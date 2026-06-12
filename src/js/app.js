@@ -15,17 +15,33 @@
         menuBtn.addEventListener('click', function() {
             mobileMenu.classList.toggle('active');
             const isOpen = mobileMenu.classList.contains('active');
-            menuBtn.setAttribute('aria-expanded', isOpen);
+            menuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        // Close mobile menu when clicking a link
+        mobileMenu.querySelectorAll('a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                mobileMenu.classList.remove('active');
+                menuBtn.setAttribute('aria-expanded', 'false');
+            });
         });
     }
 
-    // Smooth scroll for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Puzzle Picker - scroll to the clicked puzzle in the archive
+    const puzzlePickerBtns = document.querySelectorAll('.puzzle-picker-btn');
+    puzzlePickerBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            // Update active state
+            puzzlePickerBtns.forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            
+            // If on archive page, scroll to puzzle
+            const puzzleId = btn.getAttribute('data-puzzle-id');
+            if (puzzleId) {
+                const target = document.getElementById(puzzleId);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
             }
         });
     });
@@ -121,6 +137,12 @@
             if (detailContainer) {
                 detailContainer.innerHTML = generatePuzzleDetail(puzzle);
             }
+        }
+
+        function generatePuzzleDetail(puzzle) {
+            return '<div class="archive-puzzle-header"><h2>Wend #' + puzzle.puzzle_number + '</h2>' +
+                   '<span class="puzzle-date">' + new Date(puzzle.date).toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'}) + '</span></div>' +
+                   '<p>Puzzle #' + puzzle.puzzle_number + ' has ' + puzzle.words.length + ' words: <strong>' + puzzle.words.join(', ') + '</strong></p>';
         }
 
         // Back to calendar

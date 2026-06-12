@@ -1,45 +1,9 @@
 /* ================================================
-   Wend Answer Today - Complete Stylesheet
-   Inspired by thewordfinder.com Wend hints page
+   Wend Answer Today - thewordfinder.com-style CSS
    ================================================ */
 
 /* --- CSS Variables --- */
 :root {
-    --clr-primary-50: #f5f3ff;
-    --clr-primary-100: #ede9fe;
-    --clr-primary-200: #ddd6fe;
-    --clr-primary-300: #c4b5fd;
-    --clr-primary-400: #a78bfa;
-    --clr-primary-500: #8b5cf6;
-    --clr-primary-600: #7c3aed;
-    --clr-primary-700: #6d28d9;
-    --clr-primary-800: #5b21b6;
-    --clr-primary-900: #4c1d95;
-
-    --clr-accent: #f59e0b;
-    --clr-accent-light: #fbbf24;
-
-    --clr-gray-50: #f9fafb;
-    --clr-gray-100: #f3f4f6;
-    --clr-gray-200: #e5e7eb;
-    --clr-gray-300: #d1d5db;
-    --clr-gray-400: #9ca3af;
-    --clr-gray-500: #6b7280;
-    --clr-gray-600: #4b5563;
-    --clr-gray-700: #374151;
-    --clr-gray-800: #1f2937;
-    --clr-gray-900: #111827;
-
-    --clr-success: #10b981;
-    --clr-blocked: #b2b2b2;
-
-    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
-    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
-    --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
-
-    /* Word colors - matching thewordfinder.com palette */
     --word-0: #E8572A;
     --word-1: #D4449A;
     --word-2: #4DBDBA;
@@ -49,617 +13,192 @@
     --word-6: #9B59B6;
     --word-7: #26C0A6;
 
-    /* Word colors for text on light bg */
-    --word-text-0: #ffffff;
-    --word-text-1: #ffffff;
-    --word-text-2: #1a1a1a;
-    --word-text-3: #1a1a1a;
-    --word-text-4: #ffffff;
-    --word-text-5: #1a1a1a;
-    --word-text-6: #ffffff;
-    --word-text-7: #1a1a1a;
+    --clr-bg: #f5f5f0;
+    --clr-white: #ffffff;
+    --clr-blocked: #b2b2b2;
+    --clr-border: #333333;
+    --clr-text: #1a1a1a;
+    --clr-text-muted: #666666;
+    --clr-card-border: #e5e5e0;
 
-    --radius-sm: 0.375rem;
-    --radius-md: 0.5rem;
-    --radius-lg: 0.75rem;
-    --radius-xl: 1rem;
-    --radius-2xl: 1.5rem;
-    --radius-full: 9999px;
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* --- Reset & Base --- */
-*, *::before, *::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html {
-    scroll-behavior: smooth;
-    -webkit-text-size-adjust: 100%;
-}
-
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
     font-family: var(--font-family);
+    background: var(--clr-bg);
+    color: var(--clr-text);
     line-height: 1.6;
-    color: var(--clr-gray-800);
-    background-color: var(--clr-gray-50);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-
-a {
-    color: var(--clr-primary-600);
-    text-decoration: none;
-    transition: color 0.2s;
-}
-
-a:hover {
-    color: var(--clr-primary-700);
-}
-
-img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-}
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; font-family: inherit; }
 
 .container {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
-    padding: 0 1.5rem;
+    padding: 0 16px;
+}
+
+/* --- Page Wrapper --- */
+.page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 /* --- Header --- */
 .site-header {
-    background: white;
-    border-bottom: 1px solid var(--clr-gray-200);
+    background: var(--clr-white);
+    border-bottom: 1px solid var(--clr-card-border);
     position: sticky;
     top: 0;
     z-index: 100;
-    backdrop-filter: blur(12px);
-    background: rgba(255,255,255,0.95);
 }
-
-.site-header .container {
+.header-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 64px;
+    height: 56px;
 }
-
 .site-logo {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    color: var(--clr-gray-900);
+    gap: 8px;
     font-weight: 800;
-    font-size: 1.25rem;
-    text-decoration: none;
+    font-size: 1.125rem;
+    color: var(--clr-text);
 }
-
 .logo-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--word-0);
+    color: white;
+    border-radius: 8px;
+    font-weight: 900;
+    font-size: 0.875rem;
+}
+.logo-text { letter-spacing: -0.02em; }
+
+.nav-links {
+    display: none;
+    gap: 24px;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+.nav-links a {
+    padding: 4px 0;
+    color: var(--clr-text-muted);
+    transition: color 0.2s;
+}
+.nav-links a:hover,
+.nav-links a.active { color: var(--clr-text); }
+
+.mobile-menu-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
-    background: linear-gradient(135deg, var(--clr-primary-600), var(--clr-primary-400));
-    color: white;
-    border-radius: var(--radius-md);
-    font-weight: 900;
-    font-size: 1.1rem;
-}
-
-.nav-links {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-}
-
-.nav-links a {
-    color: var(--clr-gray-600);
-    font-weight: 500;
-    font-size: 0.9375rem;
-    transition: color 0.2s;
-    text-decoration: none;
-}
-
-.nav-links a:hover,
-.nav-links a.active {
-    color: var(--clr-primary-600);
-}
-
-.mobile-menu-btn {
-    display: none;
+    width: 40px;
+    height: 40px;
     background: none;
     border: none;
-    cursor: pointer;
-    color: var(--clr-gray-600);
-    padding: 0.5rem;
+    color: var(--clr-text);
 }
 
 .mobile-menu {
     display: none;
     flex-direction: column;
-    background: white;
-    border-bottom: 1px solid var(--clr-gray-200);
-    padding: 1rem 1.5rem;
+    background: var(--clr-white);
+    border-bottom: 1px solid var(--clr-card-border);
+    padding: 8px 16px 16px;
 }
-
-.mobile-menu.active {
-    display: flex;
-}
-
+.mobile-menu.active { display: flex; }
 .mobile-menu a {
-    padding: 0.75rem 0;
-    color: var(--clr-gray-600);
+    padding: 10px 0;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: var(--clr-text-muted);
+    border-bottom: 1px solid #f0f0ed;
+}
+.mobile-menu a:last-child { border-bottom: none; }
+.mobile-menu a.active { color: var(--word-0); }
+
+@media (min-width: 768px) {
+    .nav-links { display: flex; }
+    .mobile-menu-btn { display: none; }
+    .mobile-menu { display: none !important; }
+}
+
+/* --- Page Title --- */
+.page-title-section {
+    padding: 24px 0 0;
+}
+.page-title {
+    font-size: clamp(1.25rem, 4vw, 1.75rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--clr-text);
+}
+.page-subtitle {
+    font-size: 0.9375rem;
+    color: var(--clr-text-muted);
+    margin-top: 4px;
     font-weight: 500;
-    text-decoration: none;
-    border-bottom: 1px solid var(--clr-gray-100);
 }
 
-.mobile-menu a:last-child {
-    border-bottom: none;
+/* --- Puzzle Picker --- */
+.puzzle-picker-section {
+    padding: 16px 0 0;
 }
-
-@media (max-width: 768px) {
-    .nav-links {
-        display: none;
-    }
-    .mobile-menu-btn {
-        display: block;
-    }
+.puzzle-picker {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
 }
-
-/* --- Hero Section --- */
-.hero {
-    background: linear-gradient(135deg, var(--clr-primary-50) 0%, white 50%, var(--clr-primary-50) 100%);
-    padding: 2.5rem 0;
-    position: relative;
-    overflow: hidden;
-}
-
-.hero::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 600px;
-    height: 600px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%);
-    pointer-events: none;
-}
-
-.hero-content {
-    text-align: center;
-}
-
-.hero-badge {
+.puzzle-picker-btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    background: var(--clr-primary-100);
-    color: var(--clr-primary-700);
-    padding: 0.375rem 0.875rem;
-    border-radius: var(--radius-full);
-    font-size: 0.8125rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-}
-
-.hero h1 {
-    font-size: 2rem;
-    font-weight: 900;
-    line-height: 1.2;
-    color: var(--clr-gray-900);
-    letter-spacing: -0.02em;
-}
-
-.date-highlight {
-    color: var(--clr-primary-600);
-}
-
-.hero-desc {
-    font-size: 1.0625rem;
-    color: var(--clr-gray-600);
-    line-height: 1.7;
-    margin-top: 0.75rem;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-@media (max-width: 768px) {
-    .hero h1 {
-        font-size: 1.5rem;
-    }
-}
-
-/* --- Game Section --- */
-.game-section {
-    padding: 2rem 0;
-}
-
-.section-title {
-    font-size: 1.75rem;
-    font-weight: 800;
-    color: var(--clr-gray-900);
-    margin-bottom: 0.5rem;
-    letter-spacing: -0.01em;
-}
-
-.section-desc {
-    color: var(--clr-gray-500);
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 2px solid var(--clr-card-border);
+    border-radius: 12px;
+    background: var(--clr-white);
+    font-weight: 700;
     font-size: 1rem;
-    margin-bottom: 2rem;
-    max-width: 600px;
+    color: var(--clr-text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.puzzle-picker-btn:hover {
+    border-color: var(--clr-text);
+    color: var(--clr-text);
+}
+.puzzle-picker-btn.active {
+    background: var(--word-0);
+    border-color: var(--word-0);
+    color: white;
 }
 
+/* --- Game Layout --- */
+.game-section {
+    padding: 20px 0;
+}
 .game-container {
     position: relative;
 }
 
-/* --- Two-Column Game Layout (like thewordfinder.com) --- */
-.game-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    align-items: start;
-}
-
-@media (max-width: 768px) {
-    .game-layout {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-}
-
-/* --- Board Column --- */
-.game-board-col {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* --- Wend Board Grid (thewordfinder-style) --- */
-.wend-board-wrapper {
-    display: grid;
-    grid-template-columns: repeat(var(--grid-cols), 1fr);
-    grid-template-rows: repeat(var(--grid-rows), 1fr);
-    width: 100%;
-    max-width: 440px;
-    aspect-ratio: 1;
-    border: 3px solid #333;
-    border-radius: 14px;
-    overflow: hidden;
-    gap: 0;
-    background: #fff;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-}
-
-/* --- Grid Cell --- */
-.wend-cell {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    aspect-ratio: 1;
-    position: relative;
-    overflow: visible;
-    font-size: clamp(14px, 4.5vw, 28px);
-    font-weight: 900;
-    line-height: 1;
-    letter-spacing: -0.03em;
-    user-select: none;
-}
-
-/* Letter cell (before reveal) */
-.wend-cell--letter {
-    background: #fff;
-    color: #1a1a1a;
-    box-shadow: inset 1px 0 #e4e4e4, inset -1px 0 #e4e4e4,
-                inset 0 1px #e4e4e4, inset 0 -1px #e4e4e4;
-    transition: background 0.15s ease;
-}
-
-/* Blocked cell */
-.wend-cell--blocked {
-    background: var(--clr-blocked);
-    cursor: default;
-}
-
-/* Revealed cell (after reveal) - thewordfinder style */
-.wend-cell--revealed {
-    background: color-mix(in srgb, var(--word-color, #e5e7eb) 22%, white) !important;
-    box-shadow: none !important;
-}
-
-.wend-cell--revealed:hover {
-    filter: brightness(1.04);
-}
-
-/* Cell pop animation - thewordfinder style */
-@keyframes cellPop {
-    0%   { transform: scale(0.82); opacity: 0.6; }
-    55%  { transform: scale(1.06); }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-.wend-cell--pulse {
-    animation: cellPop 0.28s ease forwards;
-}
-
-/* Tube connectors for revealed cells */
-.cell-tube {
-    position: absolute;
-    z-index: 1;
-    pointer-events: none;
-    background: color-mix(in srgb, var(--word-color, #e5e7eb) 22%, white);
-}
-
-.cell-tube-h {
-    top: 22.5%;
-    bottom: 22.5%;
-}
-
-.cell-tube-v {
-    left: 22.5%;
-    right: 22.5%;
-}
-
-/* Circle indicator for first letter of word */
-.cell-circle {
-    position: absolute;
-    width: 55%;
-    height: 55%;
-    border-radius: 50%;
-    z-index: 2;
-    pointer-events: none;
-    outline: 5px solid color-mix(in srgb, var(--word-color, #e5e7eb) 22%, white);
-}
-
-/* Check badge */
-.cell-check-badge {
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 16px;
-    height: 16px;
-    background: rgba(255,255,255,0.3);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    z-index: 5;
-    pointer-events: none;
-    font-size: 10px;
-}
-
-/* Direction arrows */
-.cell-arrow {
-    position: absolute;
-    width: clamp(10px, 3vw, 16px);
-    height: clamp(10px, 3vw, 16px);
-    color: rgba(0,0,0,0.5);
-    z-index: 999;
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 8px;
-}
-
-.cell-arrow--down  { top: 0;   left: 50%; transform: translate(-50%) translateY(-50%); }
-.cell-arrow--up    { bottom: 0; left: 50%; transform: translate(-50%) translateY(50%); }
-.cell-arrow--right { left: 0;   top: 50%;  transform: translate(-50%) translateY(-50%); }
-.cell-arrow--left  { right: 0;  top: 50%;  transform: translate(50%) translateY(-50%); }
-
-/* Letter text inside cells */
-.cell-letter {
-    font-size: clamp(14px, 4.5vw, 28px);
-    font-weight: 900;
-    line-height: 1;
-    letter-spacing: -0.03em;
-    user-select: none;
-    pointer-events: none;
-    position: relative;
-    z-index: 4;
-    color: #1a1a1a;
-}
-
-.board-instruction {
-    text-align: center;
-    margin-top: 0.75rem;
-    font-size: 0.875rem;
-    color: var(--clr-gray-500);
-}
-
-.revealed-text {
-    color: var(--clr-success);
-    font-weight: 600;
-}
-
-/* --- Words Column --- */
-.game-words-col {
-    width: 100%;
-}
-
-/* --- Progress Bar (thewordfinder style) --- */
-.progress-section {
-    margin-bottom: 1rem;
-}
-
-.progress-label {
-    font-size: 0.875rem;
-    color: #374151;
-    margin-bottom: 0.35rem;
-    font-weight: 600;
-}
-
-.progress-count {
-    color: var(--clr-primary-600);
-}
-
-.progress-bar {
-    height: 10px;
-    background: #e5e7eb;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.progress-fill {
-    height: 100%;
-    border-radius: 5px;
-    background: linear-gradient(90deg, #14b8a6, #22c55e);
-    transition: width 0.4s ease;
-}
-
-/* --- Word Blank Cards (thewordfinder style) --- */
-.words-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-top: 0.75rem;
-}
-
-.word-blank {
-    background: #fff;
-    border: 2px solid #e5e5e0;
-    border-radius: 16px;
-    padding: 12px 14px;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.word-blank--revealed {
-    border-color: var(--word-color, #22c55e);
-    background: color-mix(in srgb, var(--word-color, #22c55e) 5%, white);
-    box-shadow: 0 2px 16px color-mix(in srgb, var(--word-color, #22c55e) 18%, transparent);
-    animation: slideDown 0.2s ease;
-}
-
-@keyframes slideDown {
-    0%   { opacity: 0; transform: translateY(-8px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-
-/* Letter row inside word blank */
-.letter-row {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    flex-wrap: wrap;
-}
-
-/* Letter Bubbles (thewordfinder style) */
-.letter-bubble {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 16px;
-    flex-shrink: 0;
-    transition: background 0.28s ease, transform 0.2s ease;
-}
-
-.letter-bubble--hidden {
-    background: #deded8;
-}
-
-.letter-bubble--revealed {
-    color: #1a1a1a;
-    transform: scale(1.05);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
-}
-
-.bubble-letter {
-    font-size: 16px;
-    font-weight: 800;
-    color: #1a1a1a;
-    line-height: 1;
-    letter-spacing: -0.02em;
-}
-
-/* Revealed label showing the full word */
-.revealed-label {
-    font-weight: 800;
-    font-size: 1rem;
-    color: var(--word-color, #1a1a1a);
-}
-
-/* Check icon for completed word */
-.check-icon-word {
-    color: var(--word-color, #22c55e);
-    font-size: 1.125rem;
-    font-weight: 800;
-}
-
-/* --- Wend #N Words Label --- */
-.wend-words-label {
-    display: none;
-    margin-top: 1.5rem;
-    padding: 1rem;
-    background: var(--clr-primary-50);
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--clr-primary-200);
-    animation: slideDown 0.3s ease;
-}
-
-.wend-words-label h3 {
-    font-size: 1.0625rem;
-    font-weight: 700;
-    color: var(--clr-primary-700);
-    margin-bottom: 0.75rem;
-}
-
-.wend-words-summary {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.word-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    padding: 0.5rem 1rem;
-    border-radius: var(--radius-full);
-    font-weight: 700;
-    font-size: 0.9375rem;
-    letter-spacing: 0.02em;
-    animation: wordBounce 0.4s ease-out backwards;
-}
-
-.word-chip .chip-check {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.word-chip .chip-check svg {
-    width: 10px;
-    height: 10px;
-}
-
-@keyframes wordBounce {
-    0% { transform: scale(0.8); opacity: 0; }
-    50% { transform: scale(1.08); }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-/* --- CSS-Only Reveal Button --- */
+/* The checkbox hack - checkbox must be sibling of game-layout */
 .reveal-checkbox {
     position: absolute;
     opacity: 0;
@@ -668,556 +207,725 @@ img {
     pointer-events: none;
 }
 
-.reveal-container {
-    text-align: center;
-    margin-top: 2rem;
+.game-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 }
 
-.reveal-btn {
-    display: inline-flex;
+@media (min-width: 768px) {
+    .game-layout {
+        flex-direction: row;
+        gap: 32px;
+    }
+    .game-board-col { flex: 0 0 auto; width: 420px; }
+    .game-words-col { flex: 1; min-width: 0; }
+}
+
+@media (min-width: 1024px) {
+    .game-board-col { width: 480px; }
+}
+
+/* --- Grid Board --- */
+.wend-board-wrapper {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-cols), 1fr);
+    grid-template-rows: repeat(var(--grid-rows), 1fr);
+    width: 100%;
+    aspect-ratio: 1;
+    border: 3px solid var(--clr-border);
+    border-radius: 14px;
+    overflow: hidden;
+    gap: 0;
+    background: var(--clr-white);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Grid Cells --- */
+.wend-cell {
+    position: relative;
+    display: flex;
     align-items: center;
-    gap: 0.625rem;
-    padding: 0.875rem 2rem;
-    background: linear-gradient(135deg, var(--clr-primary-600), var(--clr-primary-500));
-    color: white;
-    font-weight: 700;
-    font-size: 1.0625rem;
-    border-radius: var(--radius-full);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 14px rgba(124,58,237,0.4);
+    justify-content: center;
+    aspect-ratio: 1;
+    overflow: hidden;
     user-select: none;
 }
 
-.reveal-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(124,58,237,0.5);
+.wend-cell--blocked {
+    background: var(--clr-blocked);
+}
+.wend-cell--blocked::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-right: 1px solid rgba(0,0,0,0.08);
+    border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 
-.reveal-btn:active {
-    transform: translateY(0);
+.wend-cell--letter {
+    background: var(--clr-white);
+    box-shadow: inset 1px 0 #e4e4e4, inset -1px 0 #e4e4e4, inset 0 1px #e4e4e4, inset 0 -1px #e4e4e4;
+    cursor: pointer;
+}
+.wend-cell--letter .cell-letter {
+    font-size: clamp(14px, 4.5vw, 28px);
+    font-weight: 900;
+    color: var(--clr-text);
+    z-index: 2;
+    position: relative;
+}
+.wend-cell--letter:active {
+    background: #f5f5f0;
 }
 
-.reveal-text-hide {
-    display: none;
+/* Revealed cell */
+.wend-cell--revealed {
+    background: color-mix(in srgb, var(--word-color) 22%, white) !important;
+    box-shadow: none;
+    animation: cellPop 0.28s ease backwards;
+    animation-delay: calc(var(--cell-delay, 0) * 0.06s);
+}
+.wend-cell--revealed .cell-letter {
+    font-size: clamp(14px, 4.5vw, 28px);
+    font-weight: 900;
+    color: var(--clr-text);
+    z-index: 3;
+    position: relative;
 }
 
-.reveal-icon {
+@keyframes cellPop {
+    0% { transform: scale(0.82); opacity: 0.6; }
+    55% { transform: scale(1.06); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* --- Tube Connectors --- */
+.cell-tube {
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+}
+.cell-tube-h {
+    top: 25%;
+    bottom: 25%;
+    height: 50%;
+}
+.cell-tube-v {
+    left: 25%;
+    right: 25%;
+    width: 50%;
+}
+
+/* --- Circle & Check on first letter --- */
+.cell-circle {
+    position: absolute;
+    inset: 6%;
+    border-radius: 50%;
+    z-index: 2;
+    pointer-events: none;
+    border: 3px solid currentColor;
+    opacity: 0.3;
+}
+.cell-check-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--word-color);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
     display: flex;
     align-items: center;
+    justify-content: center;
+    z-index: 4;
+    pointer-events: none;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
-/* --- THE MAGIC: CSS-only Reveal ---
-   Checkbox is a direct sibling of grid views,
-   so ~ combinator works correctly */
+/* --- Direction Arrow --- */
+.cell-arrow {
+    position: absolute;
+    font-size: 8px;
+    opacity: 0.35;
+    z-index: 2;
+    pointer-events: none;
+}
+.cell-arrow--right { right: 2px; top: 50%; transform: translateY(-50%); }
+.cell-arrow--left { left: 2px; top: 50%; transform: translateY(-50%); }
+.cell-arrow--down { bottom: 2px; left: 50%; transform: translateX(-50%); }
+.cell-arrow--up { top: 2px; left: 50%; transform: translateX(-50%); }
 
-/* Hidden state: after-grid and after-words are hidden */
+/* --- Grid View Toggle --- */
 .grid-view-revealed {
     display: none;
 }
-
-.words-list-revealed {
+#reveal-toggle:checked ~ .game-layout .grid-view:not(.grid-view-revealed) {
     display: none;
 }
-
-.wend-words-label {
-    display: none;
-}
-
-/* When checkbox is checked: show the solved state */
-.reveal-checkbox:checked ~ .game-layout .grid-view:not(.grid-view-revealed) {
-    display: none;
-}
-
-.reveal-checkbox:checked ~ .game-layout .grid-view-revealed {
+#reveal-toggle:checked ~ .game-layout .grid-view-revealed {
     display: block;
     animation: revealPuzzle 0.6s ease-out;
 }
+#reveal-toggle:checked ~ .game-layout .grid-view-revealed .wend-cell--revealed {
+    animation: cellPop 0.28s ease backwards;
+    animation-delay: calc(var(--cell-delay, 0) * 0.06s);
+}
+@keyframes revealPuzzle {
+    0% { opacity: 0; transform: scale(0.98); }
+    100% { opacity: 1; transform: scale(1); }
+}
 
-.reveal-checkbox:checked ~ .game-layout .words-list:not(.words-list-revealed) {
+/* --- Board Instruction --- */
+.board-instruction {
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--clr-text-muted);
+    margin-top: 12px;
+    font-weight: 500;
+}
+.board-instruction.revealed-text {
+    display: none;
+    color: #14b8a6;
+    font-weight: 700;
+}
+#reveal-toggle:checked ~ .game-layout .board-instruction:not(.revealed-text) {
     display: none;
 }
-
-.reveal-checkbox:checked ~ .game-layout .words-list-revealed {
-    display: flex;
-}
-
-.reveal-checkbox:checked ~ .game-layout .wend-words-label {
+#reveal-toggle:checked ~ .game-layout .board-instruction.revealed-text {
     display: block;
 }
 
-.reveal-checkbox:checked ~ .game-layout .progress-fill {
+/* --- Reveal / Clear Buttons --- */
+.reveal-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 16px;
+}
+.reveal-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+.reveal-btn--primary {
+    background: linear-gradient(135deg, #14b8a6, #22c55e);
+    color: white;
+    box-shadow: 0 4px 14px rgba(20, 184, 166, 0.35);
+}
+.reveal-btn--primary:hover {
+    box-shadow: 0 6px 20px rgba(20, 184, 166, 0.45);
+    transform: translateY(-1px);
+}
+.reveal-btn--primary:active {
+    transform: translateY(0);
+}
+
+.reveal-text-hide { display: none; }
+#reveal-toggle:checked ~ .game-layout .reveal-text-show { display: none; }
+#reveal-toggle:checked ~ .game-layout .reveal-text-hide { display: inline; }
+#reveal-toggle:checked ~ .game-layout .reveal-btn--primary {
+    background: linear-gradient(135deg, #6b7280, #9ca3af);
+    box-shadow: 0 4px 14px rgba(107, 114, 128, 0.3);
+}
+
+/* --- Progress Bar --- */
+.progress-section {
+    margin-bottom: 16px;
+}
+.progress-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--clr-text-muted);
+    margin-bottom: 8px;
+}
+.progress-count { color: var(--clr-text); font-weight: 800; }
+.progress-bar {
+    height: 10px;
+    background: #e5e7eb;
+    border-radius: 5px;
+    overflow: hidden;
+}
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #14b8a6, #22c55e);
+    border-radius: 5px;
+    transition: width 0.4s ease;
+    width: 0%;
+}
+#reveal-toggle:checked ~ .game-layout .progress-fill {
     width: 100% !important;
 }
 
-.reveal-checkbox:checked ~ .game-layout .progress-count {
-    /* Update shown via CSS content trick won't work, handled by having both lists */
+/* --- Words List --- */
+.words-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
-
-/* Reveal button style change when checked */
-.reveal-checkbox:checked ~ .reveal-container .reveal-btn {
-    background: linear-gradient(135deg, var(--clr-gray-600), var(--clr-gray-500));
-    box-shadow: 0 4px 14px rgba(107,114,128,0.4);
-}
-
-.reveal-checkbox:checked ~ .reveal-container .reveal-text-show {
+.words-list-revealed {
     display: none;
 }
-
-.reveal-checkbox:checked ~ .reveal-container .reveal-text-hide {
-    display: inline;
+#reveal-toggle:checked ~ .game-layout .words-list:not(.words-list-revealed) {
+    display: none;
+}
+#reveal-toggle:checked ~ .game-layout .words-list-revealed {
+    display: flex;
 }
 
-/* Solved cells get pop animation when revealed */
-.reveal-checkbox:checked ~ .game-layout .wend-cell--revealed {
-    animation: cellPop 0.28s ease backwards;
+/* --- Word Blank Cards --- */
+.word-blank {
+    background: var(--clr-white);
+    border: 2px solid var(--clr-card-border);
+    border-radius: 16px;
+    padding: 12px 14px;
+    transition: all 0.3s ease;
+}
+.word-blank--revealed {
+    border-color: var(--word-color);
+    background: color-mix(in srgb, var(--word-color) 5%, white);
+    box-shadow: 0 2px 16px color-mix(in srgb, var(--word-color) 18%, transparent);
+    animation: cardReveal 0.4s ease backwards;
+    animation-delay: calc(var(--card-delay, 0) * 0.1s);
+}
+@keyframes cardReveal {
+    0% { opacity: 0; transform: translateY(8px); }
+    100% { opacity: 1; transform: translateY(0); }
 }
 
-.reveal-checkbox:checked ~ .game-layout .word-blank--revealed {
-    animation: slideDown 0.2s ease backwards;
+.letter-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
-.reveal-checkbox:checked ~ .game-layout .word-chip {
-    animation: wordBounce 0.4s ease-out backwards;
+/* Letter Bubbles - Hidden */
+.letter-bubble--hidden {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #deded8;
 }
 
-/* Stagger animations for word cards */
-.reveal-checkbox:checked ~ .game-layout .word-blank--revealed:nth-child(1) { animation-delay: 0.05s; }
-.reveal-checkbox:checked ~ .game-layout .word-blank--revealed:nth-child(2) { animation-delay: 0.15s; }
-.reveal-checkbox:checked ~ .game-layout .word-blank--revealed:nth-child(3) { animation-delay: 0.25s; }
-.reveal-checkbox:checked ~ .game-layout .word-blank--revealed:nth-child(4) { animation-delay: 0.35s; }
-.reveal-checkbox:checked ~ .game-layout .word-blank--revealed:nth-child(5) { animation-delay: 0.45s; }
-.reveal-checkbox:checked ~ .game-layout .word-blank--revealed:nth-child(6) { animation-delay: 0.55s; }
-.reveal-checkbox:checked ~ .game-layout .word-blank--revealed:nth-child(7) { animation-delay: 0.65s; }
-.reveal-checkbox:checked ~ .game-layout .word-blank--revealed:nth-child(8) { animation-delay: 0.75s; }
-
-/* Stagger grid cell reveals */
-.reveal-checkbox:checked ~ .game-layout .wend-cell--revealed {
-    animation-delay: calc(var(--cell-delay, 0) * 0.06s);
+/* Letter Bubbles - Revealed */
+.letter-bubble--revealed {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+    font-weight: 800;
+    font-size: 16px;
+    color: #1a1a1a;
+    animation: bubblePop 0.3s ease backwards;
+    animation-delay: calc(var(--bubble-delay, 0) * 0.05s);
+}
+@keyframes bubblePop {
+    0% { transform: scale(0.5); opacity: 0; }
+    60% { transform: scale(1.12); }
+    100% { transform: scale(1.05); opacity: 1; }
 }
 
-@keyframes revealPuzzle {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.bubble-letter {
+    line-height: 1;
 }
 
-/* --- Shimmer loading animation --- */
-.shimmer {
-    animation: shimmer 1.5s infinite;
-    background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6, #e5e7eb 75%);
-    background-size: 200% 100%;
+.revealed-label {
+    margin-top: 6px;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
 }
 
-@keyframes shimmer {
-    0%   { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
+/* --- Wend #N Words Label --- */
+.wend-words-label {
+    display: none;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 2px solid var(--clr-card-border);
+}
+#reveal-toggle:checked ~ .game-layout .wend-words-label {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+@keyframes fadeIn {
+    from { opacity: 0; } to { opacity: 1; }
+}
+.wend-words-label h3 {
+    font-size: 1.0625rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+    color: var(--clr-text);
+}
+.wend-words-summary {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.word-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: 0.875rem;
+    animation: chipSlide 0.35s ease backwards;
+    animation-delay: var(--chip-delay, 0s);
+}
+@keyframes chipSlide {
+    0% { opacity: 0; transform: translateY(6px) scale(0.9); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.chip-check {
+    width: 14px;
+    height: 14px;
+    display: flex;
+}
+.chip-check svg {
+    width: 14px;
+    height: 14px;
 }
 
 /* --- Hints Section --- */
 .hints-section {
-    padding: 3rem 0;
-    background: white;
+    padding: 40px 0;
 }
-
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+    color: var(--clr-text);
+}
 .hints-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin-top: 1.5rem;
+    grid-template-columns: 1fr;
+    gap: 16px;
 }
-
+@media (min-width: 640px) {
+    .hints-grid { grid-template-columns: repeat(2, 1fr); }
+}
 .hint-card {
-    background: var(--clr-gray-50);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    border: 1px solid var(--clr-gray-200);
-    transition: transform 0.2s, box-shadow 0.2s;
+    background: var(--clr-white);
+    border: 1px solid var(--clr-card-border);
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
 }
-
-.hint-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-.hint-card .hint-number {
-    display: inline-flex;
+.hint-number {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #14b8a6, #22c55e);
+    color: white;
+    display: flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
-    background: var(--clr-primary-600);
-    color: white;
-    border-radius: 50%;
-    font-weight: 700;
-    font-size: 0.8125rem;
-    margin-bottom: 0.75rem;
+    font-weight: 800;
+    font-size: 0.9375rem;
 }
-
 .hint-card h3 {
     font-size: 1rem;
     font-weight: 700;
-    color: var(--clr-gray-800);
-    margin-bottom: 0.5rem;
+    margin-bottom: 4px;
 }
-
 .hint-card p {
-    font-size: 0.9375rem;
-    color: var(--clr-gray-600);
-    line-height: 1.6;
+    font-size: 0.875rem;
+    color: var(--clr-text-muted);
+    line-height: 1.5;
 }
 
 /* --- Recent Puzzles --- */
 .recent-section {
-    padding: 3rem 0;
+    padding: 40px 0;
 }
-
 .recent-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 1.25rem;
-    margin-top: 1.5rem;
+    grid-template-columns: 1fr;
+    gap: 12px;
 }
-
+@media (min-width: 640px) {
+    .recent-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+    .recent-grid { grid-template-columns: repeat(3, 1fr); }
+}
 .recent-card {
-    background: white;
-    border-radius: var(--radius-lg);
-    padding: 1.25rem;
-    border: 1px solid var(--clr-gray-200);
-    transition: transform 0.2s, box-shadow 0.2s;
-    text-decoration: none;
-    color: inherit;
     display: block;
+    background: var(--clr-white);
+    border: 1px solid var(--clr-card-border);
+    border-radius: 14px;
+    padding: 16px;
+    transition: all 0.2s;
 }
-
 .recent-card:hover {
+    border-color: var(--word-0);
+    box-shadow: 0 4px 16px rgba(232, 87, 42, 0.12);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--clr-primary-200);
 }
-
-.recent-card .card-header {
+.card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.75rem;
+    margin-bottom: 8px;
 }
-
-.recent-card .card-number {
+.card-number {
     font-weight: 700;
-    color: var(--clr-primary-600);
     font-size: 0.9375rem;
 }
-
-.recent-card .card-date {
+.card-date {
     font-size: 0.8125rem;
-    color: var(--clr-gray-500);
+    color: var(--clr-text-muted);
 }
-
-.recent-card .card-words {
+.card-words {
     display: flex;
+    gap: 6px;
     flex-wrap: wrap;
-    gap: 0.375rem;
 }
-
-.recent-card .card-word {
-    padding: 0.25rem 0.625rem;
-    background: var(--clr-gray-100);
-    border-radius: var(--radius-full);
+.card-word {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    background: #f0f0ed;
     font-size: 0.8125rem;
     font-weight: 600;
-    color: var(--clr-gray-600);
 }
 
 /* --- FAQ Section --- */
 .faq-section {
-    padding: 3rem 0;
-    background: white;
+    padding: 40px 0;
 }
-
 .faq-list {
-    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
     max-width: 720px;
 }
-
 .faq-item {
-    border-bottom: 1px solid var(--clr-gray-200);
-    padding: 1.25rem 0;
+    background: var(--clr-white);
+    border: 1px solid var(--clr-card-border);
+    border-radius: 14px;
+    padding: 20px;
 }
-
-.faq-item:first-child {
-    border-top: 1px solid var(--clr-gray-200);
-}
-
 .faq-question {
-    font-size: 1.0625rem;
+    font-size: 1rem;
     font-weight: 700;
-    color: var(--clr-gray-800);
-    margin-bottom: 0.5rem;
+    margin-bottom: 8px;
 }
-
 .faq-answer {
     font-size: 0.9375rem;
-    color: var(--clr-gray-600);
-    line-height: 1.7;
+    color: var(--clr-text-muted);
+    line-height: 1.6;
 }
 
 /* --- Footer --- */
 .site-footer {
-    background: var(--clr-gray-900);
-    color: var(--clr-gray-400);
-    padding: 3rem 0 1.5rem;
+    margin-top: auto;
+    background: #1a1a2e;
+    color: #ccc;
+    padding: 40px 0 20px;
 }
-
 .footer-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: 2rem;
-    margin-bottom: 2rem;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
-
+@media (min-width: 768px) {
+    .footer-grid { grid-template-columns: 2fr 1fr 1fr; }
+}
+.footer-brand .logo-icon {
+    background: var(--word-0);
+}
+.footer-brand .logo-text {
+    color: white;
+    font-size: 1.0625rem;
+}
 .footer-brand {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 8px;
 }
-
-.footer-brand .logo-icon {
-    width: 32px;
-    height: 32px;
-    font-size: 0.9375rem;
-}
-
-.footer-brand .logo-text {
-    color: white;
-    font-size: 1.125rem;
-}
-
 .footer-brand p {
     font-size: 0.875rem;
-    line-height: 1.6;
-    color: var(--clr-gray-400);
+    color: #999;
+    max-width: 320px;
 }
-
-.footer-links h4, .footer-legal h4 {
+.footer-links h4,
+.footer-legal h4 {
+    font-size: 0.875rem;
+    font-weight: 700;
     color: white;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
 }
-
 .footer-links a {
     display: block;
-    color: var(--clr-gray-400);
     font-size: 0.875rem;
-    padding: 0.25rem 0;
-    text-decoration: none;
+    color: #999;
+    padding: 4px 0;
     transition: color 0.2s;
 }
-
-.footer-links a:hover {
-    color: white;
-}
-
+.footer-links a:hover { color: white; }
 .footer-legal p {
     font-size: 0.8125rem;
-    color: var(--clr-gray-500);
+    color: #777;
     line-height: 1.5;
 }
-
 .footer-bottom {
-    border-top: 1px solid var(--clr-gray-800);
-    padding-top: 1.5rem;
+    padding-top: 16px;
     text-align: center;
     font-size: 0.8125rem;
-}
-
-@media (max-width: 768px) {
-    .footer-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
+    color: #666;
 }
 
 /* --- Archive Page --- */
 .archive-header {
-    padding: 3rem 0 1rem;
-    text-align: center;
+    padding: 32px 0 16px;
 }
-
 .archive-header h1 {
-    font-size: 2rem;
+    font-size: 1.75rem;
     font-weight: 900;
-    color: var(--clr-gray-900);
-    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
 }
-
 .archive-header p {
-    color: var(--clr-gray-500);
-    font-size: 1rem;
+    font-size: 0.9375rem;
+    color: var(--clr-text-muted);
+    margin-top: 4px;
 }
 
-/* --- Calendar for Archive --- */
-.calendar-section {
-    padding: 1.5rem 0;
-}
-
+/* Calendar */
+.calendar-section { padding: 16px 0; }
 .calendar-wrapper {
-    background: white;
-    border-radius: var(--radius-xl);
-    padding: 1.5rem;
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--clr-gray-200);
-    max-width: 500px;
-    margin: 0 auto;
+    background: var(--clr-white);
+    border: 1px solid var(--clr-card-border);
+    border-radius: 16px;
+    padding: 20px;
+    max-width: 420px;
 }
-
 .calendar-nav {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    justify-content: space-between;
+    margin-bottom: 16px;
 }
-
-.calendar-nav h3 {
-    font-size: 1.125rem;
-    font-weight: 700;
-    color: var(--clr-gray-800);
-}
-
 .calendar-nav button {
-    background: var(--clr-gray-100);
-    border: 1px solid var(--clr-gray-200);
-    border-radius: var(--radius-md);
-    padding: 0.375rem 0.75rem;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--clr-card-border);
+    border-radius: 8px;
+    background: var(--clr-white);
+    font-size: 1.125rem;
     cursor: pointer;
-    font-size: 1rem;
-    color: var(--clr-gray-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: all 0.2s;
 }
-
-.calendar-nav button:hover {
-    background: var(--clr-primary-100);
-    border-color: var(--clr-primary-300);
-    color: var(--clr-primary-600);
+.calendar-nav button:hover { border-color: var(--clr-text); }
+.calendar-month-title {
+    font-size: 1rem;
+    font-weight: 700;
 }
-
 .calendar-weekdays {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 2px;
-    margin-bottom: 0.5rem;
-}
-
-.calendar-weekdays span {
     text-align: center;
     font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--clr-gray-400);
-    padding: 0.25rem 0;
-    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--clr-text-muted);
+    margin-bottom: 8px;
 }
-
 .calendar-days {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 3px;
+    gap: 4px;
 }
-
 .calendar-day {
     aspect-ratio: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-md);
+    border-radius: 8px;
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--clr-gray-600);
-    cursor: default;
-    transition: all 0.2s;
-    position: relative;
+    color: var(--clr-text-muted);
 }
-
 .calendar-day--has-puzzle {
-    background: var(--clr-primary-50);
-    color: var(--clr-primary-700);
+    background: color-mix(in srgb, var(--word-0) 12%, white);
+    color: var(--word-0);
     font-weight: 700;
     cursor: pointer;
-    border: 1px solid var(--clr-primary-200);
+    transition: all 0.2s;
 }
-
 .calendar-day--has-puzzle:hover {
-    background: var(--clr-primary-100);
-    border-color: var(--clr-primary-400);
-    transform: scale(1.1);
-    box-shadow: var(--shadow-md);
+    background: color-mix(in srgb, var(--word-0) 25%, white);
 }
-
-.calendar-day--has-puzzle::after {
-    content: '';
-    position: absolute;
-    bottom: 3px;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--clr-primary-500);
-}
-
-.calendar-day--empty {
-    color: transparent;
-}
-
 .calendar-day--today {
-    background: var(--clr-primary-600);
-    color: white;
-    border: none;
+    border: 2px solid var(--word-0);
 }
+.calendar-day--empty { visibility: hidden; }
 
-/* --- Archive Puzzle Detail --- */
+/* Archive Puzzle Section */
 .archive-puzzle-section {
     display: none;
-    padding: 2rem 0;
 }
-
 .archive-puzzle-section.active {
     display: block;
-    animation: slideDown 0.3s ease;
+    padding: 16px 0;
 }
-
-.archive-puzzle-detail {
-    background: white;
-    border-radius: var(--radius-xl);
-    padding: 2rem;
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--clr-gray-200);
+.back-to-calendar {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: var(--word-0);
+    cursor: pointer;
+    margin-bottom: 16px;
 }
+.back-to-calendar:hover { text-decoration: underline; }
 
+/* Archive puzzle items */
+.archive-puzzle-item {
+    margin-bottom: 40px;
+    position: relative;
+}
 .archive-puzzle-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--clr-gray-200);
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 16px;
 }
-
 .archive-puzzle-header h2 {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 800;
-    color: var(--clr-gray-900);
 }
-
-.archive-puzzle-header .puzzle-date {
+.puzzle-date {
     font-size: 0.875rem;
-    color: var(--clr-gray-500);
+    color: var(--clr-text-muted);
 }
-
-/* Archive reveal - CSS only */
 .archive-reveal-checkbox {
     position: absolute;
     opacity: 0;
@@ -1225,223 +933,99 @@ img {
     height: 0;
     pointer-events: none;
 }
-
-.archive-game-container {
-    position: relative;
-}
-
-.archive-grid-before {
-    /* Shows the blank grid */
-}
-
-.archive-grid-after {
-    display: none;
-}
-
-.archive-reveal-checkbox:checked ~ .archive-grid-before {
-    display: none;
-}
-
-.archive-reveal-checkbox:checked ~ .archive-grid-after {
-    display: block;
-    animation: revealPuzzle 0.6s ease-out;
-}
-
-.archive-reveal-checkbox:checked ~ .archive-grid-after .wend-cell--revealed {
-    animation: cellPop 0.28s ease backwards;
-}
-
-.archive-reveal-checkbox:checked ~ .archive-words-before {
-    display: none;
-}
-
-.archive-reveal-checkbox:checked ~ .archive-layout .words-list:not(.words-list-revealed) {
-    display: none;
-}
-
-.archive-reveal-checkbox:checked ~ .archive-layout .words-list-revealed {
+.archive-layout {
     display: flex;
+    flex-direction: column;
+    gap: 24px;
 }
-
-.archive-reveal-checkbox:checked ~ .archive-words-after {
-    display: block;
+@media (min-width: 768px) {
+    .archive-layout {
+        flex-direction: row;
+        gap: 32px;
+    }
+    .archive-layout .game-board-col { flex: 0 0 auto; width: 360px; }
+    .archive-layout .game-words-col { flex: 1; min-width: 0; }
 }
-
-.archive-reveal-checkbox:checked ~ .archive-reveal-container .archive-reveal-btn {
-    background: linear-gradient(135deg, var(--clr-gray-600), var(--clr-gray-500));
-}
-
-.archive-reveal-checkbox:checked ~ .archive-reveal-container .archive-reveal-show {
-    display: none;
-}
-
-.archive-reveal-checkbox:checked ~ .archive-reveal-container .archive-reveal-hide {
-    display: inline;
-}
-
-.archive-words-after {
-    display: none;
-}
-
+.archive-grid-after { display: none; }
+.archive-words-after { display: none; }
 .archive-reveal-container {
+    margin-top: 16px;
     text-align: center;
-    margin-top: 1.5rem;
 }
-
 .archive-reveal-btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.75rem;
-    background: linear-gradient(135deg, var(--clr-primary-600), var(--clr-primary-500));
-    color: white;
+    gap: 8px;
+    padding: 12px 28px;
+    border-radius: 12px;
     font-weight: 700;
     font-size: 1rem;
-    border-radius: var(--radius-full);
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 14px rgba(124,58,237,0.4);
-    user-select: none;
+    transition: all 0.2s;
+    background: linear-gradient(135deg, #14b8a6, #22c55e);
+    color: white;
+    box-shadow: 0 4px 14px rgba(20, 184, 166, 0.35);
 }
-
 .archive-reveal-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(124,58,237,0.5);
+    box-shadow: 0 6px 20px rgba(20, 184, 166, 0.45);
+    transform: translateY(-1px);
 }
+.archive-reveal-hide { display: none; }
 
-.archive-reveal-hide {
-    display: none;
-}
-
-.archive-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    align-items: start;
-}
-
-@media (max-width: 768px) {
-    .archive-layout {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* --- How To Play Page --- */
+/* --- How to Play page --- */
 .steps-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin-top: 2rem;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 24px;
 }
-
+@media (min-width: 640px) {
+    .steps-grid { grid-template-columns: repeat(2, 1fr); }
+}
 .step-card {
-    background: white;
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    border: 1px solid var(--clr-gray-200);
-    position: relative;
+    background: var(--clr-white);
+    border: 1px solid var(--clr-card-border);
+    border-radius: 14px;
+    padding: 20px;
 }
-
-.step-card .step-num {
-    display: inline-flex;
+.step-num {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #14b8a6, #22c55e);
+    color: white;
+    display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, var(--clr-primary-600), var(--clr-primary-400));
-    color: white;
-    border-radius: 50%;
     font-weight: 800;
-    font-size: 1.125rem;
-    margin-bottom: 1rem;
-}
-
-.step-card h3 {
-    font-size: 1.0625rem;
-    font-weight: 700;
-    color: var(--clr-gray-800);
-    margin-bottom: 0.5rem;
-}
-
-.step-card p {
     font-size: 0.9375rem;
-    color: var(--clr-gray-600);
+    margin-bottom: 12px;
+}
+.step-card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+.step-card p {
+    font-size: 0.875rem;
+    color: var(--clr-text-muted);
     line-height: 1.6;
 }
 
-/* --- Page Wrapper --- */
-.page-wrapper {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-.page-content {
-    flex: 1;
-}
-
-/* --- Utility --- */
-.text-center { text-align: center; }
-.mt-2 { margin-top: 0.5rem; }
-.mt-4 { margin-top: 1rem; }
-.mb-2 { margin-bottom: 0.5rem; }
-.mb-4 { margin-bottom: 1rem; }
-
-/* --- Responsive --- */
-@media (max-width: 480px) {
-    .wend-board-wrapper {
-        max-width: 320px;
-    }
-
-    .hero h1 {
-        font-size: 1.375rem;
-    }
-
-    .word-chip {
-        padding: 0.375rem 0.75rem;
-        font-size: 0.8125rem;
-    }
-
-    .letter-bubble {
-        width: 32px;
-        height: 32px;
-        font-size: 14px;
-    }
-
-    .bubble-letter {
-        font-size: 14px;
-    }
-
-    .calendar-wrapper {
-        padding: 1rem;
-    }
-}
-
-/* Back to calendar link */
-.back-to-calendar {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    color: var(--clr-primary-600);
-    font-weight: 600;
-    font-size: 0.875rem;
-    margin-bottom: 1rem;
-    cursor: pointer;
-    transition: color 0.2s;
-}
-
-.back-to-calendar:hover {
-    color: var(--clr-primary-700);
-}
-
-/* Mini grid for archive puzzle */
-.mini-grid-archive {
-    display: grid;
-    gap: 2px;
-    max-width: 300px;
-    border: 3px solid #333;
-    border-radius: 14px;
+/* --- Accessibility --- */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
     overflow: hidden;
-    background: #fff;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    clip: rect(0,0,0,0);
+    border: 0;
+}
+
+/* Focus styles */
+:focus-visible {
+    outline: 2px solid var(--word-0);
+    outline-offset: 2px;
 }

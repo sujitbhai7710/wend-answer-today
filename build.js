@@ -1,7 +1,7 @@
 /**
  * Build script for Wend Answer Today
  * Fetches puzzle data from the Worker API and generates static HTML pages
- * with thewordfinder.com-style animations and CSS-only reveal
+ * with thewordfinder.com-style layout, CSS-only reveal, and animations
  */
 
 const fs = require('fs');
@@ -12,15 +12,19 @@ const API_KEY = process.env.WORKER_API_KEY || '';
 
 // Word colors matching thewordfinder.com palette
 const WORD_COLORS = [
-    { bg: '#E8572A', text: '#ffffff', name: 'orange-red' },
-    { bg: '#D4449A', text: '#ffffff', name: 'pink' },
-    { bg: '#4DBDBA', text: '#1a1a1a', name: 'teal' },
-    { bg: '#98C21F', text: '#1a1a1a', name: 'lime-green' },
-    { bg: '#5B8DD9', text: '#ffffff', name: 'blue' },
-    { bg: '#F5A623', text: '#1a1a1a', name: 'amber' },
-    { bg: '#9B59B6', text: '#ffffff', name: 'purple' },
-    { bg: '#26C0A6', text: '#1a1a1a', name: 'mint' },
+    '#E8572A',
+    '#D4449A',
+    '#4DBDBA',
+    '#98C21F',
+    '#5B8DD9',
+    '#F5A623',
+    '#9B59B6',
+    '#26C0A6',
 ];
+
+function wordColor(idx) {
+    return WORD_COLORS[idx % WORD_COLORS.length];
+}
 
 function formatDate(dateStr) {
     const date = new Date(dateStr);
@@ -52,7 +56,11 @@ function getDirection(prevCell, currCell, nextCell) {
     return '';
 }
 
-// Generate thewordfinder-style grid cells (BEFORE reveal)
+// =========================================================
+// Grid cell generation
+// =========================================================
+
+// BEFORE reveal: letter cells with white background
 function generateGridCells(grid, rows, cols) {
     let html = '';
     for (let r = 0; r < rows; r++) {
@@ -61,7 +69,7 @@ function generateGridCells(grid, rows, cols) {
             if (cell.isBlocked) {
                 html += `<div class="wend-cell wend-cell--blocked" data-row="${r}" data-col="${c}" aria-hidden="true"></div>`;
             } else {
-                html += `<button class="wend-cell wend-cell--letter" data-row="${r}" data-col="${c}" aria-label="${cell.letter} — hidden">
+                html += `<button class="wend-cell wend-cell--letter" data-row="${r}" data-col="${c}" aria-label="Letter hidden">
                     <span class="cell-letter">${cell.letter}</span>
                 </button>`;
             }
@@ -70,21 +78,21 @@ function generateGridCells(grid, rows, cols) {
     return html;
 }
 
-// Generate thewordfinder-style grid cells (AFTER reveal - solved)
+// AFTER reveal: cells with colored backgrounds, tube connectors, circles, check badges
 function generateSolvedGridCells(grid, wordCells, rows, cols) {
     // Build maps for cell word assignments
     const cellWordMap = {};
-    const cellDirectionMap = {};
     const cellIsFirst = {};
     const cellIsLast = {};
-    const cellConnectH = {}; // horizontal tube
-    const cellConnectV = {}; // vertical tube
-    
+    const cellConnectH = {};
+    const cellConnectV = {};
+
     wordCells.forEach((word, wordIdx) => {
+        const color = wordColor(wordIdx);
         word.cells.forEach((cell, cellIdx) => {
             const key = `${cell.row},${cell.col}`;
             if (!(key in cellWordMap)) {
-                cellWordMap[key] = wordIdx;
+                cellWordMap[key] = { wordIdx, color };
             }
             if (cellIdx === 0 && !(key in cellIsFirst)) {
                 cellIsFirst[key] = true;
@@ -92,30 +100,25 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
             if (cellIdx === word.cells.length - 1 && !(key in cellIsLast)) {
                 cellIsLast[key] = true;
             }
-            
+
             // Determine connections for tubes
             const prevCell = cellIdx > 0 ? word.cells[cellIdx - 1] : null;
             const nextCell = cellIdx < word.cells.length - 1 ? word.cells[cellIdx + 1] : null;
-            
+
             if (!(key in cellConnectH)) cellConnectH[key] = { left: false, right: false };
             if (!(key in cellConnectV)) cellConnectV[key] = { top: false, bottom: false };
-            
+
             if (prevCell) {
                 const dc = cell.col - prevCell.col;
                 const dr = cell.row - prevCell.row;
-                if (dc !== 0) cellConnectH[key].left = true; // connected from left
-                if (dr !== 0) cellConnectV[key].top = true;  // connected from top
+                if (dc !== 0) cellConnectH[key].left = true;
+                if (dr !== 0) cellConnectV[key].top = true;
             }
             if (nextCell) {
                 const dc = nextCell.col - cell.col;
                 const dr = nextCell.row - cell.row;
-                if (dc !== 0) cellConnectH[key].right = true; // connected to right
-                if (dr !== 0) cellConnectV[key].bottom = true; // connected to bottom
-            }
-            
-            const dir = getDirection(prevCell, cell, nextCell);
-            if (dir && !(key in cellDirectionMap)) {
-                cellDirectionMap[key] = dir;
+                if (dc !== 0) cellConnectH[key].right = true;
+                if (dr !== 0) cellConnectV[key].bottom = true;
             }
         });
     });
@@ -123,7 +126,7 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
     // Calculate animation delays - word by word
     let totalDelay = 0;
     const cellDelayMap = {};
-    
+
     wordCells.forEach((word, wordIdx) => {
         word.cells.forEach((cell, cellIdx) => {
             const key = `${cell.row},${cell.col}`;
@@ -139,43 +142,36 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
         for (let c = 0; c < cols; c++) {
             const cell = grid[r][c];
             const key = `${r},${c}`;
-            
+
             if (cell.isBlocked) {
                 html += `<div class="wend-cell wend-cell--blocked" data-row="${r}" data-col="${c}" aria-hidden="true"></div>`;
             } else if (key in cellWordMap) {
-                const wordIdx = cellWordMap[key];
-                const color = WORD_COLORS[wordIdx % WORD_COLORS.length];
+                const { wordIdx, color } = cellWordMap[key];
                 const delay = cellDelayMap[key] || 0;
-                const dir = cellDirectionMap[key] || '';
-                
-                // Build inner content
+
                 let inner = `<span class="cell-letter">${cell.letter}</span>`;
-                
+
                 // Tube connectors
                 const hConn = cellConnectH[key];
                 const vConn = cellConnectV[key];
                 if (hConn && (hConn.left || hConn.right)) {
-                    const left = hConn.left ? '0' : 'auto';
-                    const right = hConn.right ? '0' : 'auto';
-                    inner += `<span class="cell-tube cell-tube-h" style="left:${hConn.left ? '0' : '22.5%'};right:${hConn.right ? '0' : '22.5%'};background:color-mix(in srgb, ${color.bg} 22%, white);"></span>`;
+                    const leftPct = hConn.left ? '0' : '25%';
+                    const rightPct = hConn.right ? '0' : '25%';
+                    inner += `<span class="cell-tube cell-tube-h" style="left:${leftPct};right:${rightPct};background:color-mix(in srgb, ${color} 22%, white);"></span>`;
                 }
                 if (vConn && (vConn.top || vConn.bottom)) {
-                    inner += `<span class="cell-tube cell-tube-v" style="top:${vConn.top ? '0' : '22.5%'};bottom:${vConn.bottom ? '0' : '22.5%'};background:color-mix(in srgb, ${color.bg} 22%, white);"></span>`;
+                    const topPct = vConn.top ? '0' : '25%';
+                    const bottomPct = vConn.bottom ? '0' : '25%';
+                    inner += `<span class="cell-tube cell-tube-v" style="top:${topPct};bottom:${bottomPct};background:color-mix(in srgb, ${color} 22%, white);"></span>`;
                 }
-                
+
                 // Circle for first letter
                 if (cellIsFirst[key]) {
-                    inner += `<span class="cell-circle" style="background:${color.bg};outline-color:color-mix(in srgb, ${color.bg} 22%, white);"></span>`;
-                    inner += `<span class="cell-check-badge">&#10003;</span>`;
+                    inner += `<span class="cell-circle" style="border-color:${color};"></span>`;
+                    inner += `<span class="cell-check-badge" style="background:${color};">&#10003;</span>`;
                 }
-                
-                // Direction arrow
-                if (dir) {
-                    const arrowSymbols = { right: '&#9654;', left: '&#9664;', down: '&#9660;', up: '&#9650;' };
-                    inner += `<span class="cell-arrow cell-arrow--${dir}">${arrowSymbols[dir]}</span>`;
-                }
-                
-                html += `<div class="wend-cell wend-cell--revealed" data-row="${r}" data-col="${c}" style="--word-color:${color.bg};--cell-delay:${delay};" aria-label="${cell.letter} — revealed">${inner}</div>`;
+
+                html += `<div class="wend-cell wend-cell--revealed" data-row="${r}" data-col="${c}" style="--word-color:${color};--cell-delay:${delay};" aria-label="${cell.letter} — revealed">${inner}</div>`;
             } else {
                 html += `<div class="wend-cell wend-cell--letter" data-row="${r}" data-col="${c}">
                     <span class="cell-letter">${cell.letter}</span>
@@ -186,47 +182,78 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
     return html;
 }
 
-// Generate word blank cards BEFORE reveal (hidden bubbles)
+// =========================================================
+// Word cards
+// =========================================================
+
+// BEFORE reveal: gray bubbles
 function generateWordCardsBefore(words) {
     return words.map((word, idx) => {
-        const color = WORD_COLORS[idx % WORD_COLORS.length];
-        const bubbles = Array.from({ length: word.length }, () => 
+        const color = wordColor(idx);
+        const bubbles = Array.from({ length: word.length }, () =>
             `<div class="letter-bubble letter-bubble--hidden"></div>`
         ).join('');
-        
-        return `<div class="word-blank" style="--word-color:${color.bg};">
+
+        return `<div class="word-blank" style="--word-color:${color};">
             <div class="letter-row">${bubbles}</div>
         </div>`;
     }).join('');
 }
 
-// Generate word blank cards AFTER reveal (shown bubbles)
+// AFTER reveal: colored bubbles with letters
 function generateWordCardsAfter(words, wordCells) {
     return words.map((word, idx) => {
-        const color = WORD_COLORS[idx % WORD_COLORS.length];
-        const bubbles = word.split('').map(letter =>
-            `<div class="letter-bubble letter-bubble--revealed" style="background:${color.bg};">
+        const color = wordColor(idx);
+        const bubbles = word.split('').map((letter, li) =>
+            `<div class="letter-bubble letter-bubble--revealed" style="background:${color};--bubble-delay:${li};">
                 <span class="bubble-letter">${letter}</span>
             </div>`
         ).join('');
-        
-        return `<div class="word-blank word-blank--revealed" style="--word-color:${color.bg};">
+
+        return `<div class="word-blank word-blank--revealed" style="--word-color:${color};--card-delay:${idx};">
             <div class="letter-row">${bubbles}</div>
-            <div class="revealed-label" style="--word-color:${color.bg};color:${color.bg};"><strong>${word}</strong></div>
+            <div class="revealed-label" style="color:${color};"><strong>${word}</strong></div>
         </div>`;
     }).join('');
 }
 
-// Generate word chips for the Wend #N Words section
+// Word chips for the "Wend #N Words" section
 function generateWordChips(words) {
     return words.map((word, idx) => {
-        const color = WORD_COLORS[idx % WORD_COLORS.length];
-        return `<span class="word-chip" style="background:${color.bg};color:${color.text};animation-delay:${(idx + 1) * 0.15}s;">
+        const color = wordColor(idx);
+        const textColor = isLightColor(color) ? '#1a1a1a' : '#ffffff';
+        return `<span class="word-chip" style="background:${color};color:${textColor};--chip-delay:${(idx + 1) * 0.15}s;">
             <span class="chip-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
             ${word}
         </span>`;
     }).join('');
 }
+
+// Simple lightness check for text color on chips
+function isLightColor(hex) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.55;
+}
+
+// =========================================================
+// Puzzle picker buttons
+// =========================================================
+
+function generatePuzzlePickerButtons(puzzleNumber, allPuzzles) {
+    // Show buttons for the latest 4 puzzles, with the current one active
+    const recentPuzzles = allPuzzles.slice(0, 4);
+    return recentPuzzles.map((p, idx) => {
+        const isActive = p.puzzle_number === puzzleNumber;
+        return `<button class="puzzle-picker-btn${isActive ? ' active' : ''}" data-puzzle-id="puzzle-${p.puzzle_number}">#${p.puzzle_number}</button>`;
+    }).join('');
+}
+
+// =========================================================
+// Hints
+// =========================================================
 
 function generateHints(words, puzzleNumber) {
     const hints = [
@@ -251,24 +278,30 @@ function generateHints(words, puzzleNumber) {
             text: `Letters like Z, Q, X, and J are rare and can help you quickly identify where certain words begin or end. Scan the grid for these distinctive letters first.`
         }
     ];
-    
+
     return hints.map(h => `
         <div class="hint-card">
             <div class="hint-number">${h.num}</div>
-            <h3>${h.title}</h3>
-            <p>${h.text}</p>
+            <div>
+                <h3>${h.title}</h3>
+                <p>${h.text}</p>
+            </div>
         </div>
     `).join('');
 }
 
+// =========================================================
+// Recent puzzles
+// =========================================================
+
 function generateRecentPuzzles(puzzles) {
-    return puzzles.slice(0, 5).map(p => {
-        const date = formatDate(p.date);
+    return puzzles.slice(0, 6).map(p => {
         const dateShort = formatDateShort(p.date);
-        const wordsHtml = (Array.isArray(p.words) ? p.words : JSON.parse(p.words)).slice(0, 3).map(w => 
+        const wordsArr = Array.isArray(p.words) ? p.words : JSON.parse(p.words);
+        const wordsHtml = wordsArr.slice(0, 3).map(w =>
             `<span class="card-word">${w}</span>`
         ).join('');
-        
+
         return `
             <a href="/archive.html#puzzle-${p.puzzle_number}" class="recent-card">
                 <div class="card-header">
@@ -281,10 +314,14 @@ function generateRecentPuzzles(puzzles) {
     }).join('');
 }
 
+// =========================================================
+// Schema
+// =========================================================
+
 function generateSchema(puzzleData, allPuzzles) {
     const words = puzzleData.words;
     const date = formatDate(puzzleData.date);
-    
+
     const schema = [
         {
             "@context": "https://schema.org",
@@ -334,38 +371,42 @@ function generateSchema(puzzleData, allPuzzles) {
             }))
         }
     ];
-    
+
     return JSON.stringify(schema);
 }
 
+// =========================================================
+// Main Build
+// =========================================================
+
 async function buildSite() {
     console.log('Fetching puzzle data from Worker API...');
-    
+
     // Fetch latest puzzle
     const latestResp = await fetch(`${WORKER_URL}/api/puzzle/latest`);
     const latestData = await latestResp.json();
-    
+
     if (!latestData.success) {
         throw new Error('Failed to fetch latest puzzle: ' + JSON.stringify(latestData));
     }
-    
+
     const puzzle = latestData.data;
     console.log(`Latest puzzle: #${puzzle.puzzle_number}, Date: ${puzzle.date}, Words: ${puzzle.words.join(', ')}`);
-    
+
     // Fetch all puzzles for recent/archives
     const allResp = await fetch(`${WORKER_URL}/api/puzzles`);
     const allData = await allResp.json();
     const allPuzzles = allData.success ? allData.data : [puzzle];
-    
+
     // Read template
     const templatePath = path.join(__dirname, 'src', 'index.html');
     let template = fs.readFileSync(templatePath, 'utf8');
-    
+
     // Generate all replacement values
     const dateDisplay = formatDate(puzzle.date);
     const dateShort = formatDateShort(puzzle.date);
     const metaDescription = `LinkedIn Wend answer today - Updated with ${dateDisplay} answers, full word list, grid walkthrough, and archive access for puzzle #${puzzle.puzzle_number}.`;
-    
+
     const replacements = {
         '{{META_DESCRIPTION}}': metaDescription,
         '{{SCHEMA_JSON}}': generateSchema(puzzle, allPuzzles),
@@ -382,35 +423,40 @@ async function buildSite() {
         '{{WORD_CARDS_AFTER}}': generateWordCardsAfter(puzzle.words, puzzle.word_cells),
         '{{HINTS_CONTENT}}': generateHints(puzzle.words, puzzle.puzzle_number),
         '{{RECENT_PUZZLES}}': generateRecentPuzzles(allPuzzles),
+        '{{PUZZLE_PICKER_BUTTONS}}': generatePuzzlePickerButtons(puzzle.puzzle_number, allPuzzles),
     };
-    
+
     // Apply replacements
     for (const [key, value] of Object.entries(replacements)) {
         template = template.split(key).join(value);
     }
-    
+
     // Write the built index.html
     const outputDir = path.join(__dirname, 'dist');
     if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir, { recursive: true });
     }
-    
+
     fs.writeFileSync(path.join(outputDir, 'index.html'), template);
     console.log('Built index.html');
-    
+
     // Copy static assets
     copyDir(path.join(__dirname, 'src', 'css'), path.join(outputDir, 'css'));
     copyDir(path.join(__dirname, 'src', 'js'), path.join(outputDir, 'js'));
     copyDir(path.join(__dirname, 'src', 'images'), path.join(outputDir, 'images'));
-    
+
     // Generate archive page
     await buildArchivePage(allPuzzles, outputDir);
-    
+
     // Generate how-to-play page
     buildHowToPlayPage(outputDir);
-    
+
     console.log('Build complete!');
 }
+
+// =========================================================
+// Archive Page
+// =========================================================
 
 async function buildArchivePage(allPuzzles, outputDir) {
     // Fetch full data for each puzzle
@@ -435,8 +481,8 @@ async function buildArchivePage(allPuzzles, outputDir) {
         grid: p.grid,
         word_cells: p.word_cells
     }));
-    
-    // Generate puzzle detail HTML for each puzzle (hidden by default)
+
+    // Generate puzzle detail HTML for each puzzle (shown by default, with reveal toggle)
     const puzzleDetailsHtml = fullPuzzles.map(p => {
         const gridBefore = generateGridCells(p.grid, p.rows, p.cols);
         const gridAfter = generateSolvedGridCells(p.grid, p.word_cells, p.rows, p.cols);
@@ -444,7 +490,7 @@ async function buildArchivePage(allPuzzles, outputDir) {
         const wordsAfter = generateWordCardsAfter(p.words, p.word_cells);
         const wordChips = generateWordChips(p.words);
         const dateDisplay = formatDate(p.date);
-        
+
         return `
         <div class="archive-puzzle-item" id="archive-puzzle-${p.puzzle_number}" data-puzzle-number="${p.puzzle_number}">
             <input type="checkbox" id="archive-reveal-${p.puzzle_number}" class="archive-reveal-checkbox">
@@ -460,7 +506,7 @@ async function buildArchivePage(allPuzzles, outputDir) {
                         </div>
                     </div>
                     <div class="archive-grid-after">
-                        <div class="wend-board-wrapper" style="--grid-cols:${p.cols};--grid-rows:${p.rows};">
+                        <div class="wend-board-wrapper wend-board-solved" style="--grid-cols:${p.cols};--grid-rows:${p.rows};">
                             ${gridAfter}
                         </div>
                     </div>
@@ -484,11 +530,9 @@ async function buildArchivePage(allPuzzles, outputDir) {
             </div>
             <div class="archive-reveal-container">
                 <label for="archive-reveal-${p.puzzle_number}" class="archive-reveal-btn">
-                    <span class="reveal-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                    </span>
-                    <span class="archive-reveal-show">Reveal Answer</span>
-                    <span class="archive-reveal-hide">Hide Answer</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <span class="archive-reveal-show">Reveal all</span>
+                    <span class="archive-reveal-hide">Clear all</span>
                 </label>
             </div>
         </div>`;
@@ -499,14 +543,12 @@ async function buildArchivePage(allPuzzles, outputDir) {
         return `
         #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .archive-grid-before { display: none; }
         #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .archive-grid-after { display: block; animation: revealPuzzle 0.6s ease-out; }
-        #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .archive-grid-after .wend-cell--revealed { animation: cellPop 0.28s ease backwards; }
+        #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .archive-grid-after .wend-cell--revealed { animation: cellPop 0.28s ease backwards; animation-delay: calc(var(--cell-delay, 0) * 0.06s); }
         #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .archive-words-before { display: none; }
         #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .archive-words-after { display: block; }
-        #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .words-list:not(.words-list-revealed) { display: none; }
-        #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .words-list-revealed { display: flex; }
         #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .wend-words-label { display: block; }
         #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .progress-fill { width: 100% !important; }
-        #archive-reveal-${p.puzzle_number}:checked ~ .archive-reveal-container .archive-reveal-btn { background: linear-gradient(135deg, #4b5563, #6b7280); }
+        #archive-reveal-${p.puzzle_number}:checked ~ .archive-reveal-container .archive-reveal-btn { background: linear-gradient(135deg, #6b7280, #9ca3af); box-shadow: 0 4px 14px rgba(107, 114, 128, 0.3); }
         #archive-reveal-${p.puzzle_number}:checked ~ .archive-reveal-container .archive-reveal-show { display: none; }
         #archive-reveal-${p.puzzle_number}:checked ~ .archive-reveal-container .archive-reveal-hide { display: inline; }`;
     }).join('\n');
@@ -528,7 +570,7 @@ async function buildArchivePage(allPuzzles, outputDir) {
 <body>
     <div class="page-wrapper">
         <header class="site-header">
-            <div class="container">
+            <div class="container header-inner">
                 <a href="/" class="site-logo">
                     <span class="logo-icon">W</span>
                     <span class="logo-text">Wend Answers</span>
@@ -538,12 +580,17 @@ async function buildArchivePage(allPuzzles, outputDir) {
                     <a href="/archive.html" class="active">Archive</a>
                     <a href="/how-to-play.html">How to Play</a>
                 </nav>
-                <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
                 </button>
             </div>
+            <div class="mobile-menu" id="mobile-menu" role="navigation" aria-label="Mobile navigation">
+                <a href="/">Home</a>
+                <a href="/archive.html" class="active">Archive</a>
+                <a href="/how-to-play.html">How to Play</a>
+            </div>
         </header>
-        
+
         <main class="page-content">
             <div class="archive-header">
                 <div class="container">
@@ -582,7 +629,7 @@ async function buildArchivePage(allPuzzles, outputDir) {
                 </div>
             </section>
         </main>
-        
+
         <footer class="site-footer">
             <div class="container">
                 <div class="footer-bottom">
@@ -594,10 +641,14 @@ async function buildArchivePage(allPuzzles, outputDir) {
     <script src="/js/app.js" defer></script>
 </body>
 </html>`;
-    
+
     fs.writeFileSync(path.join(outputDir, 'archive.html'), archiveHtml);
     console.log('Built archive.html');
 }
+
+// =========================================================
+// How to Play Page
+// =========================================================
 
 function buildHowToPlayPage(outputDir) {
     const html = `<!DOCTYPE html>
@@ -614,7 +665,7 @@ function buildHowToPlayPage(outputDir) {
 <body>
     <div class="page-wrapper">
         <header class="site-header">
-            <div class="container">
+            <div class="container header-inner">
                 <a href="/" class="site-logo">
                     <span class="logo-icon">W</span>
                     <span class="logo-text">Wend Answers</span>
@@ -624,18 +675,23 @@ function buildHowToPlayPage(outputDir) {
                     <a href="/archive.html">Archive</a>
                     <a href="/how-to-play.html" class="active">How to Play</a>
                 </nav>
-                <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
                 </button>
             </div>
+            <div class="mobile-menu" id="mobile-menu" role="navigation" aria-label="Mobile navigation">
+                <a href="/">Home</a>
+                <a href="/archive.html">Archive</a>
+                <a href="/how-to-play.html" class="active">How to Play</a>
+            </div>
         </header>
-        
+
         <main class="page-content">
-            <section style="padding: 3rem 0;">
+            <section style="padding: 32px 0 48px;">
                 <div class="container">
                     <h1 class="section-title">How to Play LinkedIn Wend</h1>
-                    <p class="section-desc">Wend is a word search puzzle where words wind through a letter grid. Here's everything you need to know to start solving puzzles like a pro.</p>
-                    
+                    <p style="color:#666;font-size:0.9375rem;margin-bottom:24px;">Wend is a word search puzzle where words wind through a letter grid. Here's everything you need to know to start solving puzzles like a pro.</p>
+
                     <div class="steps-grid">
                         <div class="step-card">
                             <div class="step-num">1</div>
@@ -668,14 +724,14 @@ function buildHowToPlayPage(outputDir) {
                             <p>Wend puzzles get easier with practice. Play every day to develop pattern recognition skills. Over time, you'll learn to spot word paths more quickly and solve puzzles in fewer moves.</p>
                         </div>
                     </div>
-                    
-                    <div style="margin-top: 3rem; text-align: center;">
-                        <a href="/" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.875rem 2rem;background:linear-gradient(135deg,#7c3aed,#8b5cf6);color:white;font-weight:700;font-size:1.0625rem;border-radius:9999px;text-decoration:none;box-shadow:0 4px 14px rgba(124,58,237,0.4);">View Today's Answer</a>
+
+                    <div style="margin-top: 2.5rem; text-align: center;">
+                        <a href="/" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.875rem 2rem;background:linear-gradient(135deg,#14b8a6,#22c55e);color:white;font-weight:700;font-size:1.0625rem;border-radius:12px;text-decoration:none;box-shadow:0 4px 14px rgba(20,184,166,0.35);transition:all 0.2s;">View Today's Answer</a>
                     </div>
                 </div>
             </section>
         </main>
-        
+
         <footer class="site-footer">
             <div class="container">
                 <div class="footer-bottom">
@@ -687,10 +743,14 @@ function buildHowToPlayPage(outputDir) {
     <script src="/js/app.js" defer></script>
 </body>
 </html>`;
-    
+
     fs.writeFileSync(path.join(outputDir, 'how-to-play.html'), html);
     console.log('Built how-to-play.html');
 }
+
+// =========================================================
+// Utility
+// =========================================================
 
 function copyDir(src, dest) {
     if (!fs.existsSync(src)) return;

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
-    <meta name="theme-color" content="#7c3aed">
+    <meta name="theme-color" content="#1a1a2e">
     <meta name="color-scheme" content="light">
     <meta name="robots" content="index, follow">
     <meta name="googlebot" content="index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1">
@@ -14,10 +14,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="canonical" href="https://wendanswertoday.online">
-    <title>LinkedIn Wend Answer Today - Updated Daily</title>
+    <title>LinkedIn Wend Hints and Answers — {{DATE_DISPLAY}}</title>
     <meta name="description" content="{{META_DESCRIPTION}}">
     <meta name="keywords" content="linkedin wend answer today, linkedin wend game, wend puzzle answers, linkedin wend hints, linkedin wend solutions, daily wend answer, wend word search">
-    <meta property="og:title" content="LinkedIn Wend Answer Today - Updated Daily">
+    <meta property="og:title" content="LinkedIn Wend Hints and Answers — {{DATE_DISPLAY}}">
     <meta property="og:description" content="{{META_DESCRIPTION}}">
     <meta property="og:image" content="https://wendanswertoday.online/images/og-image.png">
     <meta property="og:image:width" content="1200">
@@ -25,7 +25,7 @@
     <meta property="og:url" content="https://wendanswertoday.online">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="LinkedIn Wend Answer Today - Updated Daily">
+    <meta name="twitter:title" content="LinkedIn Wend Hints and Answers — {{DATE_DISPLAY}}">
     <meta name="twitter:description" content="{{META_DESCRIPTION}}">
     <meta name="twitter:image" content="https://wendanswertoday.online/images/og-image.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -36,7 +36,7 @@
     <div class="page-wrapper">
         <!-- Header -->
         <header class="site-header">
-            <div class="container">
+            <div class="container header-inner">
                 <a href="/" class="site-logo" aria-label="Wend Answer Today - Home">
                     <span class="logo-icon" aria-hidden="true">W</span>
                     <span class="logo-text">Wend Answers</span>
@@ -46,11 +46,11 @@
                     <a href="/archive.html">Archive</a>
                     <a href="/how-to-play.html">How to Play</a>
                 </nav>
-                <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
                 </button>
             </div>
-            <div class="mobile-menu" id="mobile-menu">
+            <div class="mobile-menu" id="mobile-menu" role="navigation" aria-label="Mobile navigation">
                 <a href="/">Home</a>
                 <a href="/archive.html">Archive</a>
                 <a href="/how-to-play.html">How to Play</a>
@@ -58,53 +58,69 @@
         </header>
 
         <main class="page-content">
-            <!-- Hero Section -->
-            <section class="hero">
+            <!-- Page Title -->
+            <section class="page-title-section">
                 <div class="container">
-                    <div class="hero-content">
-                        <div class="hero-badge">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-                            Updated for Puzzle #{{PUZZLE_NUMBER}}
-                        </div>
-                        <h1>LinkedIn Wend Answer Today <span class="date-highlight">({{DATE_DISPLAY}})</span></h1>
-                        <p class="hero-desc">See today's Wend puzzle answers with the full word list, grid walkthrough, and hints for puzzle #{{PUZZLE_NUMBER}}.</p>
+                    <h1 class="page-title">LinkedIn Wend Hints and Answers — {{DATE_DISPLAY}}</h1>
+                    <p class="page-subtitle">Puzzle #{{PUZZLE_NUMBER}} — {{WORD_COUNT}} words to find</p>
+                </div>
+            </section>
+
+            <!-- Puzzle Picker -->
+            <section class="puzzle-picker-section">
+                <div class="container">
+                    <div class="puzzle-picker">
+                        {{PUZZLE_PICKER_BUTTONS}}
                     </div>
                 </div>
             </section>
 
-            <!-- Game Grid Section - Two Column Layout like thewordfinder -->
+            <!-- Game Section -->
             <section class="game-section">
                 <div class="container">
-                    <!-- CRITICAL: Checkbox MUST be a direct sibling of grid views for CSS ~ combinator -->
+                    <!-- CRITICAL: Checkbox MUST be a direct sibling of game-layout for CSS ~ combinator -->
                     <div class="game-container">
                         <input type="checkbox" id="reveal-toggle" class="reveal-checkbox" aria-label="Reveal answer">
 
-                        <!-- Two-column layout: Grid + Words -->
+                        <!-- Two-column layout: Grid + Words (stacks on mobile) -->
                         <div class="game-layout">
-                            <!-- LEFT: Board column -->
+                            <!-- LEFT / TOP: Board column -->
                             <div class="game-board-col">
+                                <!-- Before reveal grid -->
                                 <div class="grid-view" id="grid-before">
                                     <div class="wend-board-wrapper" id="wend-grid" style="--grid-cols: {{GRID_COLS}}; --grid-rows: {{GRID_ROWS}};">
                                         {{GRID_CELLS}}
                                     </div>
-                                    <p class="board-instruction">Click "Reveal Answer" to see the solution</p>
                                 </div>
 
+                                <!-- After reveal grid -->
                                 <div class="grid-view grid-view-revealed" id="grid-after">
                                     <div class="wend-board-wrapper wend-board-solved" id="wend-grid-solved" style="--grid-cols: {{GRID_COLS}}; --grid-rows: {{GRID_ROWS}};">
                                         {{GRID_CELLS_SOLVED}}
                                     </div>
-                                    <p class="board-instruction revealed-text">All words revealed!</p>
+                                </div>
+
+                                <!-- Click instruction -->
+                                <p class="board-instruction" id="board-instruction">Click any letter to reveal</p>
+                                <p class="board-instruction revealed-text" id="board-instruction-revealed">All words revealed!</p>
+
+                                <!-- Reveal / Clear buttons -->
+                                <div class="reveal-buttons">
+                                    <label for="reveal-toggle" class="reveal-btn reveal-btn--primary">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                        <span class="reveal-text-show">Reveal all</span>
+                                        <span class="reveal-text-hide">Clear all</span>
+                                    </label>
                                 </div>
                             </div>
 
-                            <!-- RIGHT: Words column -->
+                            <!-- RIGHT / BOTTOM: Words column -->
                             <div class="game-words-col">
                                 <!-- Progress Bar -->
                                 <div class="progress-section">
-                                    <div class="progress-label">Words found: <span class="progress-count">0 / {{WORD_COUNT}}</span></div>
+                                    <div class="progress-label">Words found: <span class="progress-count" id="progress-count">0 / {{WORD_COUNT}}</span></div>
                                     <div class="progress-bar">
-                                        <div class="progress-fill" style="width: 0%;"></div>
+                                        <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
                                     </div>
                                 </div>
 
@@ -127,17 +143,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- CSS-only Reveal Button -->
-                        <div class="reveal-container">
-                            <label for="reveal-toggle" class="reveal-btn">
-                                <span class="reveal-icon">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                                </span>
-                                <span class="reveal-text-show">Reveal Answer</span>
-                                <span class="reveal-text-hide">Hide Answer</span>
-                            </label>
-                        </div>
                     </div>
                 </div>
             </section>
@@ -145,7 +150,7 @@
             <!-- Hints Section -->
             <section class="hints-section">
                 <div class="container">
-                    <h2 class="section-title">Wend Hints & Tips</h2>
+                    <h2 class="section-title">Wend Hints &amp; Tips</h2>
                     <div class="hints-grid">
                         {{HINTS_CONTENT}}
                     </div>
