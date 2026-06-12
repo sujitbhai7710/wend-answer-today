@@ -203,8 +203,14 @@ button { cursor: pointer; font-family: inherit; }
 .game-board-col {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     width: 100%;
+}
+
+/* Center the grid within the board column */
+.grid-view {
+    display: flex;
+    justify-content: center;
 }
 
 /* --- Wend Board Grid (matching thewordfinder.com exactly) --- */
@@ -375,6 +381,7 @@ button { cursor: pointer; font-family: inherit; }
     color: #6b7280;
     text-align: center;
     margin-top: 8px;
+    align-self: center;
 }
 .board-instruction b { color: var(--clr-text); }
 .revealed-text { display: none; }
@@ -615,7 +622,7 @@ button { cursor: pointer; font-family: inherit; }
 
 /* Default: show before-state, hide after-state */
 .grid-view-revealed { display: none; }
-.grid-view:not(.grid-view-revealed) { display: block; }
+.grid-view:not(.grid-view-revealed) { display: flex; }
 .words-list-revealed { display: none; }
 .wend-words-label { display: none; }
 .progress-fill { width: 0%; }
@@ -623,7 +630,7 @@ button { cursor: pointer; font-family: inherit; }
 /* When checkbox checked: swap visibility */
 .reveal-checkbox:checked ~ .game-layout .grid-view:not(.grid-view-revealed) { display: none; }
 .reveal-checkbox:checked ~ .game-layout .grid-view-revealed {
-    display: block;
+    display: flex;
     animation: revealPuzzle 0.6s ease-out;
 }
 .reveal-checkbox:checked ~ .game-layout .words-list:not(.words-list-revealed) { display: none; }
@@ -1114,7 +1121,7 @@ button { cursor: pointer; font-family: inherit; }
         gap: 16px;
     }
     .game-board-col {
-        align-items: center;
+        align-items: stretch;
     }
     /* Make the grid nearly full width on mobile */
     .wend-board-wrapper {
