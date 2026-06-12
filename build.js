@@ -14,9 +14,9 @@ const API_KEY = process.env.WORKER_API_KEY || '';
 const WORD_COLORS = [
     '#E8572A',
     '#D4449A',
-    '#4DBDBA',
-    '#98C21F',
-    '#5B8DD9',
+    '#00B5B0',
+    '#8DC63F',
+    '#4A90D9',
     '#F5A623',
     '#9B59B6',
     '#26C0A6',

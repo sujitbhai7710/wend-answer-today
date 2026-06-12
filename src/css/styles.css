@@ -1,25 +1,27 @@
 /* ================================================
    Wend Answer Today - Matching thewordfinder.com
+   Bright, vibrant, polished design
    ================================================ */
 
 /* --- CSS Variables --- */
 :root {
+    /* Word colors - bright and vibrant matching thewordfinder.com */
     --word-0: #E8572A;
     --word-1: #D4449A;
-    --word-2: #4DBDBA;
-    --word-3: #98C21F;
-    --word-4: #5B8DD9;
+    --word-2: #00B5B0;
+    --word-3: #8DC63F;
+    --word-4: #4A90D9;
     --word-5: #F5A623;
     --word-6: #9B59B6;
     --word-7: #26C0A6;
 
-    --clr-bg: #f7f7f2;
+    --clr-bg: #f0f0eb;
     --clr-white: #ffffff;
-    --clr-blocked: #b2b2b2;
-    --clr-border: #333333;
+    --clr-blocked: #a8a8a8;
+    --clr-border: #2d2d2d;
     --clr-text: #1a1a1a;
     --clr-text-muted: #6b7280;
-    --clr-card-border: #e5e5e0;
+    --clr-card-border: #e0e0db;
     --clr-primary-600: #017f70;
     --clr-primary-700: #016d60;
     --clr-grey-900: #1f2933;
@@ -32,8 +34,9 @@
     --font-family: 'Inter', ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
     --radius-md: 0.5rem;
     --radius-full: 9999px;
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 14px rgba(0,0,0,0.1);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
     --transition: 0.15s;
 }
 
@@ -73,6 +76,7 @@ button { cursor: pointer; font-family: inherit; }
     position: sticky;
     top: 0;
     z-index: 100;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
 .header-inner {
     display: flex;
@@ -190,7 +194,7 @@ button { cursor: pointer; font-family: inherit; }
 }
 @media (min-width: 768px) {
     .game-layout {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
         gap: 28px;
     }
 }
@@ -207,14 +211,14 @@ button { cursor: pointer; font-family: inherit; }
 .wend-board-wrapper {
     display: grid;
     width: 100%;
-    max-width: 420px;
+    max-width: 400px;
     aspect-ratio: 1;
-    border: 3px solid #333;
-    border-radius: 12px;
+    border: 3px solid #2d2d2d;
+    border-radius: 10px;
     overflow: hidden;
     gap: 0;
     background: #fff;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    box-shadow: 0 3px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.08);
 }
 
 /* --- Grid Cells --- */
@@ -227,7 +231,7 @@ button { cursor: pointer; font-family: inherit; }
     overflow: visible;
 }
 .wend-cell--blocked {
-    background: #b2b2b2;
+    background: var(--clr-blocked);
     cursor: default;
     box-sizing: border-box;
 }
@@ -240,18 +244,21 @@ button { cursor: pointer; font-family: inherit; }
     cursor: pointer;
     font-family: inherit;
     box-sizing: border-box;
-    box-shadow: inset 1px 0 #e4e4e4, inset -1px 0 #e4e4e4, inset 0 1px #e4e4e4, inset 0 -1px #e4e4e4;
+    box-shadow: inset 1px 0 #ddd, inset -1px 0 #ddd, inset 0 1px #ddd, inset 0 -1px #ddd;
     transition: background 0.15s ease;
 }
+.wend-cell--letter:hover {
+    background: #f8f8f5 !important;
+}
 .wend-cell--revealed {
-    background: color-mix(in srgb, var(--word-color) 22%, white) !important;
+    background: color-mix(in srgb, var(--word-color) 20%, white) !important;
     box-shadow: none;
 }
 .wend-cell--revealed:hover {
-    filter: brightness(1.04);
+    filter: brightness(1.06);
 }
 
-/* Cell pop animation (exact match) */
+/* Cell pop animation */
 @keyframes cellPop {
     0% { transform: scale(0.82); opacity: 0.6; }
     55% { transform: scale(1.06); }
@@ -277,7 +284,7 @@ button { cursor: pointer; font-family: inherit; }
     color: #1a1a1a;
 }
 
-/* --- Tube connectors (matching thewordfinder.com) --- */
+/* --- Tube connectors --- */
 .cell-tube {
     position: absolute;
     z-index: 1;
@@ -300,7 +307,7 @@ button { cursor: pointer; font-family: inherit; }
     border-radius: 50%;
     z-index: 2;
     pointer-events: none;
-    outline: 5px solid color-mix(in srgb, var(--word-color) 22%, white);
+    outline: 5px solid color-mix(in srgb, var(--word-color) 20%, white);
     border: 3px solid var(--word-color);
 }
 
@@ -322,12 +329,12 @@ button { cursor: pointer; font-family: inherit; }
     font-weight: 700;
 }
 
-/* --- Direction arrows (matching thewordfinder.com) --- */
+/* --- Direction arrows --- */
 .cell-arrow {
     position: absolute;
     width: clamp(10px, 2.5vw, 14px);
     height: clamp(10px, 2.5vw, 14px);
-    color: rgba(0,0,0,0.5);
+    color: rgba(0,0,0,0.45);
     z-index: 999;
     pointer-events: none;
     display: flex;
@@ -370,7 +377,7 @@ button { cursor: pointer; font-family: inherit; }
 .board-instruction b { color: var(--clr-text); }
 .revealed-text { display: none; }
 
-/* --- Reveal / Clear Buttons (matching thewordfinder.com pill style) --- */
+/* --- Reveal / Clear Buttons --- */
 .reveal-buttons {
     display: flex;
     gap: 8px;
@@ -383,14 +390,14 @@ button { cursor: pointer; font-family: inherit; }
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 0.55em 1.4em;
+    padding: 0.6em 1.5em;
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 700;
     border-radius: var(--radius-full);
     border: 1px solid transparent;
     cursor: pointer;
-    transition: background var(--transition), color var(--transition), border-color var(--transition), box-shadow var(--transition), transform 0.12s ease;
-    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     user-select: none;
 }
 .reveal-btn--primary {
@@ -399,6 +406,7 @@ button { cursor: pointer; font-family: inherit; }
 }
 .reveal-btn--primary:hover {
     background: var(--clr-primary-700);
+    box-shadow: 0 4px 12px rgba(1,127,112,0.3);
 }
 .reveal-btn--secondary {
     background: #fff;
@@ -417,6 +425,7 @@ button { cursor: pointer; font-family: inherit; }
     background: #fff;
     border-color: var(--clr-grey-900);
     color: var(--clr-grey-900);
+    box-shadow: var(--shadow-sm);
 }
 .reveal-checkbox:checked ~ .game-layout .reveal-btn--secondary {
     background: var(--clr-primary-600);
@@ -429,20 +438,21 @@ button { cursor: pointer; font-family: inherit; }
     width: 100%;
 }
 
-/* --- Progress Bar (matching thewordfinder.com) --- */
+/* --- Progress Bar --- */
 .progress-section {
     margin-top: 0;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 .progress-label {
     font-size: 0.8rem;
     color: #374151;
     margin-bottom: 4px;
+    font-weight: 500;
 }
 .progress-label b { font-weight: 700; }
 .progress-bar {
     height: 8px;
-    background: #e5e7eb;
+    background: #e0e0db;
     border-radius: 4px;
     overflow: hidden;
 }
@@ -450,7 +460,7 @@ button { cursor: pointer; font-family: inherit; }
     height: 100%;
     border-radius: 4px;
     background: linear-gradient(90deg, #14b8a6, #22c55e);
-    transition: width 0.4s ease;
+    transition: width 0.6s ease;
     width: 0%;
 }
 
@@ -461,21 +471,22 @@ button { cursor: pointer; font-family: inherit; }
     gap: 8px;
 }
 
-/* --- Word Blank Card (matching thewordfinder.com exactly) --- */
+/* --- Word Blank Card --- */
 .word-blank {
-    background: #fff;
-    border: 2px solid #e5e5e0;
+    background: var(--clr-white);
+    border: 2px solid #e0e0db;
     border-radius: 14px;
     padding: 10px 12px;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
     gap: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 .word-blank--revealed {
     border-color: var(--word-color, #22c55e);
-    background: color-mix(in srgb, var(--word-color, #22c55e) 5%, white);
-    box-shadow: 0 2px 12px color-mix(in srgb, var(--word-color, #22c55e) 15%, transparent);
+    background: color-mix(in srgb, var(--word-color, #22c55e) 4%, white);
+    box-shadow: 0 3px 14px color-mix(in srgb, var(--word-color, #22c55e) 18%, transparent);
     animation: wordSlideDown 0.4s ease backwards;
     animation-delay: calc(var(--card-delay, 0) * 0.12s);
 }
@@ -493,7 +504,7 @@ button { cursor: pointer; font-family: inherit; }
     flex-wrap: wrap;
 }
 
-/* --- Letter Bubbles (matching thewordfinder.com exactly) --- */
+/* --- Letter Bubbles --- */
 .letter-bubble {
     width: 36px;
     height: 36px;
@@ -507,12 +518,13 @@ button { cursor: pointer; font-family: inherit; }
     transition: background 0.28s ease, transform 0.2s ease;
 }
 .letter-bubble--hidden {
-    background: #dcdcd6;
+    background: #d5d5cf;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
 }
 .letter-bubble--revealed {
     color: #fff;
     transform: scale(1.05);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.22);
     animation: bubbleBounce 0.3s ease backwards;
     animation-delay: calc(var(--bubble-delay, 0) * 0.08s);
 }
@@ -520,14 +532,14 @@ button { cursor: pointer; font-family: inherit; }
     font-size: 15px;
     font-weight: 800;
     color: inherit;
-    text-shadow: none;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.1);
     line-height: 1;
     letter-spacing: -0.02em;
 }
 
 @keyframes bubbleBounce {
     0% { transform: scale(0.6); opacity: 0.5; }
-    60% { transform: scale(1.1); }
+    60% { transform: scale(1.12); }
     100% { transform: scale(1.05); opacity: 1; }
 }
 
@@ -543,14 +555,15 @@ button { cursor: pointer; font-family: inherit; }
     letter-spacing: 0.04em;
 }
 
-/* --- Wend #N Words label (shown after reveal) --- */
+/* --- Wend #N Words label --- */
 .wend-words-label {
     display: none;
     margin-top: 12px;
     padding: 12px 14px;
-    background: #fff;
+    background: var(--clr-white);
     border-radius: 12px;
     border: 1px solid var(--clr-grey-200);
+    box-shadow: var(--shadow-sm);
 }
 .wend-words-label h3 {
     font-size: 0.95rem;
@@ -569,7 +582,7 @@ button { cursor: pointer; font-family: inherit; }
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    padding: 4px 10px;
+    padding: 5px 10px;
     border-radius: var(--radius-full);
     font-size: 0.75rem;
     font-weight: 700;
@@ -577,6 +590,7 @@ button { cursor: pointer; font-family: inherit; }
     opacity: 0;
     animation: chipFadeIn 0.3s ease forwards;
     animation-delay: var(--chip-delay, 0s);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
 }
 .chip-check {
     display: flex;
@@ -595,7 +609,6 @@ button { cursor: pointer; font-family: inherit; }
 
 /* ================================================
    CSS-ONLY REVEAL MECHANISM
-   Checkbox ~ sibling combinator
    ================================================ */
 
 /* Default: show before-state, hide after-state */
@@ -623,12 +636,10 @@ button { cursor: pointer; font-family: inherit; }
     animation: cellPop 0.28s ease backwards;
     animation-delay: calc(var(--cell-delay, 0) * 0.06s);
 }
-/* Staggered word card animation */
 .reveal-checkbox:checked ~ .game-layout .word-blank--revealed {
     animation: wordSlideDown 0.4s ease backwards;
     animation-delay: calc(var(--card-delay, 0) * 0.12s);
 }
-/* Staggered letter bubble animation */
 .reveal-checkbox:checked ~ .game-layout .letter-bubble--revealed {
     animation: bubbleBounce 0.3s ease backwards;
     animation-delay: calc(var(--bubble-delay, 0) * 0.08s);
@@ -666,6 +677,7 @@ button { cursor: pointer; font-family: inherit; }
     background: var(--clr-white);
     border-radius: 12px;
     border: 1px solid var(--clr-grey-200);
+    box-shadow: var(--shadow-sm);
 }
 .hint-number {
     width: 28px;
@@ -709,10 +721,11 @@ button { cursor: pointer; font-family: inherit; }
     border-radius: 12px;
     border: 1px solid var(--clr-grey-200);
     transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: var(--shadow-sm);
 }
 .recent-card:hover {
     border-color: var(--clr-grey-300);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    box-shadow: var(--shadow-md);
 }
 .card-header {
     display: flex;
@@ -757,6 +770,7 @@ button { cursor: pointer; font-family: inherit; }
     border-radius: 10px;
     border: 1px solid var(--clr-grey-200);
     padding: 14px 16px;
+    box-shadow: var(--shadow-sm);
 }
 .faq-question {
     font-size: 0.875rem;
@@ -856,6 +870,7 @@ button { cursor: pointer; font-family: inherit; }
     padding: 16px;
     max-width: 380px;
     margin: 0 auto;
+    box-shadow: var(--shadow-sm);
 }
 .calendar-nav {
     display: flex;
@@ -956,6 +971,7 @@ button { cursor: pointer; font-family: inherit; }
     border-radius: 14px;
     border: 1px solid var(--clr-grey-200);
     padding: 16px;
+    box-shadow: var(--shadow-md);
 }
 .archive-puzzle-header {
     display: flex;
@@ -981,7 +997,7 @@ button { cursor: pointer; font-family: inherit; }
 }
 @media (min-width: 768px) {
     .archive-layout {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
         gap: 24px;
     }
 }
@@ -1003,19 +1019,20 @@ button { cursor: pointer; font-family: inherit; }
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 0.55em 1.4em;
+    padding: 0.6em 1.5em;
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 700;
     border-radius: var(--radius-full);
     border: 1px solid transparent;
     cursor: pointer;
     background: var(--clr-primary-600);
     color: #fff;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     transition: all 0.2s;
 }
 .archive-reveal-btn:hover {
     background: var(--clr-primary-700);
+    box-shadow: 0 4px 12px rgba(1,127,112,0.3);
 }
 .archive-reveal-hide { display: none; }
 
@@ -1036,6 +1053,7 @@ button { cursor: pointer; font-family: inherit; }
     border-radius: 12px;
     border: 1px solid var(--clr-grey-200);
     padding: 16px;
+    box-shadow: var(--shadow-sm);
 }
 .step-num {
     width: 32px;
@@ -1082,7 +1100,7 @@ button { cursor: pointer; font-family: inherit; }
 }
 
 /* ================================================
-   MOBILE OPTIMIZATIONS - Full-width, larger elements
+   MOBILE OPTIMIZATIONS
    ================================================ */
 @media (max-width: 767px) {
     .container {
@@ -1100,7 +1118,8 @@ button { cursor: pointer; font-family: inherit; }
     .wend-board-wrapper {
         max-width: 100%;
         width: 100%;
-        border-radius: 10px;
+        border-radius: 8px;
+        border-width: 2.5px;
     }
     .page-title-section {
         padding: 10px 0 2px;
@@ -1147,7 +1166,7 @@ button { cursor: pointer; font-family: inherit; }
     }
 }
 
-/* Extra small screens - still keep things usable and full-width */
+/* Extra small screens */
 @media (max-width: 380px) {
     .container {
         padding: 0 8px;
@@ -1169,7 +1188,7 @@ button { cursor: pointer; font-family: inherit; }
     }
     .wend-board-wrapper {
         border-width: 2px;
-        border-radius: 8px;
+        border-radius: 6px;
     }
     .cell-letter {
         font-size: clamp(12px, 4.5vw, 18px);
