@@ -15,7 +15,7 @@
     --word-6: #9B59B6;
     --word-7: #26C0A6;
 
-    --clr-bg: #f0f0eb;
+    --clr-bg: #ffffff;
     --clr-white: #ffffff;
     --clr-blocked: #a8a8a8;
     --clr-border: #2d2d2d;
@@ -213,12 +213,12 @@ button { cursor: pointer; font-family: inherit; }
     width: 100%;
     max-width: 400px;
     aspect-ratio: 1;
-    border: 3px solid #2d2d2d;
-    border-radius: 10px;
+    border: 4px solid #222;
+    border-radius: 12px;
     overflow: hidden;
     gap: 0;
     background: #fff;
-    box-shadow: 0 3px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15), 0 1px 4px rgba(0,0,0,0.08);
 }
 
 /* --- Grid Cells --- */
@@ -251,7 +251,7 @@ button { cursor: pointer; font-family: inherit; }
     background: #f8f8f5 !important;
 }
 .wend-cell--revealed {
-    background: color-mix(in srgb, var(--word-color) 20%, white) !important;
+    background: color-mix(in srgb, var(--word-color) 35%, white) !important;
     box-shadow: none;
 }
 .wend-cell--revealed:hover {
@@ -270,10 +270,10 @@ button { cursor: pointer; font-family: inherit; }
 
 /* Cell letter styling */
 .cell-letter {
-    font-size: clamp(16px, 5vw, 26px);
+    font-size: clamp(17px, 5.5vw, 28px);
     font-weight: 900;
     line-height: 1;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.02em;
     user-select: none;
     pointer-events: none;
     position: relative;
@@ -302,22 +302,22 @@ button { cursor: pointer; font-family: inherit; }
 /* --- Cell circle (first letter indicator) --- */
 .cell-circle {
     position: absolute;
-    width: 55%;
-    height: 55%;
+    width: 60%;
+    height: 60%;
     border-radius: 50%;
     z-index: 2;
     pointer-events: none;
-    outline: 5px solid color-mix(in srgb, var(--word-color) 20%, white);
-    border: 3px solid var(--word-color);
+    outline: 6px solid color-mix(in srgb, var(--word-color) 35%, white);
+    border: 3.5px solid var(--word-color);
 }
 
 /* --- Check badge on first cell --- */
 .cell-check-badge {
     position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 14px;
-    height: 14px;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -325,16 +325,16 @@ button { cursor: pointer; font-family: inherit; }
     color: #fff;
     z-index: 5;
     pointer-events: none;
-    font-size: 8px;
-    font-weight: 700;
+    font-size: 10px;
+    font-weight: 800;
 }
 
 /* --- Direction arrows --- */
 .cell-arrow {
     position: absolute;
-    width: clamp(10px, 2.5vw, 14px);
-    height: clamp(10px, 2.5vw, 14px);
-    color: rgba(0,0,0,0.45);
+    width: clamp(12px, 3vw, 18px);
+    height: clamp(12px, 3vw, 18px);
+    color: rgba(0,0,0,0.55);
     z-index: 999;
     pointer-events: none;
     display: flex;
@@ -485,8 +485,8 @@ button { cursor: pointer; font-family: inherit; }
 }
 .word-blank--revealed {
     border-color: var(--word-color, #22c55e);
-    background: color-mix(in srgb, var(--word-color, #22c55e) 4%, white);
-    box-shadow: 0 3px 14px color-mix(in srgb, var(--word-color, #22c55e) 18%, transparent);
+    background: color-mix(in srgb, var(--word-color, #22c55e) 6%, white);
+    box-shadow: 0 3px 16px color-mix(in srgb, var(--word-color, #22c55e) 22%, transparent);
     animation: wordSlideDown 0.4s ease backwards;
     animation-delay: calc(var(--card-delay, 0) * 0.12s);
 }
@@ -506,33 +506,33 @@ button { cursor: pointer; font-family: inherit; }
 
 /* --- Letter Bubbles --- */
 .letter-bubble {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 800;
-    font-size: 15px;
+    font-size: 16px;
     flex-shrink: 0;
     transition: background 0.28s ease, transform 0.2s ease;
 }
 .letter-bubble--hidden {
-    background: #d5d5cf;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
+    background: #d0d0c8;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
 }
 .letter-bubble--revealed {
     color: #fff;
     transform: scale(1.05);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.22);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.25);
     animation: bubbleBounce 0.3s ease backwards;
     animation-delay: calc(var(--bubble-delay, 0) * 0.08s);
 }
 .bubble-letter {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 800;
     color: inherit;
-    text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
     line-height: 1;
     letter-spacing: -0.02em;
 }
