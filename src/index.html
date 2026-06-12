@@ -61,81 +61,75 @@
             <!-- Hero Section -->
             <section class="hero">
                 <div class="container">
-                    <div class="hero-grid">
-                        <div class="hero-text">
-                            <div class="hero-badge">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-                                Updated for Puzzle #{{PUZZLE_NUMBER}}
-                            </div>
-                            <h1>LinkedIn Wend Answer Today <span class="date-highlight">({{DATE_DISPLAY}})</span></h1>
-                            <div class="hero-accent"></div>
-                            <p class="hero-desc">See today's Wend puzzle answers with the full word list, grid walkthrough, and hints for puzzle #{{PUZZLE_NUMBER}}.</p>
-                            <div class="hero-stats">
-                                <div class="hero-stat">
-                                    <div class="hero-stat-value">{{WORD_COUNT}}</div>
-                                    <div class="hero-stat-label">Words</div>
-                                </div>
-                                <div class="hero-stat">
-                                    <div class="hero-stat-value">{{GRID_SIZE}}</div>
-                                    <div class="hero-stat-label">Grid</div>
-                                </div>
-                                <div class="hero-stat">
-                                    <div class="hero-stat-value">Daily</div>
-                                    <div class="hero-stat-label">Updates</div>
-                                </div>
-                            </div>
+                    <div class="hero-content">
+                        <div class="hero-badge">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                            Updated for Puzzle #{{PUZZLE_NUMBER}}
                         </div>
-                        <div class="hero-card-wrapper">
-                            <div class="hero-card">
-                                <div class="hero-card-header">
-                                    <h3>Wend #{{PUZZLE_NUMBER}} Words</h3>
-                                    <div class="date-badge">{{DATE_SHORT}}</div>
-                                </div>
-                                <div class="hero-card-words">
-                                    {{WORD_CHIPS}}
-                                </div>
-                            </div>
-                        </div>
+                        <h1>LinkedIn Wend Answer Today <span class="date-highlight">({{DATE_DISPLAY}})</span></h1>
+                        <p class="hero-desc">See today's Wend puzzle answers with the full word list, grid walkthrough, and hints for puzzle #{{PUZZLE_NUMBER}}.</p>
                     </div>
                 </div>
             </section>
 
-            <!-- Game Grid Section -->
+            <!-- Game Grid Section - Two Column Layout like thewordfinder -->
             <section class="game-section">
                 <div class="container">
-                    <h2 class="section-title">Today's Wend Puzzle Grid</h2>
-                    <p class="section-desc">The grid below shows the Wend word search puzzle. Click "Reveal Answer" to see the solution with color-coded word paths.</p>
-                    
+                    <!-- CRITICAL: Checkbox MUST be a direct sibling of grid views for CSS ~ combinator -->
                     <div class="game-container">
-                        <!-- Before Reveal: Plain Grid -->
-                        <div class="grid-view" id="grid-before">
-                            <div class="wend-grid" id="wend-grid" style="--grid-cols: {{GRID_COLS}}; --grid-rows: {{GRID_ROWS}};">
-                                {{GRID_CELLS}}
-                            </div>
-                            <div class="word-list-plain">
-                                <h3>Words to Find</h3>
-                                <ul>
-                                    {{WORD_LIST_PLAIN}}
-                                </ul>
-                            </div>
-                        </div>
+                        <input type="checkbox" id="reveal-toggle" class="reveal-checkbox" aria-label="Reveal answer">
 
-                        <!-- After Reveal: Solved Grid with Animation -->
-                        <div class="grid-view grid-view-revealed" id="grid-after">
-                            <div class="wend-grid wend-grid-solved" id="wend-grid-solved" style="--grid-cols: {{GRID_COLS}}; --grid-rows: {{GRID_ROWS}};">
-                                {{GRID_CELLS_SOLVED}}
+                        <!-- Two-column layout: Grid + Words -->
+                        <div class="game-layout">
+                            <!-- LEFT: Board column -->
+                            <div class="game-board-col">
+                                <div class="grid-view" id="grid-before">
+                                    <div class="wend-board-wrapper" id="wend-grid" style="--grid-cols: {{GRID_COLS}}; --grid-rows: {{GRID_ROWS}};">
+                                        {{GRID_CELLS}}
+                                    </div>
+                                    <p class="board-instruction">Click "Reveal Answer" to see the solution</p>
+                                </div>
+
+                                <div class="grid-view grid-view-revealed" id="grid-after">
+                                    <div class="wend-board-wrapper wend-board-solved" id="wend-grid-solved" style="--grid-cols: {{GRID_COLS}}; --grid-rows: {{GRID_ROWS}};">
+                                        {{GRID_CELLS_SOLVED}}
+                                    </div>
+                                    <p class="board-instruction revealed-text">All words revealed!</p>
+                                </div>
                             </div>
-                            <div class="word-list-solved">
-                                <h3>Solved Words</h3>
-                                <ul>
-                                    {{WORD_LIST_SOLVED}}
-                                </ul>
+
+                            <!-- RIGHT: Words column -->
+                            <div class="game-words-col">
+                                <!-- Progress Bar -->
+                                <div class="progress-section">
+                                    <div class="progress-label">Words found: <span class="progress-count">0 / {{WORD_COUNT}}</span></div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%;"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Word Cards - Before Reveal (hidden letters) -->
+                                <div class="words-list" id="words-before">
+                                    {{WORD_CARDS_BEFORE}}
+                                </div>
+
+                                <!-- Word Cards - After Reveal (shown letters) -->
+                                <div class="words-list words-list-revealed" id="words-after">
+                                    {{WORD_CARDS_AFTER}}
+                                </div>
+
+                                <!-- Wend #N Words label - shown after reveal -->
+                                <div class="wend-words-label" id="wend-words-label">
+                                    <h3>Wend #{{PUZZLE_NUMBER}} Words</h3>
+                                    <div class="wend-words-summary">
+                                        {{WORD_CHIPS}}
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         <!-- CSS-only Reveal Button -->
                         <div class="reveal-container">
-                            <input type="checkbox" id="reveal-toggle" class="reveal-checkbox" aria-label="Reveal answer">
                             <label for="reveal-toggle" class="reveal-btn">
                                 <span class="reveal-icon">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>

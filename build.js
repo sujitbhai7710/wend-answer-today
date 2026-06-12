@@ -1,6 +1,7 @@
 /**
  * Build script for Wend Answer Today
  * Fetches puzzle data from the Worker API and generates static HTML pages
+ * with thewordfinder.com-style animations and CSS-only reveal
  */
 
 const fs = require('fs');
@@ -9,15 +10,16 @@ const path = require('path');
 const WORKER_URL = process.env.WORKER_URL || 'https://wend-api-worker.wendapi.workers.dev';
 const API_KEY = process.env.WORKER_API_KEY || '';
 
+// Word colors matching thewordfinder.com palette
 const WORD_COLORS = [
-    { bg: '#4ade80', text: '#1f2937' },  // green
-    { bg: '#a78bfa', text: '#ffffff' },  // purple
-    { bg: '#fb923c', text: '#ffffff' },  // orange
-    { bg: '#38bdf8', text: '#ffffff' },  // light blue
-    { bg: '#f472b6', text: '#ffffff' },  // pink
-    { bg: '#fbbf24', text: '#1f2937' },  // yellow
-    { bg: '#2dd4bf', text: '#1f2937' },  // teal
-    { bg: '#f87171', text: '#ffffff' },  // red
+    { bg: '#E8572A', text: '#ffffff', name: 'orange-red' },
+    { bg: '#D4449A', text: '#ffffff', name: 'pink' },
+    { bg: '#4DBDBA', text: '#1a1a1a', name: 'teal' },
+    { bg: '#98C21F', text: '#1a1a1a', name: 'lime-green' },
+    { bg: '#5B8DD9', text: '#ffffff', name: 'blue' },
+    { bg: '#F5A623', text: '#1a1a1a', name: 'amber' },
+    { bg: '#9B59B6', text: '#ffffff', name: 'purple' },
+    { bg: '#26C0A6', text: '#1a1a1a', name: 'mint' },
 ];
 
 function formatDate(dateStr) {
@@ -31,24 +33,6 @@ function formatDateShort(dateStr) {
 }
 
 function getDirection(prevCell, currCell, nextCell) {
-    const directions = [];
-    if (prevCell) {
-        const dr = currCell.row - prevCell.row;
-        const dc = currCell.col - prevCell.col;
-        if (dc > 0) directions.push('right');
-        else if (dc < 0) directions.push('left');
-        else if (dr > 0) directions.push('down');
-        else if (dr < 0) directions.push('up');
-    }
-    if (nextCell) {
-        const dr = nextCell.row - currCell.row;
-        const dc = nextCell.col - currCell.col;
-        if (dc > 0) directions.push('right');
-        else if (dc < 0) directions.push('left');
-        else if (dr > 0) directions.push('down');
-        else if (dr < 0) directions.push('up');
-    }
-    // Return the direction TO the next cell (outgoing)
     if (nextCell) {
         const dr = nextCell.row - currCell.row;
         const dc = nextCell.col - currCell.col;
@@ -57,40 +41,78 @@ function getDirection(prevCell, currCell, nextCell) {
         if (dr > 0) return 'down';
         if (dr < 0) return 'up';
     }
+    if (prevCell) {
+        const dr = currCell.row - prevCell.row;
+        const dc = currCell.col - prevCell.col;
+        if (dc > 0) return 'right';
+        if (dc < 0) return 'left';
+        if (dr > 0) return 'down';
+        if (dr < 0) return 'up';
+    }
     return '';
 }
 
+// Generate thewordfinder-style grid cells (BEFORE reveal)
 function generateGridCells(grid, rows, cols) {
     let html = '';
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
             const cell = grid[r][c];
             if (cell.isBlocked) {
-                html += `<div class="grid-cell blocked" data-row="${r}" data-col="${c}"></div>`;
+                html += `<div class="wend-cell wend-cell--blocked" data-row="${r}" data-col="${c}" aria-hidden="true"></div>`;
             } else {
-                html += `<div class="grid-cell active" data-row="${r}" data-col="${c}">${cell.letter}</div>`;
+                html += `<button class="wend-cell wend-cell--letter" data-row="${r}" data-col="${c}" aria-label="${cell.letter} — hidden">
+                    <span class="cell-letter">${cell.letter}</span>
+                </button>`;
             }
         }
     }
     return html;
 }
 
+// Generate thewordfinder-style grid cells (AFTER reveal - solved)
 function generateSolvedGridCells(grid, wordCells, rows, cols) {
-    // Build a map of cell positions to word index
+    // Build maps for cell word assignments
     const cellWordMap = {};
     const cellDirectionMap = {};
+    const cellIsFirst = {};
+    const cellIsLast = {};
+    const cellConnectH = {}; // horizontal tube
+    const cellConnectV = {}; // vertical tube
     
     wordCells.forEach((word, wordIdx) => {
         word.cells.forEach((cell, cellIdx) => {
-            const key = `${cell.col},${cell.row}`;
-            // If a cell belongs to multiple words (intersection), keep the first assignment
+            const key = `${cell.row},${cell.col}`;
             if (!(key in cellWordMap)) {
                 cellWordMap[key] = wordIdx;
             }
+            if (cellIdx === 0 && !(key in cellIsFirst)) {
+                cellIsFirst[key] = true;
+            }
+            if (cellIdx === word.cells.length - 1 && !(key in cellIsLast)) {
+                cellIsLast[key] = true;
+            }
             
-            // Determine direction arrow
+            // Determine connections for tubes
             const prevCell = cellIdx > 0 ? word.cells[cellIdx - 1] : null;
             const nextCell = cellIdx < word.cells.length - 1 ? word.cells[cellIdx + 1] : null;
+            
+            if (!(key in cellConnectH)) cellConnectH[key] = { left: false, right: false };
+            if (!(key in cellConnectV)) cellConnectV[key] = { top: false, bottom: false };
+            
+            if (prevCell) {
+                const dc = cell.col - prevCell.col;
+                const dr = cell.row - prevCell.row;
+                if (dc !== 0) cellConnectH[key].left = true; // connected from left
+                if (dr !== 0) cellConnectV[key].top = true;  // connected from top
+            }
+            if (nextCell) {
+                const dc = nextCell.col - cell.col;
+                const dr = nextCell.row - cell.row;
+                if (dc !== 0) cellConnectH[key].right = true; // connected to right
+                if (dr !== 0) cellConnectV[key].bottom = true; // connected to bottom
+            }
+            
             const dir = getDirection(prevCell, cell, nextCell);
             if (dir && !(key in cellDirectionMap)) {
                 cellDirectionMap[key] = dir;
@@ -98,64 +120,111 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
         });
     });
 
-    // Calculate animation delays
-    // Each word gets a base offset, then cells within a word get sequential delays
+    // Calculate animation delays - word by word
     let totalDelay = 0;
     const cellDelayMap = {};
     
     wordCells.forEach((word, wordIdx) => {
         word.cells.forEach((cell, cellIdx) => {
-            const key = `${cell.col},${cell.row}`;
+            const key = `${cell.row},${cell.col}`;
             if (!(key in cellDelayMap)) {
                 cellDelayMap[key] = totalDelay + cellIdx;
             }
         });
-        totalDelay += word.cells.length + 2; // gap between words
+        totalDelay += word.cells.length + 2;
     });
 
     let html = '';
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
             const cell = grid[r][c];
-            const key = `${c},${r}`;
+            const key = `${r},${c}`;
             
             if (cell.isBlocked) {
-                html += `<div class="grid-cell blocked" data-row="${r}" data-col="${c}"></div>`;
+                html += `<div class="wend-cell wend-cell--blocked" data-row="${r}" data-col="${c}" aria-hidden="true"></div>`;
             } else if (key in cellWordMap) {
                 const wordIdx = cellWordMap[key];
+                const color = WORD_COLORS[wordIdx % WORD_COLORS.length];
                 const delay = cellDelayMap[key] || 0;
                 const dir = cellDirectionMap[key] || '';
-                const arrowHtml = dir ? `<span class="arrow arrow-${dir}">&#x25B6;</span>` : '';
-                html += `<div class="grid-cell solved word-${wordIdx}" data-row="${r}" data-col="${c}" style="--cell-delay: ${delay}; animation-delay: ${delay * 0.08}s;">${cell.letter}${arrowHtml}</div>`;
+                
+                // Build inner content
+                let inner = `<span class="cell-letter">${cell.letter}</span>`;
+                
+                // Tube connectors
+                const hConn = cellConnectH[key];
+                const vConn = cellConnectV[key];
+                if (hConn && (hConn.left || hConn.right)) {
+                    const left = hConn.left ? '0' : 'auto';
+                    const right = hConn.right ? '0' : 'auto';
+                    inner += `<span class="cell-tube cell-tube-h" style="left:${hConn.left ? '0' : '22.5%'};right:${hConn.right ? '0' : '22.5%'};background:color-mix(in srgb, ${color.bg} 22%, white);"></span>`;
+                }
+                if (vConn && (vConn.top || vConn.bottom)) {
+                    inner += `<span class="cell-tube cell-tube-v" style="top:${vConn.top ? '0' : '22.5%'};bottom:${vConn.bottom ? '0' : '22.5%'};background:color-mix(in srgb, ${color.bg} 22%, white);"></span>`;
+                }
+                
+                // Circle for first letter
+                if (cellIsFirst[key]) {
+                    inner += `<span class="cell-circle" style="background:${color.bg};outline-color:color-mix(in srgb, ${color.bg} 22%, white);"></span>`;
+                    inner += `<span class="cell-check-badge">&#10003;</span>`;
+                }
+                
+                // Direction arrow
+                if (dir) {
+                    const arrowSymbols = { right: '&#9654;', left: '&#9664;', down: '&#9660;', up: '&#9650;' };
+                    inner += `<span class="cell-arrow cell-arrow--${dir}">${arrowSymbols[dir]}</span>`;
+                }
+                
+                html += `<div class="wend-cell wend-cell--revealed" data-row="${r}" data-col="${c}" style="--word-color:${color.bg};--cell-delay:${delay};" aria-label="${cell.letter} — revealed">${inner}</div>`;
             } else {
-                html += `<div class="grid-cell active" data-row="${r}" data-col="${c}">${cell.letter}</div>`;
+                html += `<div class="wend-cell wend-cell--letter" data-row="${r}" data-col="${c}">
+                    <span class="cell-letter">${cell.letter}</span>
+                </div>`;
             }
         }
     }
     return html;
 }
 
-function generateWordChips(words) {
+// Generate word blank cards BEFORE reveal (hidden bubbles)
+function generateWordCardsBefore(words) {
     return words.map((word, idx) => {
         const color = WORD_COLORS[idx % WORD_COLORS.length];
-        return `<span class="word-chip" style="background: ${color.bg}; color: ${color.text};">
-            <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
-            ${word}
-        </span>`;
+        const bubbles = Array.from({ length: word.length }, () => 
+            `<div class="letter-bubble letter-bubble--hidden"></div>`
+        ).join('');
+        
+        return `<div class="word-blank" style="--word-color:${color.bg};">
+            <div class="letter-row">${bubbles}</div>
+        </div>`;
     }).join('');
 }
 
-function generateWordListPlain(words) {
-    return words.map(w => `<li>${w}</li>`).join('');
-}
-
-function generateWordListSolved(words) {
+// Generate word blank cards AFTER reveal (shown bubbles)
+function generateWordCardsAfter(words, wordCells) {
     return words.map((word, idx) => {
         const color = WORD_COLORS[idx % WORD_COLORS.length];
-        return `<li class="word-color-${idx}" style="background: ${color.bg}; color: ${color.text}; animation-delay: ${(idx + 1) * 0.3}s;">
-            <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="10" height="10"><polyline points="20 6 9 17 4 12"/></svg></span>
+        const bubbles = word.split('').map(letter =>
+            `<div class="letter-bubble letter-bubble--revealed" style="background:${color.bg};">
+                <span class="bubble-letter">${letter}</span>
+            </div>`
+        ).join('');
+        
+        return `<div class="word-blank word-blank--revealed" style="--word-color:${color.bg};">
+            <div class="letter-row">${bubbles}</div>
+            <div class="revealed-label" style="--word-color:${color.bg};color:${color.bg};"><strong>${word}</strong></div>
+        </div>`;
+    }).join('');
+}
+
+// Generate word chips for the Wend #N Words section
+function generateWordChips(words) {
+    return words.map((word, idx) => {
+        const color = WORD_COLORS[idx % WORD_COLORS.length];
+        return `<span class="word-chip" style="background:${color.bg};color:${color.text};animation-delay:${(idx + 1) * 0.15}s;">
+            <span class="chip-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
             ${word}
-        </li>`;
+        </span>`;
     }).join('');
 }
 
@@ -304,14 +373,13 @@ async function buildSite() {
         '{{DATE_DISPLAY}}': dateDisplay,
         '{{DATE_SHORT}}': dateShort,
         '{{WORD_COUNT}}': puzzle.words.length,
-        '{{GRID_SIZE}}': `${puzzle.rows}x${puzzle.cols}`,
         '{{GRID_COLS}}': puzzle.cols,
         '{{GRID_ROWS}}': puzzle.rows,
         '{{WORD_CHIPS}}': generateWordChips(puzzle.words),
         '{{GRID_CELLS}}': generateGridCells(puzzle.grid, puzzle.rows, puzzle.cols),
         '{{GRID_CELLS_SOLVED}}': generateSolvedGridCells(puzzle.grid, puzzle.word_cells, puzzle.rows, puzzle.cols),
-        '{{WORD_LIST_PLAIN}}': generateWordListPlain(puzzle.words),
-        '{{WORD_LIST_SOLVED}}': generateWordListSolved(puzzle.words),
+        '{{WORD_CARDS_BEFORE}}': generateWordCardsBefore(puzzle.words),
+        '{{WORD_CARDS_AFTER}}': generateWordCardsAfter(puzzle.words, puzzle.word_cells),
         '{{HINTS_CONTENT}}': generateHints(puzzle.words, puzzle.puzzle_number),
         '{{RECENT_PUZZLES}}': generateRecentPuzzles(allPuzzles),
     };
@@ -356,7 +424,90 @@ async function buildArchivePage(allPuzzles, outputDir) {
             console.error(`Failed to fetch puzzle ${p.puzzle_number}:`, e);
         }
     }
+
+    // Build puzzle data for calendar JS
+    const calendarPuzzles = fullPuzzles.map(p => ({
+        puzzle_number: p.puzzle_number,
+        date: p.date,
+        words: p.words,
+        rows: p.rows,
+        cols: p.cols,
+        grid: p.grid,
+        word_cells: p.word_cells
+    }));
     
+    // Generate puzzle detail HTML for each puzzle (hidden by default)
+    const puzzleDetailsHtml = fullPuzzles.map(p => {
+        const gridBefore = generateGridCells(p.grid, p.rows, p.cols);
+        const gridAfter = generateSolvedGridCells(p.grid, p.word_cells, p.rows, p.cols);
+        const wordsBefore = generateWordCardsBefore(p.words);
+        const wordsAfter = generateWordCardsAfter(p.words, p.word_cells);
+        const wordChips = generateWordChips(p.words);
+        const dateDisplay = formatDate(p.date);
+        
+        return `
+        <div class="archive-puzzle-item" id="archive-puzzle-${p.puzzle_number}" data-puzzle-number="${p.puzzle_number}">
+            <input type="checkbox" id="archive-reveal-${p.puzzle_number}" class="archive-reveal-checkbox">
+            <div class="archive-puzzle-header">
+                <h2>Wend #${p.puzzle_number}</h2>
+                <span class="puzzle-date">${dateDisplay}</span>
+            </div>
+            <div class="archive-layout">
+                <div class="game-board-col">
+                    <div class="archive-grid-before">
+                        <div class="wend-board-wrapper" style="--grid-cols:${p.cols};--grid-rows:${p.rows};">
+                            ${gridBefore}
+                        </div>
+                    </div>
+                    <div class="archive-grid-after">
+                        <div class="wend-board-wrapper" style="--grid-cols:${p.cols};--grid-rows:${p.rows};">
+                            ${gridAfter}
+                        </div>
+                    </div>
+                </div>
+                <div class="game-words-col">
+                    <div class="progress-section">
+                        <div class="progress-label">Words found: <span class="progress-count">0 / ${p.words.length}</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:0%;"></div></div>
+                    </div>
+                    <div class="archive-words-before">
+                        <div class="words-list">${wordsBefore}</div>
+                    </div>
+                    <div class="archive-words-after">
+                        <div class="words-list words-list-revealed">${wordsAfter}</div>
+                        <div class="wend-words-label">
+                            <h3>Wend #${p.puzzle_number} Words</h3>
+                            <div class="wend-words-summary">${wordChips}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="archive-reveal-container">
+                <label for="archive-reveal-${p.puzzle_number}" class="archive-reveal-btn">
+                    <span class="reveal-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </span>
+                    <span class="archive-reveal-show">Reveal Answer</span>
+                    <span class="archive-reveal-hide">Hide Answer</span>
+                </label>
+            </div>
+        </div>`;
+    }).join('');
+
+    // Archive reveal CSS (per puzzle)
+    const archiveRevealCSS = fullPuzzles.map(p => {
+        return `
+        #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .archive-grid-before { display: none; }
+        #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .archive-grid-after { display: block; animation: revealPuzzle 0.6s ease-out; }
+        #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .archive-grid-after .wend-cell--revealed { animation: cellPop 0.28s ease backwards; }
+        #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .archive-words-before { display: none; }
+        #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .archive-words-after { display: block; }
+        #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .progress-fill { width: 100% !important; }
+        #archive-reveal-${p.puzzle_number}:checked ~ .archive-reveal-container .archive-reveal-btn { background: linear-gradient(135deg, #4b5563, #6b7280); }
+        #archive-reveal-${p.puzzle_number}:checked ~ .archive-reveal-container .archive-reveal-show { display: none; }
+        #archive-reveal-${p.puzzle_number}:checked ~ .archive-reveal-container .archive-reveal-hide { display: inline; }`;
+    }).join('\n');
+
     const archiveHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -367,6 +518,9 @@ async function buildArchivePage(allPuzzles, outputDir) {
     <meta name="description" content="Complete archive of LinkedIn Wend puzzle answers. Browse all past puzzles with full solutions and word lists.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        ${archiveRevealCSS}
+    </style>
 </head>
 <body>
     <div class="page-wrapper">
@@ -388,32 +542,39 @@ async function buildArchivePage(allPuzzles, outputDir) {
         </header>
         
         <main class="page-content">
-            <section style="padding: 3rem 0;">
+            <div class="archive-header">
                 <div class="container">
-                    <h1 class="section-title">Wend Puzzle Archive</h1>
-                    <p class="section-desc">Browse all past LinkedIn Wend puzzles with complete answers and word lists.</p>
-                    
-                    <div class="archive-grid">
-                        ${fullPuzzles.reverse().map(p => {
-                            const gridCells = generateSolvedGridCells(p.grid, p.word_cells, p.rows, p.cols);
-                            const wordList = p.words.map((w, i) => {
-                                const color = WORD_COLORS[i % WORD_COLORS.length];
-                                return `<span style="background:${color.bg};color:${color.text};padding:0.25rem 0.5rem;border-radius:9999px;font-size:0.75rem;font-weight:600;">${w}</span>`;
-                            }).join(' ');
-                            
-                            return `
-                                <div class="archive-card" id="puzzle-${p.puzzle_number}">
-                                    <div class="card-title">
-                                        <h3>Puzzle #${p.puzzle_number}</h3>
-                                        <span class="puzzle-num">${formatDate(p.date)}</span>
-                                    </div>
-                                    <div class="mini-grid" style="grid-template-columns: repeat(${p.cols}, 1fr);">
-                                        ${generateMiniGrid(p.grid, p.word_cells, p.rows, p.cols)}
-                                    </div>
-                                    <div class="words-preview">${wordList}</div>
-                                </div>
-                            `;
-                        }).join('')}
+                    <h1>Wend Puzzle Archive</h1>
+                    <p>Browse all past LinkedIn Wend puzzles with complete answers and word lists.</p>
+                </div>
+            </div>
+
+            <!-- Calendar Section -->
+            <section class="calendar-section">
+                <div class="container">
+                    <div class="calendar-wrapper">
+                        <div class="calendar-nav">
+                            <button class="calendar-prev" aria-label="Previous month">&#8592;</button>
+                            <h3 class="calendar-month-title"></h3>
+                            <button class="calendar-next" aria-label="Next month">&#8594;</button>
+                        </div>
+                        <div class="calendar-weekdays">
+                            <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                        </div>
+                        <div class="calendar-days" data-puzzles='${JSON.stringify(calendarPuzzles).replace(/'/g, "&#39;")}'>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Puzzle Detail Section (shown when calendar date clicked) -->
+            <section class="archive-puzzle-section">
+                <div class="container">
+                    <span class="back-to-calendar">&#8592; Back to Calendar</span>
+                    <div class="archive-puzzle-detail">
+                        <div class="archive-puzzle-detail-content">
+                            ${puzzleDetailsHtml}
+                        </div>
                     </div>
                 </div>
             </section>
@@ -433,33 +594,6 @@ async function buildArchivePage(allPuzzles, outputDir) {
     
     fs.writeFileSync(path.join(outputDir, 'archive.html'), archiveHtml);
     console.log('Built archive.html');
-}
-
-function generateMiniGrid(grid, wordCells, rows, cols) {
-    const cellWordMap = {};
-    wordCells.forEach((word, wordIdx) => {
-        word.cells.forEach(cell => {
-            const key = `${cell.col},${cell.row}`;
-            if (!(key in cellWordMap)) cellWordMap[key] = wordIdx;
-        });
-    });
-    
-    let html = '';
-    for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-            const cell = grid[r][c];
-            const key = `${c},${r}`;
-            if (cell.isBlocked) {
-                html += `<div class="mini-cell blocked"></div>`;
-            } else if (key in cellWordMap) {
-                const color = WORD_COLORS[cellWordMap[key] % WORD_COLORS.length];
-                html += `<div class="mini-cell" style="background:${color.bg};color:${color.text};font-size:0.5rem;">${cell.letter}</div>`;
-            } else {
-                html += `<div class="mini-cell active">${cell.letter}</div>`;
-            }
-        }
-    }
-    return html;
 }
 
 function buildHowToPlayPage(outputDir) {

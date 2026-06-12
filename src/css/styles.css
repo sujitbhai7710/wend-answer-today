@@ -1,5 +1,6 @@
 /* ================================================
    Wend Answer Today - Complete Stylesheet
+   Inspired by thewordfinder.com Wend hints page
    ================================================ */
 
 /* --- CSS Variables --- */
@@ -30,7 +31,7 @@
     --clr-gray-900: #111827;
 
     --clr-success: #10b981;
-    --clr-blocked: #e5e7eb;
+    --clr-blocked: #b2b2b2;
 
     --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
@@ -38,15 +39,25 @@
     --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
     --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
 
-    /* Word colors - vibrant and distinct */
-    --word-0: #4ade80;
-    --word-1: #a78bfa;
-    --word-2: #fb923c;
-    --word-3: #38bdf8;
-    --word-4: #f472b6;
-    --word-5: #fbbf24;
-    --word-6: #2dd4bf;
-    --word-7: #f87171;
+    /* Word colors - matching thewordfinder.com palette */
+    --word-0: #E8572A;
+    --word-1: #D4449A;
+    --word-2: #4DBDBA;
+    --word-3: #98C21F;
+    --word-4: #5B8DD9;
+    --word-5: #F5A623;
+    --word-6: #9B59B6;
+    --word-7: #26C0A6;
+
+    /* Word colors for text on light bg */
+    --word-text-0: #ffffff;
+    --word-text-1: #ffffff;
+    --word-text-2: #1a1a1a;
+    --word-text-3: #1a1a1a;
+    --word-text-4: #ffffff;
+    --word-text-5: #1a1a1a;
+    --word-text-6: #ffffff;
+    --word-text-7: #1a1a1a;
 
     --radius-sm: 0.375rem;
     --radius-md: 0.5rem;
@@ -108,7 +119,7 @@ img {
     top: 0;
     z-index: 100;
     backdrop-filter: blur(12px);
-    background: rgba(255,255,255,0.9);
+    background: rgba(255,255,255,0.95);
 }
 
 .site-header .container {
@@ -205,7 +216,7 @@ img {
 /* --- Hero Section --- */
 .hero {
     background: linear-gradient(135deg, var(--clr-primary-50) 0%, white 50%, var(--clr-primary-50) 100%);
-    padding: 3rem 0;
+    padding: 2.5rem 0;
     position: relative;
     overflow: hidden;
 }
@@ -222,11 +233,8 @@ img {
     pointer-events: none;
 }
 
-.hero-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    align-items: center;
+.hero-content {
+    text-align: center;
 }
 
 .hero-badge {
@@ -243,7 +251,7 @@ img {
 }
 
 .hero h1 {
-    font-size: 2.25rem;
+    font-size: 2rem;
     font-weight: 900;
     line-height: 1.2;
     color: var(--clr-gray-900);
@@ -254,121 +262,25 @@ img {
     color: var(--clr-primary-600);
 }
 
-.hero-accent {
-    width: 60px;
-    height: 4px;
-    background: linear-gradient(90deg, var(--clr-primary-500), var(--clr-accent));
-    border-radius: 2px;
-    margin: 1rem 0;
-}
-
 .hero-desc {
     font-size: 1.0625rem;
     color: var(--clr-gray-600);
     line-height: 1.7;
-    margin-bottom: 1.5rem;
-}
-
-.hero-stats {
-    display: flex;
-    gap: 2rem;
-}
-
-.hero-stat {
-    text-align: center;
-}
-
-.hero-stat-value {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: var(--clr-primary-600);
-}
-
-.hero-stat-label {
-    font-size: 0.8125rem;
-    color: var(--clr-gray-500);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.hero-card {
-    background: white;
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-xl);
-    padding: 1.75rem;
-    border: 1px solid var(--clr-gray-100);
-}
-
-.hero-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.25rem;
-}
-
-.hero-card-header h3 {
-    font-size: 1.125rem;
-    font-weight: 700;
-    color: var(--clr-gray-900);
-}
-
-.date-badge {
-    background: var(--clr-primary-100);
-    color: var(--clr-primary-700);
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-full);
-    font-size: 0.8125rem;
-    font-weight: 600;
-}
-
-.hero-card-words {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.word-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    padding: 0.5rem 1rem;
-    border-radius: var(--radius-full);
-    font-weight: 700;
-    font-size: 0.9375rem;
-    letter-spacing: 0.02em;
-}
-
-.word-chip .check-icon {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.word-chip .check-icon svg {
-    width: 10px;
-    height: 10px;
+    margin-top: 0.75rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 @media (max-width: 768px) {
-    .hero-grid {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
     .hero h1 {
-        font-size: 1.75rem;
-    }
-    .hero-stats {
-        gap: 1.5rem;
+        font-size: 1.5rem;
     }
 }
 
 /* --- Game Section --- */
 .game-section {
-    padding: 3rem 0;
+    padding: 2rem 0;
 }
 
 .section-title {
@@ -390,138 +302,362 @@ img {
     position: relative;
 }
 
-/* --- Wend Grid --- */
-.wend-grid {
+/* --- Two-Column Game Layout (like thewordfinder.com) --- */
+.game-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+@media (max-width: 768px) {
+    .game-layout {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+
+/* --- Board Column --- */
+.game-board-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* --- Wend Board Grid (thewordfinder-style) --- */
+.wend-board-wrapper {
     display: grid;
     grid-template-columns: repeat(var(--grid-cols), 1fr);
     grid-template-rows: repeat(var(--grid-rows), 1fr);
-    gap: 4px;
-    max-width: 420px;
-    margin: 0 auto 2rem;
-    padding: 12px;
-    background: white;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
-    border: 2px solid var(--clr-gray-200);
-}
-
-.grid-cell {
+    width: 100%;
+    max-width: 440px;
     aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.375rem;
-    font-weight: 700;
-    border-radius: var(--radius-md);
-    text-transform: uppercase;
-    position: relative;
-    transition: all 0.3s ease;
-}
-
-.grid-cell.active {
-    background: white;
-    color: var(--clr-gray-800);
-    border: 2px solid var(--clr-gray-200);
-}
-
-.grid-cell.blocked {
-    background: var(--clr-gray-100);
-    border: 2px solid var(--clr-gray-200);
-    color: transparent;
-}
-
-/* Solved grid cells with word colors */
-.grid-cell.solved {
-    border: 2px solid transparent;
-    color: white;
-    font-weight: 800;
-    position: relative;
+    border: 3px solid #333;
+    border-radius: 14px;
     overflow: hidden;
+    gap: 0;
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
 }
 
-.grid-cell.word-0 { background: var(--word-0); color: var(--clr-gray-900); }
-.grid-cell.word-1 { background: var(--word-1); }
-.grid-cell.word-2 { background: var(--word-2); }
-.grid-cell.word-3 { background: var(--word-3); }
-.grid-cell.word-4 { background: var(--word-4); }
-.grid-cell.word-5 { background: var(--word-5); color: var(--clr-gray-900); }
-.grid-cell.word-6 { background: var(--word-6); }
-.grid-cell.word-7 { background: var(--word-7); }
-
-/* Direction arrows for solved cells */
-.grid-cell.solved .arrow {
-    position: absolute;
-    font-size: 0.625rem;
-    opacity: 0.6;
-    color: inherit;
-}
-
-.grid-cell.solved .arrow.arrow-right { right: 2px; top: 50%; transform: translateY(-50%); }
-.grid-cell.solved .arrow.arrow-left { left: 2px; top: 50%; transform: translateY(-50%); }
-.grid-cell.solved .arrow.arrow-down { bottom: 2px; left: 50%; transform: translateX(-50%); }
-.grid-cell.solved .arrow.arrow-up { top: 2px; left: 50%; transform: translateX(-50%); }
-
-/* --- Word Lists --- */
-.word-list-plain, .word-list-solved {
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.word-list-plain h3, .word-list-solved h3 {
-    font-size: 1.125rem;
-    font-weight: 700;
-    color: var(--clr-gray-700);
-    margin-bottom: 0.75rem;
-}
-
-.word-list-plain ul, .word-list-solved ul {
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem;
-}
-
-.word-list-plain li {
-    padding: 0.375rem 0.875rem;
-    background: var(--clr-gray-100);
-    border-radius: var(--radius-full);
-    font-weight: 600;
-    font-size: 0.9375rem;
-    color: var(--clr-gray-600);
-    letter-spacing: 0.02em;
-}
-
-.word-list-solved li {
-    padding: 0.375rem 0.875rem;
-    border-radius: var(--radius-full);
-    font-weight: 700;
-    font-size: 0.9375rem;
-    color: white;
-    letter-spacing: 0.02em;
+/* --- Grid Cell --- */
+.wend-cell {
     display: flex;
     align-items: center;
-    gap: 0.375rem;
+    justify-content: center;
+    aspect-ratio: 1;
+    position: relative;
+    overflow: visible;
+    font-size: clamp(14px, 4.5vw, 28px);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    user-select: none;
 }
 
-.word-list-solved li .check {
+/* Letter cell (before reveal) */
+.wend-cell--letter {
+    background: #fff;
+    color: #1a1a1a;
+    box-shadow: inset 1px 0 #e4e4e4, inset -1px 0 #e4e4e4,
+                inset 0 1px #e4e4e4, inset 0 -1px #e4e4e4;
+    transition: background 0.15s ease;
+}
+
+/* Blocked cell */
+.wend-cell--blocked {
+    background: var(--clr-blocked);
+    cursor: default;
+}
+
+/* Revealed cell (after reveal) - thewordfinder style */
+.wend-cell--revealed {
+    background: color-mix(in srgb, var(--word-color, #e5e7eb) 22%, white) !important;
+    box-shadow: none !important;
+}
+
+.wend-cell--revealed:hover {
+    filter: brightness(1.04);
+}
+
+/* Cell pop animation - thewordfinder style */
+@keyframes cellPop {
+    0%   { transform: scale(0.82); opacity: 0.6; }
+    55%  { transform: scale(1.06); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.wend-cell--pulse {
+    animation: cellPop 0.28s ease forwards;
+}
+
+/* Tube connectors for revealed cells */
+.cell-tube {
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+    background: color-mix(in srgb, var(--word-color, #e5e7eb) 22%, white);
+}
+
+.cell-tube-h {
+    top: 22.5%;
+    bottom: 22.5%;
+}
+
+.cell-tube-v {
+    left: 22.5%;
+    right: 22.5%;
+}
+
+/* Circle indicator for first letter of word */
+.cell-circle {
+    position: absolute;
+    width: 55%;
+    height: 55%;
+    border-radius: 50%;
+    z-index: 2;
+    pointer-events: none;
+    outline: 5px solid color-mix(in srgb, var(--word-color, #e5e7eb) 22%, white);
+}
+
+/* Check badge */
+.cell-check-badge {
+    position: absolute;
+    top: 3px;
+    left: 3px;
     width: 16px;
     height: 16px;
     background: rgba(255,255,255,0.3);
     border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    z-index: 5;
+    pointer-events: none;
+    font-size: 10px;
+}
+
+/* Direction arrows */
+.cell-arrow {
+    position: absolute;
+    width: clamp(10px, 3vw, 16px);
+    height: clamp(10px, 3vw, 16px);
+    color: rgba(0,0,0,0.5);
+    z-index: 999;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+}
+
+.cell-arrow--down  { top: 0;   left: 50%; transform: translate(-50%) translateY(-50%); }
+.cell-arrow--up    { bottom: 0; left: 50%; transform: translate(-50%) translateY(50%); }
+.cell-arrow--right { left: 0;   top: 50%;  transform: translate(-50%) translateY(-50%); }
+.cell-arrow--left  { right: 0;  top: 50%;  transform: translate(50%) translateY(-50%); }
+
+/* Letter text inside cells */
+.cell-letter {
+    font-size: clamp(14px, 4.5vw, 28px);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    user-select: none;
+    pointer-events: none;
+    position: relative;
+    z-index: 4;
+    color: #1a1a1a;
+}
+
+.board-instruction {
+    text-align: center;
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--clr-gray-500);
+}
+
+.revealed-text {
+    color: var(--clr-success);
+    font-weight: 600;
+}
+
+/* --- Words Column --- */
+.game-words-col {
+    width: 100%;
+}
+
+/* --- Progress Bar (thewordfinder style) --- */
+.progress-section {
+    margin-bottom: 1rem;
+}
+
+.progress-label {
+    font-size: 0.875rem;
+    color: #374151;
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+}
+
+.progress-count {
+    color: var(--clr-primary-600);
+}
+
+.progress-bar {
+    height: 10px;
+    background: #e5e7eb;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 5px;
+    background: linear-gradient(90deg, #14b8a6, #22c55e);
+    transition: width 0.4s ease;
+}
+
+/* --- Word Blank Cards (thewordfinder style) --- */
+.words-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+.word-blank {
+    background: #fff;
+    border: 2px solid #e5e5e0;
+    border-radius: 16px;
+    padding: 12px 14px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.word-blank--revealed {
+    border-color: var(--word-color, #22c55e);
+    background: color-mix(in srgb, var(--word-color, #22c55e) 5%, white);
+    box-shadow: 0 2px 16px color-mix(in srgb, var(--word-color, #22c55e) 18%, transparent);
+    animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+    0%   { opacity: 0; transform: translateY(-8px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Letter row inside word blank */
+.letter-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+/* Letter Bubbles (thewordfinder style) */
+.letter-bubble {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 16px;
+    flex-shrink: 0;
+    transition: background 0.28s ease, transform 0.2s ease;
+}
+
+.letter-bubble--hidden {
+    background: #deded8;
+}
+
+.letter-bubble--revealed {
+    color: #1a1a1a;
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+.bubble-letter {
+    font-size: 16px;
+    font-weight: 800;
+    color: #1a1a1a;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+/* Revealed label showing the full word */
+.revealed-label {
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--word-color, #1a1a1a);
+}
+
+/* Check icon for completed word */
+.check-icon-word {
+    color: var(--word-color, #22c55e);
+    font-size: 1.125rem;
+    font-weight: 800;
+}
+
+/* --- Wend #N Words Label --- */
+.wend-words-label {
+    display: none;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: var(--clr-primary-50);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--clr-primary-200);
+    animation: slideDown 0.3s ease;
+}
+
+.wend-words-label h3 {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: var(--clr-primary-700);
+    margin-bottom: 0.75rem;
+}
+
+.wend-words-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.word-chip {
     display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: 0.9375rem;
+    letter-spacing: 0.02em;
+    animation: wordBounce 0.4s ease-out backwards;
+}
+
+.word-chip .chip-check {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.word-list-solved li.word-color-0 { background: var(--word-0); color: var(--clr-gray-900); }
-.word-list-solved li.word-color-1 { background: var(--word-1); }
-.word-list-solved li.word-color-2 { background: var(--word-2); }
-.word-list-solved li.word-color-3 { background: var(--word-3); }
-.word-list-solved li.word-color-4 { background: var(--word-4); }
-.word-list-solved li.word-color-5 { background: var(--word-5); color: var(--clr-gray-900); }
-.word-list-solved li.word-color-6 { background: var(--word-6); }
-.word-list-solved li.word-color-7 { background: var(--word-7); }
+.word-chip .chip-check svg {
+    width: 10px;
+    height: 10px;
+}
+
+@keyframes wordBounce {
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); opacity: 1; }
+}
 
 /* --- CSS-Only Reveal Button --- */
 .reveal-checkbox {
@@ -571,12 +707,54 @@ img {
     align-items: center;
 }
 
-/* --- The Magic: CSS-only Reveal --- */
+/* --- THE MAGIC: CSS-only Reveal ---
+   Checkbox is a direct sibling of grid views,
+   so ~ combinator works correctly */
+
+/* Hidden state: after-grid and after-words are hidden */
 .grid-view-revealed {
     display: none;
 }
 
-/* When checkbox is checked */
+.words-list-revealed {
+    display: none;
+}
+
+.wend-words-label {
+    display: none;
+}
+
+/* When checkbox is checked: show the solved state */
+.reveal-checkbox:checked ~ .game-layout .grid-view-revealed {
+    display: block;
+    animation: revealPuzzle 0.6s ease-out;
+}
+
+.reveal-checkbox:checked ~ .game-layout .grid-view {
+    display: none;
+}
+
+.reveal-checkbox:checked ~ .game-layout .words-list-revealed {
+    display: flex;
+}
+
+.reveal-checkbox:checked ~ .game-layout .words-list {
+    display: none;
+}
+
+.reveal-checkbox:checked ~ .game-layout .wend-words-label {
+    display: block;
+}
+
+.reveal-checkbox:checked ~ .game-layout .progress-fill {
+    width: 100% !important;
+}
+
+.reveal-checkbox:checked ~ .game-layout .progress-count {
+    /* Update shown via CSS content trick won't work, handled by having both lists */
+}
+
+/* Reveal button style change when checked */
 .reveal-checkbox:checked ~ .reveal-container .reveal-btn {
     background: linear-gradient(135deg, var(--clr-gray-600), var(--clr-gray-500));
     box-shadow: 0 4px 14px rgba(107,114,128,0.4);
@@ -590,30 +768,33 @@ img {
     display: inline;
 }
 
-.reveal-checkbox:checked ~ .reveal-container .reveal-icon svg path {
-    /* Change to closed eye */
+/* Solved cells get pop animation when revealed */
+.reveal-checkbox:checked ~ .game-layout .wend-cell--revealed {
+    animation: cellPop 0.28s ease backwards;
 }
 
-.reveal-checkbox:checked ~ #grid-before {
-    display: none;
+.reveal-checkbox:checked ~ .game-layout .word-blank--revealed {
+    animation: slideDown 0.2s ease backwards;
 }
 
-.reveal-checkbox:checked ~ #grid-after {
-    display: block;
-    animation: revealPuzzle 0.6s ease-out;
+.reveal-checkbox:checked ~ .game-layout .word-chip {
+    animation: wordBounce 0.4s ease-out backwards;
 }
 
-.reveal-checkbox:checked ~ #grid-after .grid-cell.solved {
-    animation: cellReveal 0.4s ease-out backwards;
-}
+/* Stagger animations for word cards */
+.reveal-checkbox:checked ~ .game-layout .word-blank--revealed:nth-child(1) { animation-delay: 0.05s; }
+.reveal-checkbox:checked ~ .game-layout .word-blank--revealed:nth-child(2) { animation-delay: 0.15s; }
+.reveal-checkbox:checked ~ .game-layout .word-blank--revealed:nth-child(3) { animation-delay: 0.25s; }
+.reveal-checkbox:checked ~ .game-layout .word-blank--revealed:nth-child(4) { animation-delay: 0.35s; }
+.reveal-checkbox:checked ~ .game-layout .word-blank--revealed:nth-child(5) { animation-delay: 0.45s; }
+.reveal-checkbox:checked ~ .game-layout .word-blank--revealed:nth-child(6) { animation-delay: 0.55s; }
+.reveal-checkbox:checked ~ .game-layout .word-blank--revealed:nth-child(7) { animation-delay: 0.65s; }
+.reveal-checkbox:checked ~ .game-layout .word-blank--revealed:nth-child(8) { animation-delay: 0.75s; }
 
-/* Staggered cell reveal animation */
-.grid-cell.solved {
-    opacity: 0;
-    transform: scale(0.5);
+/* Stagger grid cell reveals */
+.reveal-checkbox:checked ~ .game-layout .wend-cell--revealed {
+    animation-delay: calc(var(--cell-delay, 0) * 0.06s);
 }
-
-/* Animation delays will be set inline per cell */
 
 @keyframes revealPuzzle {
     from {
@@ -626,20 +807,16 @@ img {
     }
 }
 
-@keyframes cellReveal {
-    from {
-        opacity: 0;
-        transform: scale(0.5) rotateY(90deg);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1) rotateY(0deg);
-    }
+/* --- Shimmer loading animation --- */
+.shimmer {
+    animation: shimmer 1.5s infinite;
+    background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6, #e5e7eb 75%);
+    background-size: 200% 100%;
 }
 
-@keyframes wordPulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+@keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
 }
 
 /* --- Hints Section --- */
@@ -868,84 +1045,277 @@ img {
 }
 
 /* --- Archive Page --- */
-.archive-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin-top: 2rem;
+.archive-header {
+    padding: 3rem 0 1rem;
+    text-align: center;
 }
 
-.archive-card {
+.archive-header h1 {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--clr-gray-900);
+    margin-bottom: 0.5rem;
+}
+
+.archive-header p {
+    color: var(--clr-gray-500);
+    font-size: 1rem;
+}
+
+/* --- Calendar for Archive --- */
+.calendar-section {
+    padding: 1.5rem 0;
+}
+
+.calendar-wrapper {
     background: white;
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-xl);
     padding: 1.5rem;
+    box-shadow: var(--shadow-lg);
     border: 1px solid var(--clr-gray-200);
-    transition: all 0.2s;
+    max-width: 500px;
+    margin: 0 auto;
 }
 
-.archive-card:hover {
-    border-color: var(--clr-primary-300);
-    box-shadow: var(--shadow-md);
-}
-
-.archive-card .card-title {
+.calendar-nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
 }
 
-.archive-card .card-title h3 {
-    font-size: 1.0625rem;
+.calendar-nav h3 {
+    font-size: 1.125rem;
     font-weight: 700;
-    color: var(--clr-gray-900);
+    color: var(--clr-gray-800);
 }
 
-.archive-card .card-title .puzzle-num {
-    font-size: 0.8125rem;
+.calendar-nav button {
+    background: var(--clr-gray-100);
+    border: 1px solid var(--clr-gray-200);
+    border-radius: var(--radius-md);
+    padding: 0.375rem 0.75rem;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--clr-gray-600);
+    transition: all 0.2s;
+}
+
+.calendar-nav button:hover {
+    background: var(--clr-primary-100);
+    border-color: var(--clr-primary-300);
     color: var(--clr-primary-600);
-    font-weight: 600;
 }
 
-.archive-card .mini-grid {
+.calendar-weekdays {
     display: grid;
+    grid-template-columns: repeat(7, 1fr);
     gap: 2px;
-    margin-bottom: 1rem;
-    max-width: 180px;
+    margin-bottom: 0.5rem;
 }
 
-.archive-card .mini-cell {
+.calendar-weekdays span {
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--clr-gray-400);
+    padding: 0.25rem 0;
+    text-transform: uppercase;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+}
+
+.calendar-day {
     aspect-ratio: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.625rem;
-    font-weight: 700;
-    border-radius: 2px;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--clr-gray-600);
+    cursor: default;
+    transition: all 0.2s;
+    position: relative;
 }
 
-.archive-card .mini-cell.active {
-    background: var(--clr-gray-100);
-    color: var(--clr-gray-700);
-}
-
-.archive-card .mini-cell.blocked {
-    background: var(--clr-gray-200);
-}
-
-.archive-card .words-preview {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.375rem;
-}
-
-.archive-card .words-preview span {
-    padding: 0.25rem 0.5rem;
+.calendar-day--has-puzzle {
     background: var(--clr-primary-50);
     color: var(--clr-primary-700);
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid var(--clr-primary-200);
+}
+
+.calendar-day--has-puzzle:hover {
+    background: var(--clr-primary-100);
+    border-color: var(--clr-primary-400);
+    transform: scale(1.1);
+    box-shadow: var(--shadow-md);
+}
+
+.calendar-day--has-puzzle::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--clr-primary-500);
+}
+
+.calendar-day--empty {
+    color: transparent;
+}
+
+.calendar-day--today {
+    background: var(--clr-primary-600);
+    color: white;
+    border: none;
+}
+
+/* --- Archive Puzzle Detail --- */
+.archive-puzzle-section {
+    display: none;
+    padding: 2rem 0;
+}
+
+.archive-puzzle-section.active {
+    display: block;
+    animation: slideDown 0.3s ease;
+}
+
+.archive-puzzle-detail {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--clr-gray-200);
+}
+
+.archive-puzzle-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--clr-gray-200);
+}
+
+.archive-puzzle-header h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--clr-gray-900);
+}
+
+.archive-puzzle-header .puzzle-date {
+    font-size: 0.875rem;
+    color: var(--clr-gray-500);
+}
+
+/* Archive reveal - CSS only */
+.archive-reveal-checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+.archive-game-container {
+    position: relative;
+}
+
+.archive-grid-before {
+    /* Shows the blank grid */
+}
+
+.archive-grid-after {
+    display: none;
+}
+
+.archive-reveal-checkbox:checked ~ .archive-grid-before {
+    display: none;
+}
+
+.archive-reveal-checkbox:checked ~ .archive-grid-after {
+    display: block;
+    animation: revealPuzzle 0.6s ease-out;
+}
+
+.archive-reveal-checkbox:checked ~ .archive-grid-after .wend-cell--revealed {
+    animation: cellPop 0.28s ease backwards;
+}
+
+.archive-reveal-checkbox:checked ~ .archive-words-before {
+    display: none;
+}
+
+.archive-reveal-checkbox:checked ~ .archive-words-after {
+    display: block;
+}
+
+.archive-reveal-checkbox:checked ~ .archive-reveal-container .archive-reveal-btn {
+    background: linear-gradient(135deg, var(--clr-gray-600), var(--clr-gray-500));
+}
+
+.archive-reveal-checkbox:checked ~ .archive-reveal-container .archive-reveal-show {
+    display: none;
+}
+
+.archive-reveal-checkbox:checked ~ .archive-reveal-container .archive-reveal-hide {
+    display: inline;
+}
+
+.archive-words-after {
+    display: none;
+}
+
+.archive-reveal-container {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.archive-reveal-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.75rem;
+    background: linear-gradient(135deg, var(--clr-primary-600), var(--clr-primary-500));
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
     border-radius: var(--radius-full);
-    font-size: 0.75rem;
-    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 14px rgba(124,58,237,0.4);
+    user-select: none;
+}
+
+.archive-reveal-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(124,58,237,0.5);
+}
+
+.archive-reveal-hide {
+    display: none;
+}
+
+.archive-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+@media (max-width: 768px) {
+    .archive-layout {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* --- How To Play Page --- */
@@ -991,80 +1361,6 @@ img {
     line-height: 1.6;
 }
 
-/* --- Animations for Solved Word Paths --- */
-@keyframes drawPath {
-    from {
-        opacity: 0;
-        transform: scale(0.8);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-/* Path highlight animation for solved cells */
-.grid-cell.solved.path-animate {
-    animation: pathHighlight 0.5s ease-out forwards;
-}
-
-@keyframes pathHighlight {
-    0% {
-        box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4);
-        transform: scale(0.8);
-    }
-    50% {
-        box-shadow: 0 0 0 8px rgba(139, 92, 246, 0);
-        transform: scale(1.1);
-    }
-    100% {
-        box-shadow: none;
-        transform: scale(1);
-    }
-}
-
-/* Connecting line between solved cells (SVG overlay) */
-.grid-svg-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 10;
-}
-
-.grid-svg-overlay path {
-    fill: none;
-    stroke-width: 3;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    opacity: 0.5;
-}
-
-/* --- Word path animation for sequential reveal --- */
-.wend-grid-solved .grid-cell.solved {
-    animation: cellReveal 0.4s ease-out backwards;
-}
-
-/* Staggered animation delay based on word index and cell position */
-.grid-cell.solved.word-0 { animation-delay: calc(var(--cell-delay, 0) * 0.1s); }
-.grid-cell.solved.word-1 { animation-delay: calc(var(--word-1-offset, 0.5s) + var(--cell-delay, 0) * 0.1s); }
-.grid-cell.solved.word-2 { animation-delay: calc(var(--word-2-offset, 1s) + var(--cell-delay, 0) * 0.1s); }
-.grid-cell.solved.word-3 { animation-delay: calc(var(--word-3-offset, 1.5s) + var(--cell-delay, 0) * 0.1s); }
-.grid-cell.solved.word-4 { animation-delay: calc(var(--word-4-offset, 2s) + var(--cell-delay, 0) * 0.1s); }
-
-/* Pulse animation on solved word list items */
-@keyframes wordBounce {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.08); }
-    100% { transform: scale(1); }
-}
-
-.word-list-solved li {
-    animation: wordBounce 0.4s ease-out backwards;
-}
-
 /* --- Page Wrapper --- */
 .page-wrapper {
     display: flex;
@@ -1076,27 +1372,68 @@ img {
     flex: 1;
 }
 
-/* --- Utility Classes --- */
+/* --- Utility --- */
 .text-center { text-align: center; }
 .mt-2 { margin-top: 0.5rem; }
 .mt-4 { margin-top: 1rem; }
 .mb-2 { margin-bottom: 0.5rem; }
 .mb-4 { margin-bottom: 1rem; }
 
-/* --- Responsive Adjustments --- */
+/* --- Responsive --- */
 @media (max-width: 480px) {
-    .wend-grid {
+    .wend-board-wrapper {
         max-width: 320px;
-        padding: 8px;
-        gap: 3px;
     }
-    .grid-cell {
-        font-size: 1rem;
-    }
+
     .hero h1 {
-        font-size: 1.5rem;
+        font-size: 1.375rem;
     }
-    .hero-stats {
-        flex-wrap: wrap;
+
+    .word-chip {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.8125rem;
     }
+
+    .letter-bubble {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+
+    .bubble-letter {
+        font-size: 14px;
+    }
+
+    .calendar-wrapper {
+        padding: 1rem;
+    }
+}
+
+/* Back to calendar link */
+.back-to-calendar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: var(--clr-primary-600);
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.back-to-calendar:hover {
+    color: var(--clr-primary-700);
+}
+
+/* Mini grid for archive puzzle */
+.mini-grid-archive {
+    display: grid;
+    gap: 2px;
+    max-width: 300px;
+    border: 3px solid #333;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
 }
