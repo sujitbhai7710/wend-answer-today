@@ -492,7 +492,7 @@ async function buildArchivePage(allPuzzles, outputDir) {
         const dateDisplay = formatDate(p.date);
 
         return `
-        <div class="archive-puzzle-item" id="archive-puzzle-${p.puzzle_number}" data-puzzle-number="${p.puzzle_number}">
+        <div class="archive-puzzle-item" id="archive-puzzle-${p.puzzle_number}" data-puzzle-number="${p.puzzle_number}" style="display:none;">
             <input type="checkbox" id="archive-reveal-${p.puzzle_number}" class="archive-reveal-checkbox">
             <div class="archive-puzzle-header">
                 <h2>Wend #${p.puzzle_number}</h2>
@@ -513,7 +513,7 @@ async function buildArchivePage(allPuzzles, outputDir) {
                 </div>
                 <div class="game-words-col">
                     <div class="progress-section">
-                        <div class="progress-label">Words found: <span class="progress-count">0 / ${p.words.length}</span></div>
+                        <div class="progress-label">Words found: <span class="progress-count" data-total="${p.words.length}">0 / ${p.words.length}</span></div>
                         <div class="progress-bar"><div class="progress-fill" style="width:0%;"></div></div>
                     </div>
                     <div class="archive-words-before">

@@ -27,24 +27,29 @@
         });
     }
 
-    // Puzzle Picker - scroll to the clicked puzzle in the archive
+    // Puzzle Picker buttons on homepage
     const puzzlePickerBtns = document.querySelectorAll('.puzzle-picker-btn');
     puzzlePickerBtns.forEach(function(btn) {
         btn.addEventListener('click', function() {
-            // Update active state
             puzzlePickerBtns.forEach(function(b) { b.classList.remove('active'); });
             btn.classList.add('active');
-            
-            // If on archive page, scroll to puzzle
-            const puzzleId = btn.getAttribute('data-puzzle-id');
-            if (puzzleId) {
-                const target = document.getElementById(puzzleId);
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    // ===== Update "Words found" counter on reveal toggle =====
+    const revealToggle = document.getElementById('reveal-toggle');
+    if (revealToggle) {
+        revealToggle.addEventListener('change', function() {
+            const progressCount = document.querySelector('.progress-count');
+            if (progressCount) {
+                if (this.checked) {
+                    progressCount.textContent = progressCount.getAttribute('data-total') + ' / ' + progressCount.getAttribute('data-total');
+                } else {
+                    progressCount.textContent = '0 / ' + progressCount.getAttribute('data-total');
                 }
             }
         });
-    });
+    }
 
     // ===== Archive Calendar Logic =====
     const calendarSection = document.querySelector('.calendar-section');
@@ -69,7 +74,6 @@
                 calendarTitle.textContent = monthNames[currentMonth] + ' ' + currentYear;
             }
 
-            // Get first day and total days of month
             const firstDay = new Date(currentYear, currentMonth, 1).getDay();
             const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
             const today = new Date();
@@ -100,8 +104,7 @@
                 if (puzzle) {
                     html += '<div class="calendar-day calendar-day--has-puzzle' + 
                             (isToday ? ' calendar-day--today' : '') + 
-                            '" data-puzzle-number="' + puzzle.puzzle_number + 
-                            '" data-date="' + puzzle.date + '">' + day + '</div>';
+                            '" data-puzzle-number="' + puzzle.puzzle_number + '">' + day + '</div>';
                 } else {
                     html += '<div class="calendar-day' + 
                             (isToday ? ' calendar-day--today' : '') + '">' + day + '</div>';
@@ -114,35 +117,44 @@
             calendarDaysContainer.querySelectorAll('.calendar-day--has-puzzle').forEach(function(el) {
                 el.addEventListener('click', function() {
                     const puzzleNum = this.getAttribute('data-puzzle-number');
-                    const date = this.getAttribute('data-date');
-                    showPuzzle(puzzleNum, date);
+                    showPuzzle(puzzleNum);
                 });
             });
         }
 
-        function showPuzzle(puzzleNum, date) {
-            // Find puzzle in data
-            const puzzle = puzzlesData.find(function(p) {
-                return p.puzzle_number == puzzleNum;
+        function showPuzzle(puzzleNum) {
+            // Instead of replacing HTML, show the pre-rendered puzzle item
+            // Hide all puzzle items first
+            const allItems = document.querySelectorAll('.archive-puzzle-item');
+            allItems.forEach(function(item) {
+                item.style.display = 'none';
             });
 
-            if (!puzzle) return;
+            // Show the selected puzzle item
+            const targetItem = document.getElementById('archive-puzzle-' + puzzleNum);
+            if (targetItem) {
+                targetItem.style.display = 'block';
+            }
 
             // Hide calendar, show puzzle detail
             calendarSection.style.display = 'none';
             puzzleSection.classList.add('active');
 
-            // Populate puzzle detail
-            const detailContainer = puzzleSection.querySelector('.archive-puzzle-detail-content');
-            if (detailContainer) {
-                detailContainer.innerHTML = generatePuzzleDetail(puzzle);
+            // Also update archive reveal counter
+            const archiveToggle = document.getElementById('archive-reveal-' + puzzleNum);
+            if (archiveToggle) {
+                archiveToggle.addEventListener('change', function() {
+                    const archiveProgress = targetItem.querySelector('.progress-count');
+                    if (archiveProgress) {
+                        const total = archiveProgress.getAttribute('data-total');
+                        if (this.checked) {
+                            archiveProgress.textContent = total + ' / ' + total;
+                        } else {
+                            archiveProgress.textContent = '0 / ' + total;
+                        }
+                    }
+                });
             }
-        }
-
-        function generatePuzzleDetail(puzzle) {
-            return '<div class="archive-puzzle-header"><h2>Wend #' + puzzle.puzzle_number + '</h2>' +
-                   '<span class="puzzle-date">' + new Date(puzzle.date).toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'}) + '</span></div>' +
-                   '<p>Puzzle #' + puzzle.puzzle_number + ' has ' + puzzle.words.length + ' words: <strong>' + puzzle.words.join(', ') + '</strong></p>';
         }
 
         // Back to calendar
