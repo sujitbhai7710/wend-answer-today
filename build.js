@@ -60,8 +60,22 @@ function getDirection(prevCell, currCell, nextCell) {
 // Grid cell generation
 // =========================================================
 
-// BEFORE reveal: letter cells with white background
-function generateGridCells(grid, rows, cols) {
+// BEFORE reveal: letter cells with white background, matching thewordfinder.com
+function generateGridCells(grid, rows, cols, wordCells) {
+    // Build a map of which word color each cell belongs to (for --word-color on letter cells)
+    const cellColorMap = {};
+    if (wordCells) {
+        wordCells.forEach((word, wordIdx) => {
+            const color = wordColor(wordIdx);
+            word.cells.forEach((cell) => {
+                const key = `${cell.row},${cell.col}`;
+                if (!(key in cellColorMap)) {
+                    cellColorMap[key] = color;
+                }
+            });
+        });
+    }
+
     let html = '';
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
@@ -69,8 +83,10 @@ function generateGridCells(grid, rows, cols) {
             if (cell.isBlocked) {
                 html += `<div class="wend-cell wend-cell--blocked" data-row="${r}" data-col="${c}" aria-hidden="true"></div>`;
             } else {
-                html += `<button class="wend-cell wend-cell--letter" data-row="${r}" data-col="${c}" aria-label="Letter hidden">
-                    <span class="cell-letter">${cell.letter}</span>
+                const key = `${r},${c}`;
+                const wordColorStyle = cellColorMap[key] ? `--word-color:${cellColorMap[key]};` : '';
+                html += `<button class="wend-cell wend-cell--letter" data-row="${r}" data-col="${c}" style="${wordColorStyle}" aria-label="${cell.letter} — hidden">
+                    <span class="cell-letter cell-letter--hidden"> ${cell.letter} </span>
                 </button>`;
             }
         }
@@ -167,11 +183,32 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
 
                 // Circle for first letter
                 if (cellIsFirst[key]) {
-                    inner += `<span class="cell-circle" style="border-color:${color};"></span>`;
+                    inner += `<span class="cell-circle" style="border-color:${color};outline-color:color-mix(in srgb, ${color} 22%, white);"></span>`;
                     inner += `<span class="cell-check-badge" style="background:${color};">&#10003;</span>`;
                 }
 
-                html += `<div class="wend-cell wend-cell--revealed" data-row="${r}" data-col="${c}" style="--word-color:${color};--cell-delay:${delay};" aria-label="${cell.letter} — revealed">${inner}</div>`;
+                // Direction arrow for last cell of each word
+                if (cellIsLast[key]) {
+                    // Find the direction from second-to-last to last cell
+                    const word = wordCells[wordIdx];
+                    const lastIdx = word.cells.length - 1;
+                    const prev = word.cells[lastIdx - 1];
+                    const curr = word.cells[lastIdx];
+                    if (prev) {
+                        const dr = curr.row - prev.row;
+                        const dc = curr.col - prev.col;
+                        let arrowDir = '';
+                        if (dc > 0) arrowDir = 'right';
+                        else if (dc < 0) arrowDir = 'left';
+                        else if (dr > 0) arrowDir = 'down';
+                        else if (dr < 0) arrowDir = 'up';
+                        if (arrowDir) {
+                            inner += `<span class="cell-arrow cell-arrow--${arrowDir}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 16l-6-6h12z"/></svg></span>`;
+                        }
+                    }
+                }
+
+                html += `<div class="wend-cell wend-cell--revealed wend-cell--pulse" data-row="${r}" data-col="${c}" style="--word-color:${color};--cell-delay:${delay};" aria-label="${cell.letter} — revealed">${inner}</div>`;
             } else {
                 html += `<div class="wend-cell wend-cell--letter" data-row="${r}" data-col="${c}">
                     <span class="cell-letter">${cell.letter}</span>
@@ -417,13 +454,12 @@ async function buildSite() {
         '{{GRID_COLS}}': puzzle.cols,
         '{{GRID_ROWS}}': puzzle.rows,
         '{{WORD_CHIPS}}': generateWordChips(puzzle.words),
-        '{{GRID_CELLS}}': generateGridCells(puzzle.grid, puzzle.rows, puzzle.cols),
+        '{{GRID_CELLS}}': generateGridCells(puzzle.grid, puzzle.rows, puzzle.cols, puzzle.word_cells),
         '{{GRID_CELLS_SOLVED}}': generateSolvedGridCells(puzzle.grid, puzzle.word_cells, puzzle.rows, puzzle.cols),
         '{{WORD_CARDS_BEFORE}}': generateWordCardsBefore(puzzle.words),
         '{{WORD_CARDS_AFTER}}': generateWordCardsAfter(puzzle.words, puzzle.word_cells),
         '{{HINTS_CONTENT}}': generateHints(puzzle.words, puzzle.puzzle_number),
         '{{RECENT_PUZZLES}}': generateRecentPuzzles(allPuzzles),
-        '{{PUZZLE_PICKER_BUTTONS}}': generatePuzzlePickerButtons(puzzle.puzzle_number, allPuzzles),
     };
 
     // Apply replacements
@@ -484,7 +520,7 @@ async function buildArchivePage(allPuzzles, outputDir) {
 
     // Generate puzzle detail HTML for each puzzle (shown by default, with reveal toggle)
     const puzzleDetailsHtml = fullPuzzles.map(p => {
-        const gridBefore = generateGridCells(p.grid, p.rows, p.cols);
+        const gridBefore = generateGridCells(p.grid, p.rows, p.cols, p.word_cells);
         const gridAfter = generateSolvedGridCells(p.grid, p.word_cells, p.rows, p.cols);
         const wordsBefore = generateWordCardsBefore(p.words);
         const wordsAfter = generateWordCardsAfter(p.words, p.word_cells);
@@ -501,15 +537,17 @@ async function buildArchivePage(allPuzzles, outputDir) {
             <div class="archive-layout">
                 <div class="game-board-col">
                     <div class="archive-grid-before">
-                        <div class="wend-board-wrapper" style="--grid-cols:${p.cols};--grid-rows:${p.rows};">
+                        <div class="wend-board-wrapper" style="grid-template-columns: repeat(${p.cols}, 1fr); grid-template-rows: repeat(${p.rows}, 1fr);">
                             ${gridBefore}
                         </div>
                     </div>
                     <div class="archive-grid-after">
-                        <div class="wend-board-wrapper wend-board-solved" style="--grid-cols:${p.cols};--grid-rows:${p.rows};">
+                        <div class="wend-board-wrapper wend-board-solved" style="grid-template-columns: repeat(${p.cols}, 1fr); grid-template-rows: repeat(${p.rows}, 1fr);">
                             ${gridAfter}
                         </div>
                     </div>
+                    <p class="board-instruction archive-instruction-before"><b>Click any letter</b> to reveal where it belongs within its word.</p>
+                    <p class="board-instruction revealed-text archive-instruction-after">All words revealed!</p>
                 </div>
                 <div class="game-words-col">
                     <div class="progress-section">
@@ -548,7 +586,11 @@ async function buildArchivePage(allPuzzles, outputDir) {
         #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .archive-words-after { display: block; }
         #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .wend-words-label { display: block; }
         #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .progress-fill { width: 100% !important; }
-        #archive-reveal-${p.puzzle_number}:checked ~ .archive-reveal-container .archive-reveal-btn { background: linear-gradient(135deg, #6b7280, #9ca3af); box-shadow: 0 4px 14px rgba(107, 114, 128, 0.3); }
+        #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .archive-instruction-before { display: none; }
+        #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .archive-instruction-after { display: block; }
+        #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .word-blank--revealed { animation: wordSlideDown 0.4s ease backwards; animation-delay: calc(var(--card-delay, 0) * 0.12s); }
+        #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .letter-bubble--revealed { animation: bubbleBounce 0.3s ease backwards; animation-delay: calc(var(--bubble-delay, 0) * 0.08s); }
+        #archive-reveal-${p.puzzle_number}:checked ~ .archive-reveal-container .archive-reveal-btn { background: #fff; border-color: var(--clr-grey-900); color: var(--clr-grey-900); }
         #archive-reveal-${p.puzzle_number}:checked ~ .archive-reveal-container .archive-reveal-show { display: none; }
         #archive-reveal-${p.puzzle_number}:checked ~ .archive-reveal-container .archive-reveal-hide { display: inline; }`;
     }).join('\n');

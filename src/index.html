@@ -66,15 +66,6 @@
                 </div>
             </section>
 
-            <!-- Puzzle Picker -->
-            <section class="puzzle-picker-section">
-                <div class="container">
-                    <div class="puzzle-picker">
-                        {{PUZZLE_PICKER_BUTTONS}}
-                    </div>
-                </div>
-            </section>
-
             <!-- Game Section -->
             <section class="game-section">
                 <div class="container">
@@ -88,20 +79,20 @@
                             <div class="game-board-col">
                                 <!-- Before reveal grid -->
                                 <div class="grid-view" id="grid-before">
-                                    <div class="wend-board-wrapper" id="wend-grid" style="--grid-cols: {{GRID_COLS}}; --grid-rows: {{GRID_ROWS}};">
+                                    <div class="wend-board-wrapper" id="wend-grid" style="grid-template-columns: repeat({{GRID_COLS}}, 1fr); grid-template-rows: repeat({{GRID_ROWS}}, 1fr);">
                                         {{GRID_CELLS}}
                                     </div>
                                 </div>
 
                                 <!-- After reveal grid -->
                                 <div class="grid-view grid-view-revealed" id="grid-after">
-                                    <div class="wend-board-wrapper wend-board-solved" id="wend-grid-solved" style="--grid-cols: {{GRID_COLS}}; --grid-rows: {{GRID_ROWS}};">
+                                    <div class="wend-board-wrapper wend-board-solved" id="wend-grid-solved" style="grid-template-columns: repeat({{GRID_COLS}}, 1fr); grid-template-rows: repeat({{GRID_ROWS}}, 1fr);">
                                         {{GRID_CELLS_SOLVED}}
                                     </div>
                                 </div>
 
-                                <!-- Click instruction -->
-                                <p class="board-instruction" id="board-instruction">Click any letter to reveal</p>
+                                <!-- Click instruction (matches thewordfinder.com) -->
+                                <p class="board-instruction" id="board-instruction"><b>Click any letter</b> to reveal where it belongs within its word.</p>
                                 <p class="board-instruction revealed-text" id="board-instruction-revealed">All words revealed!</p>
 
                                 <!-- Reveal / Clear buttons -->
