@@ -1,6 +1,8 @@
 name: Daily Wend Puzzle Update
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
   schedule:
     - cron: '1 8 * * *'
