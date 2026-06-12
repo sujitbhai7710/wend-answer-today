@@ -25,7 +25,7 @@
     --word-bg-6: #D8CEE6;
     --word-bg-7: #C4E8E4;
 
-    --clr-bg: #f5f6f8;
+    --clr-bg: #ffffff;
     --clr-white: #ffffff;
     --clr-blocked: #b0b0b0;
     --clr-border: #c8c8c8;
@@ -229,7 +229,7 @@ button { cursor: pointer; font-family: inherit; }
     width: 100%;
     max-width: 420px;
     aspect-ratio: 1;
-    border: 4px solid #222;
+    border: 5px solid #1a1a1a;
     border-radius: 10px;
     overflow: hidden;
     gap: 0;
