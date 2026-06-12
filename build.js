@@ -10,16 +10,16 @@ const path = require('path');
 const WORKER_URL = process.env.WORKER_URL || 'https://wend-api-worker.wendapi.workers.dev';
 const API_KEY = process.env.WORKER_API_KEY || '';
 
-// Word colors - PASTEL/SOFT matching thewordfinder.com palette
+// Word colors - vibrant but clean matching thewordfinder.com
 const WORD_COLORS = [
-    '#F4845F',  // Soft coral/orange
-    '#E56399',  // Soft pink/rose
-    '#7EC8E3',  // Soft sky blue
-    '#A8D8B9',  // Soft mint green
-    '#7FB5E5',  // Soft medium blue
-    '#F7B267',  // Soft golden orange
-    '#B8A9C9',  // Soft lavender
-    '#7EC8C4',  // Soft teal
+    '#F06030',  // Vibrant coral/orange
+    '#E0408A',  // Vibrant pink/rose
+    '#40A8D0',  // Vibrant sky blue
+    '#68C060',  // Vibrant mint green
+    '#5080D0',  // Vibrant blue
+    '#F09030',  // Vibrant golden orange
+    '#9878C0',  // Vibrant lavender
+    '#40B0A8',  // Vibrant teal
 ];
 
 // Pastel background colors for grid cells (lighter but visible)
@@ -332,7 +332,7 @@ function isLightColor(hex) {
     const g = parseInt(hex.slice(3, 5), 16);
     const b = parseInt(hex.slice(5, 7), 16);
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    return luminance > 0.65;
+    return luminance > 0.5;
 }
 
 // =========================================================

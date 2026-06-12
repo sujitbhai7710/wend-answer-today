@@ -5,15 +5,15 @@
 
 /* --- CSS Variables --- */
 :root {
-    /* Word colors - PASTEL/SOFT matching thewordfinder.com */
-    --word-0: #F4845F;  /* Soft coral/orange */
-    --word-1: #E56399;  /* Soft pink/rose */
-    --word-2: #7EC8E3;  /* Soft sky blue */
-    --word-3: #A8D8B9;  /* Soft mint green */
-    --word-4: #7FB5E5;  /* Soft medium blue */
-    --word-5: #F7B267;  /* Soft golden orange */
-    --word-6: #B8A9C9;  /* Soft lavender */
-    --word-7: #7EC8C4;  /* Soft teal */
+    /* Word colors - vibrant but clean matching thewordfinder.com */
+    --word-0: #F06030;  /* Vibrant coral/orange */
+    --word-1: #E0408A;  /* Vibrant pink/rose */
+    --word-2: #40A8D0;  /* Vibrant sky blue */
+    --word-3: #68C060;  /* Vibrant mint green */
+    --word-4: #5080D0;  /* Vibrant blue */
+    --word-5: #F09030;  /* Vibrant golden orange */
+    --word-6: #9878C0;  /* Vibrant lavender */
+    --word-7: #40B0A8;  /* Vibrant teal */
 
     /* Pastel backgrounds for grid cells (lighter but visible) */
     --word-bg-0: #FCCEC0;
