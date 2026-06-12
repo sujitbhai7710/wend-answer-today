@@ -22,16 +22,16 @@ const WORD_COLORS = [
     '#7EC8C4',  // Soft teal
 ];
 
-// Pastel background colors for grid cells (lighter versions)
+// Pastel background colors for grid cells (lighter but visible)
 const WORD_BG_COLORS = [
-    '#FDE8DF',
-    '#F9E0EA',
-    '#E0F0F8',
-    '#E2F3E8',
-    '#DFEDF8',
-    '#FEF0DA',
-    '#EDE8F3',
-    '#E0F2F0',
+    '#FCCEC0',  // orange tint
+    '#F5C2D6',  // pink tint
+    '#C4E4F4',  // blue tint
+    '#C8E8D2',  // green tint
+    '#C6DAF0',  // medium blue tint
+    '#FAE0B0',  // golden tint
+    '#D8CEE6',  // lavender tint
+    '#C4E8E4',  // teal tint
 ];
 
 function wordColor(idx) {
