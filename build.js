@@ -241,9 +241,10 @@ function generateWordCardsBefore(words) {
 function generateWordCardsAfter(words, wordCells) {
     return words.map((word, idx) => {
         const color = wordColor(idx);
+        const textColor = isLightColor(color) ? '#1a1a1a' : '#ffffff';
         const bubbles = word.split('').map((letter, li) =>
-            `<div class="letter-bubble letter-bubble--revealed" style="background:${color};--bubble-delay:${li};">
-                <span class="bubble-letter">${letter}</span>
+            `<div class="letter-bubble letter-bubble--revealed" style="background:${color};color:${textColor};--bubble-delay:${li};">
+                <span class="bubble-letter" style="color:${textColor};">${letter}</span>
             </div>`
         ).join('');
 
@@ -297,12 +298,12 @@ function generateHints(words, puzzleNumber) {
         {
             num: 1,
             title: 'Start with Short Words',
-            text: `Begin by scanning the grid for the shortest word (${words[0]}, ${words[0].length} letters). Short words are typically easier to spot and give you anchor points for finding longer words.`
+            text: `Begin by scanning the grid for the shortest word (${words[0].length} letters). Short words are typically easier to spot and give you anchor points for finding longer words.`
         },
         {
             num: 2,
             title: 'Follow the Path',
-            text: `Each word in Wend changes direction as it winds through the grid. Once you find the first letter of a word, trace adjacent cells to find the complete path. The word "${words[words.length - 1]}" (${words[words.length - 1].length} letters) is the longest — save it for last.`
+            text: `Each word in Wend changes direction as it winds through the grid. Once you find the first letter of a word, trace adjacent cells to find the complete path. The longest word has ${words[words.length - 1].length} letters — save it for last.`
         },
         {
             num: 3,
@@ -332,7 +333,9 @@ function generateHints(words, puzzleNumber) {
 // =========================================================
 
 function generateRecentPuzzles(puzzles) {
-    return puzzles.slice(0, 6).map(p => {
+    // Skip the first (latest) puzzle to avoid spoiling today's answer on the homepage
+    // Show puzzles #2 onwards (older puzzles only)
+    return puzzles.slice(1, 7).map(p => {
         const dateShort = formatDateShort(p.date);
         const wordsArr = Array.isArray(p.words) ? p.words : JSON.parse(p.words);
         const wordsHtml = wordsArr.slice(0, 3).map(w =>
