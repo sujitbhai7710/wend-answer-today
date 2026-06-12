@@ -1,0 +1,17 @@
+name = "wend-api-worker"
+main = "index.js"
+compatibility_date = "2024-12-01"
+
+[vars]
+GH_REPO = "sujitbhai7710/wend-answer-today"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "wend-game-db"
+database_id = "32480e2b-b712-47a3-8d04-caa665c3a183"
+
+[triggers]
+crons = ["1 8 * * *"]
+
+[observability]
+enabled = true

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <meta name="theme-color" content="#7c3aed">
+    <meta name="color-scheme" content="light">
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1">
+    <meta name="author" content="Wend Answer Today">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Wend Answer Today">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="canonical" href="https://wendanswertoday.online">
+    <title>LinkedIn Wend Answer Today - Updated Daily</title>
+    <meta name="description" content="{{META_DESCRIPTION}}">
+    <meta name="keywords" content="linkedin wend answer today, linkedin wend game, wend puzzle answers, linkedin wend hints, linkedin wend solutions, daily wend answer, wend word search">
+    <meta property="og:title" content="LinkedIn Wend Answer Today - Updated Daily">
+    <meta property="og:description" content="{{META_DESCRIPTION}}">
+    <meta property="og:image" content="https://wendanswertoday.online/images/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://wendanswertoday.online">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="LinkedIn Wend Answer Today - Updated Daily">
+    <meta name="twitter:description" content="{{META_DESCRIPTION}}">
+    <meta name="twitter:image" content="https://wendanswertoday.online/images/og-image.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <script type="application/ld+json">{{SCHEMA_JSON}}</script>
+</head>
+<body>
+    <div class="page-wrapper">
+        <!-- Header -->
+        <header class="site-header">
+            <div class="container">
+                <a href="/" class="site-logo" aria-label="Wend Answer Today - Home">
+                    <span class="logo-icon" aria-hidden="true">W</span>
+                    <span class="logo-text">Wend Answers</span>
+                </a>
+                <nav class="nav-links" aria-label="Main navigation">
+                    <a href="/" class="active" aria-current="page">Home</a>
+                    <a href="/archive.html">Archive</a>
+                    <a href="/how-to-play.html">How to Play</a>
+                </nav>
+                <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="mobile-menu" id="mobile-menu">
+                <a href="/">Home</a>
+                <a href="/archive.html">Archive</a>
+                <a href="/how-to-play.html">How to Play</a>
+            </div>
+        </header>
+
+        <main class="page-content">
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="container">
+                    <div class="hero-grid">
+                        <div class="hero-text">
+                            <div class="hero-badge">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                                Updated for Puzzle #{{PUZZLE_NUMBER}}
+                            </div>
+                            <h1>LinkedIn Wend Answer Today <span class="date-highlight">({{DATE_DISPLAY}})</span></h1>
+                            <div class="hero-accent"></div>
+                            <p class="hero-desc">See today's Wend puzzle answers with the full word list, grid walkthrough, and hints for puzzle #{{PUZZLE_NUMBER}}.</p>
+                            <div class="hero-stats">
+                                <div class="hero-stat">
+                                    <div class="hero-stat-value">{{WORD_COUNT}}</div>
+                                    <div class="hero-stat-label">Words</div>
+                                </div>
+                                <div class="hero-stat">
+                                    <div class="hero-stat-value">{{GRID_SIZE}}</div>
+                                    <div class="hero-stat-label">Grid</div>
+                                </div>
+                                <div class="hero-stat">
+                                    <div class="hero-stat-value">Daily</div>
+                                    <div class="hero-stat-label">Updates</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hero-card-wrapper">
+                            <div class="hero-card">
+                                <div class="hero-card-header">
+                                    <h3>Wend #{{PUZZLE_NUMBER}} Words</h3>
+                                    <div class="date-badge">{{DATE_SHORT}}</div>
+                                </div>
+                                <div class="hero-card-words">
+                                    {{WORD_CHIPS}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Game Grid Section -->
+            <section class="game-section">
+                <div class="container">
+                    <h2 class="section-title">Today's Wend Puzzle Grid</h2>
+                    <p class="section-desc">The grid below shows the Wend word search puzzle. Click "Reveal Answer" to see the solution with color-coded word paths.</p>
+                    
+                    <div class="game-container">
+                        <!-- Before Reveal: Plain Grid -->
+                        <div class="grid-view" id="grid-before">
+                            <div class="wend-grid" id="wend-grid" style="--grid-cols: {{GRID_COLS}}; --grid-rows: {{GRID_ROWS}};">
+                                {{GRID_CELLS}}
+                            </div>
+                            <div class="word-list-plain">
+                                <h3>Words to Find</h3>
+                                <ul>
+                                    {{WORD_LIST_PLAIN}}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- After Reveal: Solved Grid with Animation -->
+                        <div class="grid-view grid-view-revealed" id="grid-after">
+                            <div class="wend-grid wend-grid-solved" id="wend-grid-solved" style="--grid-cols: {{GRID_COLS}}; --grid-rows: {{GRID_ROWS}};">
+                                {{GRID_CELLS_SOLVED}}
+                            </div>
+                            <div class="word-list-solved">
+                                <h3>Solved Words</h3>
+                                <ul>
+                                    {{WORD_LIST_SOLVED}}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- CSS-only Reveal Button -->
+                        <div class="reveal-container">
+                            <input type="checkbox" id="reveal-toggle" class="reveal-checkbox" aria-label="Reveal answer">
+                            <label for="reveal-toggle" class="reveal-btn">
+                                <span class="reveal-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </span>
+                                <span class="reveal-text-show">Reveal Answer</span>
+                                <span class="reveal-text-hide">Hide Answer</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Hints Section -->
+            <section class="hints-section">
+                <div class="container">
+                    <h2 class="section-title">Wend Hints & Tips</h2>
+                    <div class="hints-grid">
+                        {{HINTS_CONTENT}}
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Puzzles Section -->
+            <section class="recent-section">
+                <div class="container">
+                    <h2 class="section-title">Recent Wend Puzzles</h2>
+                    <div class="recent-grid">
+                        {{RECENT_PUZZLES}}
+                    </div>
+                </div>
+            </section>
+
+            <!-- FAQ Section -->
+            <section class="faq-section">
+                <div class="container">
+                    <h2 class="section-title">Frequently Asked Questions</h2>
+                    <div class="faq-list">
+                        <div class="faq-item">
+                            <h3 class="faq-question">What is LinkedIn Wend?</h3>
+                            <p class="faq-answer">LinkedIn Wend is a free daily word search game from LinkedIn. Each day, a new puzzle invites you to connect letters in a grid and uncover hidden words. The words wind through the grid, changing direction as they go, which is why the game is called "Wend" — meaning to travel along a winding course.</p>
+                        </div>
+                        <div class="faq-item">
+                            <h3 class="faq-question">How often are new Wend puzzles released?</h3>
+                            <p class="faq-answer">New LinkedIn Wend puzzles are released daily at 1:30 PM IST (Indian Standard Time). Our site updates automatically at 1:31 PM IST with the latest answers and explanations, so you always have access to the solution right after the new puzzle goes live.</p>
+                        </div>
+                        <div class="faq-item">
+                            <h3 class="faq-question">Are the answers on this site accurate?</h3>
+                            <p class="faq-answer">Yes. Every answer is verified against the official LinkedIn Wend game before posting. We use automated tools to extract the puzzle data directly from the game, ensuring 100% accuracy for every word and cell position.</p>
+                        </div>
+                        <div class="faq-item">
+                            <h3 class="faq-question">Is this site affiliated with LinkedIn?</h3>
+                            <p class="faq-answer">No. We are an independent resource. This site is not affiliated with, endorsed by, or connected to LinkedIn or Microsoft. We simply provide answers and hints for the Wend game to help players who are stuck.</p>
+                        </div>
+                        <div class="faq-item">
+                            <h3 class="faq-question">How do I play LinkedIn Wend?</h3>
+                            <p class="faq-answer">In Wend, you need to find hidden words in a letter grid. Each word winds through the grid, changing direction as it goes. Start by finding short words (3-4 letters) first, as they are usually easier to spot. Look for uncommon letter combinations that might signal the start of a longer word. The words always connect adjacent cells — horizontally, vertically, or they can change direction mid-word.</p>
+                        </div>
+                        <div class="faq-item">
+                            <h3 class="faq-question">What time does the new Wend puzzle come out?</h3>
+                            <p class="faq-answer">New LinkedIn Wend puzzles are released daily at 1:30 PM IST (Indian Standard Time), which is 8:00 AM UTC / 4:00 AM EDT. Our answers are typically posted by 1:31 PM IST each day, just one minute after the new puzzle becomes available.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-brand">
+                        <span class="logo-icon" aria-hidden="true">W</span>
+                        <span class="logo-text">Wend Answers</span>
+                        <p>Daily answers and hints for the LinkedIn Wend word search game.</p>
+                    </div>
+                    <div class="footer-links">
+                        <h4>Quick Links</h4>
+                        <a href="/">Today's Answer</a>
+                        <a href="/archive.html">Archive</a>
+                        <a href="/how-to-play.html">How to Play</a>
+                    </div>
+                    <div class="footer-legal">
+                        <h4>Legal</h4>
+                        <p>This site is not affiliated with LinkedIn or Microsoft.</p>
+                        <p>LinkedIn and Wend are trademarks of LinkedIn Corporation.</p>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2026 Wend Answer Today. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="/js/app.js" defer></script>
+</body>
+</html>

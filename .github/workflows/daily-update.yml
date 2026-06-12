@@ -1,0 +1,58 @@
+name: Daily Wend Puzzle Update
+
+on:
+  # Manual trigger
+  workflow_dispatch:
+  # Scheduled: 1:31 PM IST = 08:01 UTC
+  schedule:
+    - cron: '1 8 * * *'
+
+env:
+  WORKER_URL: ${{ secrets.WORKER_URL }}
+  WORKER_API_KEY: ${{ secrets.WORKER_API_KEY }}
+  CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+  CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+
+jobs:
+  scrape-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install Playwright
+        run: npx playwright install chromium --with-deps
+        working-directory: scraper
+      
+      - name: Scrape latest Wend puzzle
+        run: node scrape-wend.js
+        working-directory: scraper
+        env:
+          WORKER_URL: ${{ secrets.WORKER_URL }}
+          WORKER_API_KEY: ${{ secrets.WORKER_API_KEY }}
+      
+      - name: Build site
+        run: npm run build
+        env:
+          WORKER_URL: ${{ secrets.WORKER_URL }}
+          WORKER_API_KEY: ${{ secrets.WORKER_API_KEY }}
+      
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          projectName: wend-answer-today
+          directory: dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
