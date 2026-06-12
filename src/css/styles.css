@@ -1,29 +1,39 @@
 /* ================================================
    Wend Answer Today - Matching thewordfinder.com
-   Bright, vibrant, polished design
+   Pastel, clean, soft design with rounded rectangles
    ================================================ */
 
 /* --- CSS Variables --- */
 :root {
-    /* Word colors - bright and vibrant matching thewordfinder.com */
-    --word-0: #E8572A;
-    --word-1: #D4449A;
-    --word-2: #00B5B0;
-    --word-3: #8DC63F;
-    --word-4: #4A90D9;
-    --word-5: #F5A623;
-    --word-6: #9B59B6;
-    --word-7: #26C0A6;
+    /* Word colors - PASTEL/SOFT matching thewordfinder.com */
+    --word-0: #F4845F;  /* Soft coral/orange */
+    --word-1: #E56399;  /* Soft pink/rose */
+    --word-2: #7EC8E3;  /* Soft sky blue */
+    --word-3: #A8D8B9;  /* Soft mint green */
+    --word-4: #7FB5E5;  /* Soft medium blue */
+    --word-5: #F7B267;  /* Soft golden orange */
+    --word-6: #B8A9C9;  /* Soft lavender */
+    --word-7: #7EC8C4;  /* Soft teal */
 
-    --clr-bg: #ffffff;
+    /* Pastel backgrounds for grid cells (lighter versions) */
+    --word-bg-0: #FDE8DF;
+    --word-bg-1: #F9E0EA;
+    --word-bg-2: #E0F0F8;
+    --word-bg-3: #E2F3E8;
+    --word-bg-4: #DFEDF8;
+    --word-bg-5: #FEF0DA;
+    --word-bg-6: #EDE8F3;
+    --word-bg-7: #E0F2F0;
+
+    --clr-bg: #f5f6f8;
     --clr-white: #ffffff;
-    --clr-blocked: #a8a8a8;
-    --clr-border: #2d2d2d;
-    --clr-text: #1a1a1a;
+    --clr-blocked: #b0b0b0;
+    --clr-border: #c8c8c8;
+    --clr-text: #2d2d2d;
     --clr-text-muted: #6b7280;
     --clr-card-border: #e0e0db;
-    --clr-primary-600: #017f70;
-    --clr-primary-700: #016d60;
+    --clr-primary: #5B9BD5;
+    --clr-primary-dark: #4A89C4;
     --clr-grey-900: #1f2933;
     --clr-grey-700: #4b5563;
     --clr-grey-500: #6b7280;
@@ -31,13 +41,14 @@
     --clr-grey-200: #e5e7eb;
     --clr-grey-100: #f3f4f6;
 
-    --font-family: 'Inter', ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-    --radius-md: 0.5rem;
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
     --radius-full: 9999px;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-    --shadow-md: 0 4px 14px rgba(0,0,0,0.1);
-    --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
-    --transition: 0.15s;
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.08);
+    --shadow-hover: 0 4px 16px rgba(0,0,0,0.12);
+    --transition: 0.2s ease;
 }
 
 /* --- Reset & Base --- */
@@ -76,7 +87,6 @@ button { cursor: pointer; font-family: inherit; }
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
 .header-inner {
     display: flex;
@@ -95,7 +105,7 @@ button { cursor: pointer; font-family: inherit; }
 .logo-icon {
     width: 30px;
     height: 30px;
-    background: linear-gradient(135deg, #14b8a6, #22c55e);
+    background: var(--clr-primary);
     color: #fff;
     border-radius: 8px;
     display: flex;
@@ -151,25 +161,25 @@ button { cursor: pointer; font-family: inherit; }
 
 /* --- Page Title --- */
 .page-title-section {
-    padding: 16px 0 4px;
+    padding: 20px 0 8px;
     text-align: center;
 }
 .page-title {
-    font-size: clamp(1.1rem, 3.5vw, 1.5rem);
-    font-weight: 800;
-    letter-spacing: -0.03em;
+    font-size: clamp(1.15rem, 3.5vw, 1.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
     color: var(--clr-text);
-    line-height: 1.2;
+    line-height: 1.25;
 }
 .page-subtitle {
     font-size: 0.875rem;
-    color: var(--clr-grey-700);
-    margin-top: 2px;
+    color: var(--clr-grey-500);
+    margin-top: 4px;
 }
 
 /* --- Game Container --- */
 .game-section {
-    padding: 8px 0 20px;
+    padding: 8px 0 24px;
 }
 .game-container {
     position: relative;
@@ -194,8 +204,8 @@ button { cursor: pointer; font-family: inherit; }
 }
 @media (min-width: 768px) {
     .game-layout {
-        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-        gap: 28px;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+        gap: 32px;
     }
 }
 
@@ -217,14 +227,14 @@ button { cursor: pointer; font-family: inherit; }
 .wend-board-wrapper {
     display: grid;
     width: 100%;
-    max-width: 480px;
+    max-width: 420px;
     aspect-ratio: 1;
-    border: 4px solid #222;
-    border-radius: 12px;
+    border: 3px solid #555;
+    border-radius: 10px;
     overflow: hidden;
     gap: 0;
     background: #fff;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15), 0 1px 4px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
 }
 
 /* --- Grid Cells --- */
@@ -235,6 +245,7 @@ button { cursor: pointer; font-family: inherit; }
     aspect-ratio: 1;
     position: relative;
     overflow: visible;
+    border: 0.5px solid rgba(200,200,200,0.6);
 }
 .wend-cell--blocked {
     background: var(--clr-blocked);
@@ -250,24 +261,21 @@ button { cursor: pointer; font-family: inherit; }
     cursor: pointer;
     font-family: inherit;
     box-sizing: border-box;
-    box-shadow: inset 1px 0 #ddd, inset -1px 0 #ddd, inset 0 1px #ddd, inset 0 -1px #ddd;
-    transition: background 0.15s ease;
+    border: 0.5px solid rgba(200,200,200,0.6);
+    transition: background 0.2s ease;
 }
 .wend-cell--letter:hover {
-    background: #f8f8f5 !important;
+    background: #f5f5f2 !important;
 }
 .wend-cell--revealed {
-    background: color-mix(in srgb, var(--word-color) 65%, white) !important;
-    box-shadow: none;
-}
-.wend-cell--revealed:hover {
-    filter: brightness(1.06);
+    background: var(--word-bg-color, color-mix(in srgb, var(--word-color) 25%, white)) !important;
+    border-color: color-mix(in srgb, var(--word-color) 30%, white);
 }
 
 /* Cell pop animation */
 @keyframes cellPop {
-    0% { transform: scale(0.82); opacity: 0.6; }
-    55% { transform: scale(1.06); }
+    0% { transform: scale(0.85); opacity: 0.6; }
+    55% { transform: scale(1.04); }
     100% { transform: scale(1); opacity: 1; }
 }
 .wend-cell--pulse {
@@ -276,18 +284,18 @@ button { cursor: pointer; font-family: inherit; }
 
 /* Cell letter styling */
 .cell-letter {
-    font-size: clamp(17px, 5.5vw, 28px);
-    font-weight: 900;
+    font-size: clamp(16px, 5vw, 26px);
+    font-weight: 700;
     line-height: 1;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     user-select: none;
     pointer-events: none;
     position: relative;
     z-index: 4;
-    color: #1a1a1a;
+    color: #2d2d2d;
 }
 .cell-letter--hidden {
-    color: #1a1a1a;
+    color: #2d2d2d;
 }
 
 /* --- Tube connectors --- */
@@ -297,33 +305,33 @@ button { cursor: pointer; font-family: inherit; }
     pointer-events: none;
 }
 .cell-tube-h {
-    top: 20%;
-    bottom: 20%;
+    top: 25%;
+    bottom: 25%;
 }
 .cell-tube-v {
-    left: 20%;
-    right: 20%;
+    left: 25%;
+    right: 25%;
 }
 
 /* --- Cell circle (first letter indicator) --- */
 .cell-circle {
     position: absolute;
-    width: 60%;
-    height: 60%;
+    width: 58%;
+    height: 58%;
     border-radius: 50%;
     z-index: 2;
     pointer-events: none;
-    outline: 7px solid color-mix(in srgb, var(--word-color) 65%, white);
-    border: 4px solid var(--word-color);
+    outline: 5px solid var(--word-bg-color, color-mix(in srgb, var(--word-color) 25%, white));
+    border: 3px solid var(--word-color);
 }
 
 /* --- Check badge on first cell --- */
 .cell-check-badge {
     position: absolute;
-    top: 4%;
-    left: 4%;
-    width: 28%;
-    height: 28%;
+    top: 5%;
+    left: 5%;
+    width: 24%;
+    height: 24%;
     min-width: 12px;
     min-height: 12px;
     border-radius: 50%;
@@ -333,16 +341,16 @@ button { cursor: pointer; font-family: inherit; }
     color: #fff;
     z-index: 5;
     pointer-events: none;
-    font-size: clamp(7px, 1.8vw, 11px);
+    font-size: clamp(6px, 1.6vw, 10px);
     font-weight: 800;
 }
 
 /* --- Direction arrows --- */
 .cell-arrow {
     position: absolute;
-    width: clamp(12px, 30%, 20px);
-    height: clamp(12px, 30%, 20px);
-    color: rgba(0,0,0,0.55);
+    width: clamp(10px, 25%, 18px);
+    height: clamp(10px, 25%, 18px);
+    color: rgba(0,0,0,0.45);
     z-index: 999;
     pointer-events: none;
     display: flex;
@@ -378,12 +386,12 @@ button { cursor: pointer; font-family: inherit; }
 /* --- Board instruction text --- */
 .board-instruction {
     font-size: 0.8rem;
-    color: #6b7280;
+    color: #888;
     text-align: center;
     margin-top: 8px;
     align-self: center;
 }
-.board-instruction b { color: var(--clr-text); }
+.board-instruction b { color: var(--clr-text); font-weight: 600; }
 .revealed-text { display: none; }
 
 /* --- Reveal / Clear Buttons --- */
@@ -399,28 +407,28 @@ button { cursor: pointer; font-family: inherit; }
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 0.6em 1.5em;
-    font-size: 0.9rem;
-    font-weight: 700;
+    padding: 0.55em 1.6em;
+    font-size: 0.875rem;
+    font-weight: 600;
     border-radius: var(--radius-full);
-    border: 1px solid transparent;
+    border: 2px solid transparent;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     user-select: none;
 }
 .reveal-btn--primary {
-    background: var(--clr-primary-600);
+    background: var(--clr-primary);
     color: #fff;
+    border-color: var(--clr-primary);
 }
 .reveal-btn--primary:hover {
-    background: var(--clr-primary-700);
-    box-shadow: 0 4px 12px rgba(1,127,112,0.3);
+    background: var(--clr-primary-dark);
+    border-color: var(--clr-primary-dark);
 }
 .reveal-btn--secondary {
     background: #fff;
-    border-color: var(--clr-grey-900);
-    color: var(--clr-grey-900);
+    border-color: #555;
+    color: #555;
 }
 .reveal-btn--secondary:hover {
     background: var(--clr-grey-100);
@@ -432,13 +440,12 @@ button { cursor: pointer; font-family: inherit; }
 .reveal-checkbox:checked ~ .game-layout .reveal-text-hide { display: inline; }
 .reveal-checkbox:checked ~ .game-layout .reveal-btn--primary {
     background: #fff;
-    border-color: var(--clr-grey-900);
-    color: var(--clr-grey-900);
-    box-shadow: var(--shadow-sm);
+    border-color: #555;
+    color: #555;
 }
 .reveal-checkbox:checked ~ .game-layout .reveal-btn--secondary {
-    background: var(--clr-primary-600);
-    border-color: transparent;
+    background: var(--clr-primary);
+    border-color: var(--clr-primary);
     color: #fff;
 }
 
@@ -450,25 +457,25 @@ button { cursor: pointer; font-family: inherit; }
 /* --- Progress Bar --- */
 .progress-section {
     margin-top: 0;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 .progress-label {
     font-size: 0.8rem;
-    color: #374151;
-    margin-bottom: 4px;
+    color: #666;
+    margin-bottom: 5px;
     font-weight: 500;
 }
 .progress-label b { font-weight: 700; }
 .progress-bar {
-    height: 8px;
+    height: 6px;
     background: #e0e0db;
-    border-radius: 4px;
+    border-radius: 3px;
     overflow: hidden;
 }
 .progress-fill {
     height: 100%;
-    border-radius: 4px;
-    background: linear-gradient(90deg, #14b8a6, #22c55e);
+    border-radius: 3px;
+    background: var(--clr-primary);
     transition: width 0.6s ease;
     width: 0%;
 }
@@ -477,31 +484,31 @@ button { cursor: pointer; font-family: inherit; }
 .words-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 }
 
 /* --- Word Blank Card --- */
 .word-blank {
     background: var(--clr-white);
-    border: 2px solid #e0e0db;
-    border-radius: 14px;
-    padding: 10px 12px;
+    border: 1.5px solid var(--clr-card-border);
+    border-radius: var(--radius-lg);
+    padding: 12px 14px;
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
     gap: 6px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    box-shadow: var(--shadow-card);
 }
 .word-blank--revealed {
-    border-color: var(--word-color, #22c55e);
-    background: color-mix(in srgb, var(--word-color, #22c55e) 6%, white);
-    box-shadow: 0 3px 16px color-mix(in srgb, var(--word-color, #22c55e) 22%, transparent);
+    border-color: color-mix(in srgb, var(--word-color, #5B9BD5) 50%, #e0e0db);
+    background: var(--clr-white);
+    box-shadow: 0 3px 14px color-mix(in srgb, var(--word-color, #5B9BD5) 18%, transparent);
     animation: wordSlideDown 0.4s ease backwards;
     animation-delay: calc(var(--card-delay, 0) * 0.12s);
 }
 
 @keyframes wordSlideDown {
-    0% { opacity: 0; transform: translateY(-10px); }
+    0% { opacity: 0; transform: translateY(-8px); }
     100% { opacity: 1; transform: translateY(0); }
 }
 
@@ -509,73 +516,93 @@ button { cursor: pointer; font-family: inherit; }
 .letter-row {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
     flex-wrap: wrap;
 }
 
-/* --- Letter Bubbles --- */
+/* --- Letter Bubbles (ROUNDED RECTANGLES like thewordfinder.com) --- */
 .letter-bubble {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 800;
-    font-size: 16px;
+    font-weight: 700;
+    font-size: 15px;
     flex-shrink: 0;
     transition: background 0.28s ease, transform 0.2s ease;
 }
 .letter-bubble--hidden {
-    background: #d0d0c8;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    background: #d8d8d0;
+    border-radius: 8px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
 }
 .letter-bubble--revealed {
     color: #fff;
-    transform: scale(1.05);
-    box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+    transform: scale(1);
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     animation: bubbleBounce 0.3s ease backwards;
     animation-delay: calc(var(--bubble-delay, 0) * 0.08s);
 }
 .bubble-letter {
-    font-size: 16px;
-    font-weight: 800;
+    font-size: 15px;
+    font-weight: 700;
     color: inherit;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
     line-height: 1;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
 }
 
 @keyframes bubbleBounce {
-    0% { transform: scale(0.6); opacity: 0.5; }
-    60% { transform: scale(1.12); }
-    100% { transform: scale(1.05); opacity: 1; }
+    0% { transform: scale(0.7); opacity: 0.5; }
+    60% { transform: scale(1.06); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* --- Direction arrow between letter bubbles --- */
+.bubble-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    color: #888;
+    font-size: 10px;
+    line-height: 1;
+}
+.bubble-arrow svg {
+    width: 10px;
+    height: 10px;
+    fill: #888;
 }
 
 /* --- Revealed label under word --- */
 .revealed-label {
-    font-size: 0.85rem;
-    color: #3a3a38;
+    font-size: 0.8rem;
+    color: #555;
+    letter-spacing: 0.03em;
 }
 .revealed-label strong {
-    color: var(--word-color, #374151);
-    font-size: 0.95rem;
-    font-weight: 800;
+    color: var(--word-color, #555);
+    font-size: 0.85rem;
+    font-weight: 700;
     letter-spacing: 0.04em;
 }
 
 /* --- Wend #N Words label --- */
 .wend-words-label {
     display: none;
-    margin-top: 12px;
+    margin-top: 14px;
     padding: 12px 14px;
     background: var(--clr-white);
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     border: 1px solid var(--clr-grey-200);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-card);
 }
 .wend-words-label h3 {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 700;
     margin-bottom: 8px;
     color: var(--clr-text);
@@ -593,13 +620,13 @@ button { cursor: pointer; font-family: inherit; }
     gap: 4px;
     padding: 5px 10px;
     border-radius: var(--radius-full);
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.02em;
     opacity: 0;
     animation: chipFadeIn 0.3s ease forwards;
     animation-delay: var(--chip-delay, 0s);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }
 .chip-check {
     display: flex;
@@ -631,7 +658,7 @@ button { cursor: pointer; font-family: inherit; }
 .reveal-checkbox:checked ~ .game-layout .grid-view:not(.grid-view-revealed) { display: none; }
 .reveal-checkbox:checked ~ .game-layout .grid-view-revealed {
     display: flex;
-    animation: revealPuzzle 0.6s ease-out;
+    animation: revealPuzzle 0.5s ease-out;
 }
 .reveal-checkbox:checked ~ .game-layout .words-list:not(.words-list-revealed) { display: none; }
 .reveal-checkbox:checked ~ .game-layout .words-list-revealed { display: flex; }
@@ -655,7 +682,7 @@ button { cursor: pointer; font-family: inherit; }
 }
 
 @keyframes revealPuzzle {
-    0% { opacity: 0; transform: scale(0.96); }
+    0% { opacity: 0; transform: scale(0.97); }
     100% { opacity: 1; transform: scale(1); }
 }
 
@@ -663,13 +690,13 @@ button { cursor: pointer; font-family: inherit; }
    Hints Section
    ================================================ */
 .hints-section {
-    padding: 24px 0;
+    padding: 28px 0;
 }
 .section-title {
-    font-size: 1.15rem;
-    font-weight: 800;
-    margin-bottom: 12px;
-    letter-spacing: -0.02em;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
 }
 .hints-grid {
     display: grid;
@@ -684,30 +711,30 @@ button { cursor: pointer; font-family: inherit; }
     gap: 10px;
     padding: 14px;
     background: var(--clr-white);
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     border: 1px solid var(--clr-grey-200);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-card);
 }
 .hint-number {
-    width: 28px;
-    height: 28px;
-    background: linear-gradient(135deg, #14b8a6, #22c55e);
+    width: 26px;
+    height: 26px;
+    background: var(--clr-primary);
     color: #fff;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 800;
-    font-size: 0.8rem;
+    font-weight: 700;
+    font-size: 0.75rem;
     flex-shrink: 0;
 }
 .hint-card h3 {
-    font-size: 0.875rem;
+    font-size: 0.85rem;
     font-weight: 700;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
 }
 .hint-card p {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     color: var(--clr-grey-700);
     line-height: 1.5;
 }
@@ -716,7 +743,7 @@ button { cursor: pointer; font-family: inherit; }
    Recent Puzzles
    ================================================ */
 .recent-section {
-    padding: 20px 0 24px;
+    padding: 20px 0 28px;
 }
 .recent-grid {
     display: grid;
@@ -727,14 +754,14 @@ button { cursor: pointer; font-family: inherit; }
     display: block;
     padding: 14px;
     background: var(--clr-white);
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     border: 1px solid var(--clr-grey-200);
     transition: border-color 0.2s, box-shadow 0.2s;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-card);
 }
 .recent-card:hover {
     border-color: var(--clr-grey-300);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-hover);
 }
 .card-header {
     display: flex;
@@ -776,18 +803,18 @@ button { cursor: pointer; font-family: inherit; }
 }
 .faq-item {
     background: var(--clr-white);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--clr-grey-200);
     padding: 14px 16px;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-card);
 }
 .faq-question {
-    font-size: 0.875rem;
+    font-size: 0.85rem;
     font-weight: 700;
     margin-bottom: 4px;
 }
 .faq-answer {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     color: var(--clr-grey-700);
     line-height: 1.6;
 }
@@ -859,8 +886,8 @@ button { cursor: pointer; font-family: inherit; }
 }
 .archive-header h1 {
     font-size: 1.35rem;
-    font-weight: 800;
-    letter-spacing: -0.03em;
+    font-weight: 700;
+    letter-spacing: -0.02em;
 }
 .archive-header p {
     font-size: 0.875rem;
@@ -874,12 +901,12 @@ button { cursor: pointer; font-family: inherit; }
 }
 .calendar-wrapper {
     background: var(--clr-white);
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     border: 1px solid var(--clr-grey-200);
     padding: 16px;
     max-width: 380px;
     margin: 0 auto;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-card);
 }
 .calendar-nav {
     display: flex;
@@ -941,7 +968,7 @@ button { cursor: pointer; font-family: inherit; }
     color: var(--clr-text);
 }
 .calendar-day--has-puzzle {
-    background: linear-gradient(135deg, #14b8a6, #22c55e);
+    background: var(--clr-primary);
     color: #fff;
     font-weight: 700;
     cursor: pointer;
@@ -949,7 +976,7 @@ button { cursor: pointer; font-family: inherit; }
 }
 .calendar-day--has-puzzle:hover {
     transform: scale(1.1);
-    box-shadow: 0 2px 8px rgba(20,184,166,0.3);
+    box-shadow: 0 2px 8px rgba(91,155,213,0.3);
 }
 .calendar-day--has-puzzle.calendar-day--today {
     box-shadow: 0 0 0 2px var(--clr-text);
@@ -967,20 +994,20 @@ button { cursor: pointer; font-family: inherit; }
     gap: 4px;
     font-size: 0.8rem;
     font-weight: 600;
-    color: var(--clr-primary-600);
+    color: var(--clr-primary);
     cursor: pointer;
     margin-bottom: 12px;
     transition: color 0.2s;
 }
-.back-to-calendar:hover { color: var(--clr-primary-700); }
+.back-to-calendar:hover { color: var(--clr-primary-dark); }
 
 /* Archive puzzle item */
 .archive-puzzle-item {
     background: var(--clr-white);
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     border: 1px solid var(--clr-grey-200);
     padding: 16px;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-card);
 }
 .archive-puzzle-header {
     display: flex;
@@ -990,7 +1017,7 @@ button { cursor: pointer; font-family: inherit; }
 }
 .archive-puzzle-header h2 {
     font-size: 1.1rem;
-    font-weight: 800;
+    font-weight: 700;
 }
 .puzzle-date {
     font-size: 0.8rem;
@@ -1028,20 +1055,20 @@ button { cursor: pointer; font-family: inherit; }
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 0.6em 1.5em;
-    font-size: 0.9rem;
-    font-weight: 700;
+    padding: 0.55em 1.6em;
+    font-size: 0.875rem;
+    font-weight: 600;
     border-radius: var(--radius-full);
-    border: 1px solid transparent;
+    border: 2px solid transparent;
     cursor: pointer;
-    background: var(--clr-primary-600);
+    background: var(--clr-primary);
     color: #fff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-color: var(--clr-primary);
     transition: all 0.2s;
 }
 .archive-reveal-btn:hover {
-    background: var(--clr-primary-700);
-    box-shadow: 0 4px 12px rgba(1,127,112,0.3);
+    background: var(--clr-primary-dark);
+    border-color: var(--clr-primary-dark);
 }
 .archive-reveal-hide { display: none; }
 
@@ -1059,31 +1086,31 @@ button { cursor: pointer; font-family: inherit; }
 }
 .step-card {
     background: var(--clr-white);
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     border: 1px solid var(--clr-grey-200);
     padding: 16px;
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-card);
 }
 .step-num {
-    width: 32px;
-    height: 32px;
-    background: linear-gradient(135deg, #14b8a6, #22c55e);
+    width: 30px;
+    height: 30px;
+    background: var(--clr-primary);
     color: #fff;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 800;
-    font-size: 0.9rem;
+    font-weight: 700;
+    font-size: 0.85rem;
     margin-bottom: 8px;
 }
 .step-card h3 {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 700;
     margin-bottom: 4px;
 }
 .step-card p {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     color: var(--clr-grey-700);
     line-height: 1.6;
 }
@@ -1105,7 +1132,7 @@ button { cursor: pointer; font-family: inherit; }
     animation: shimmer 1.5s infinite;
     background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6, #e5e7eb 75%);
     background-size: 200% 100%;
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
 }
 
 /* ================================================
@@ -1131,36 +1158,45 @@ button { cursor: pointer; font-family: inherit; }
         border-width: 2.5px;
     }
     .page-title-section {
-        padding: 10px 0 2px;
+        padding: 12px 0 4px;
     }
     .page-title {
         font-size: 1.05rem;
     }
     .game-section {
-        padding: 4px 0 12px;
+        padding: 4px 0 16px;
     }
     .word-blank {
-        padding: 8px 10px;
+        padding: 10px 12px;
         border-radius: 12px;
     }
     .letter-bubble {
         width: 32px;
         height: 32px;
-        font-size: 14px;
+        font-size: 13px;
+        border-radius: 7px;
     }
     .bubble-letter {
-        font-size: 14px;
+        font-size: 13px;
     }
     .letter-row {
-        gap: 4px;
+        gap: 3px;
+    }
+    .bubble-arrow {
+        width: 12px;
+        height: 12px;
+    }
+    .bubble-arrow svg {
+        width: 8px;
+        height: 8px;
     }
     .reveal-btn {
-        font-size: 0.85rem;
+        font-size: 0.82rem;
         padding: 0.5em 1.2em;
     }
     .progress-section {
         margin-top: 0;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
     }
     .hints-section,
     .recent-section,
@@ -1171,7 +1207,7 @@ button { cursor: pointer; font-family: inherit; }
         gap: 12px;
     }
     .cell-letter {
-        font-size: clamp(14px, 5vw, 22px);
+        font-size: clamp(13px, 4.5vw, 22px);
     }
 }
 
@@ -1183,24 +1219,25 @@ button { cursor: pointer; font-family: inherit; }
     .letter-bubble {
         width: 28px;
         height: 28px;
-        font-size: 12px;
+        font-size: 11px;
+        border-radius: 6px;
     }
     .bubble-letter {
-        font-size: 12px;
+        font-size: 11px;
     }
     .word-blank {
-        padding: 6px 8px;
+        padding: 8px 10px;
         gap: 4px;
     }
     .letter-row {
-        gap: 3px;
+        gap: 2px;
     }
     .wend-board-wrapper {
         border-width: 2px;
         border-radius: 6px;
     }
     .cell-letter {
-        font-size: clamp(12px, 4.5vw, 18px);
+        font-size: clamp(11px, 4vw, 18px);
     }
     .cell-check-badge {
         width: 10px;

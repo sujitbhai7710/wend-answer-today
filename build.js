@@ -10,20 +10,36 @@ const path = require('path');
 const WORKER_URL = process.env.WORKER_URL || 'https://wend-api-worker.wendapi.workers.dev';
 const API_KEY = process.env.WORKER_API_KEY || '';
 
-// Word colors matching thewordfinder.com palette
+// Word colors - PASTEL/SOFT matching thewordfinder.com palette
 const WORD_COLORS = [
-    '#E8572A',
-    '#D4449A',
-    '#00B5B0',
-    '#8DC63F',
-    '#4A90D9',
-    '#F5A623',
-    '#9B59B6',
-    '#26C0A6',
+    '#F4845F',  // Soft coral/orange
+    '#E56399',  // Soft pink/rose
+    '#7EC8E3',  // Soft sky blue
+    '#A8D8B9',  // Soft mint green
+    '#7FB5E5',  // Soft medium blue
+    '#F7B267',  // Soft golden orange
+    '#B8A9C9',  // Soft lavender
+    '#7EC8C4',  // Soft teal
+];
+
+// Pastel background colors for grid cells (lighter versions)
+const WORD_BG_COLORS = [
+    '#FDE8DF',
+    '#F9E0EA',
+    '#E0F0F8',
+    '#E2F3E8',
+    '#DFEDF8',
+    '#FEF0DA',
+    '#EDE8F3',
+    '#E0F2F0',
 ];
 
 function wordColor(idx) {
     return WORD_COLORS[idx % WORD_COLORS.length];
+}
+
+function wordBgColor(idx) {
+    return WORD_BG_COLORS[idx % WORD_BG_COLORS.length];
 }
 
 function formatDate(dateStr) {
@@ -64,13 +80,16 @@ function getDirection(prevCell, currCell, nextCell) {
 function generateGridCells(grid, rows, cols, wordCells) {
     // Build a map of which word color each cell belongs to (for --word-color on letter cells)
     const cellColorMap = {};
+    const cellBgColorMap = {};
     if (wordCells) {
         wordCells.forEach((word, wordIdx) => {
             const color = wordColor(wordIdx);
+            const bgColor = wordBgColor(wordIdx);
             word.cells.forEach((cell) => {
                 const key = `${cell.row},${cell.col}`;
                 if (!(key in cellColorMap)) {
                     cellColorMap[key] = color;
+                    cellBgColorMap[key] = bgColor;
                 }
             });
         });
@@ -84,7 +103,7 @@ function generateGridCells(grid, rows, cols, wordCells) {
                 html += `<div class="wend-cell wend-cell--blocked" data-row="${r}" data-col="${c}" aria-hidden="true"></div>`;
             } else {
                 const key = `${r},${c}`;
-                const wordColorStyle = cellColorMap[key] ? `--word-color:${cellColorMap[key]};` : '';
+                const wordColorStyle = cellColorMap[key] ? `--word-color:${cellColorMap[key]};--word-bg-color:${cellBgColorMap[key]};` : '';
                 html += `<button class="wend-cell wend-cell--letter" data-row="${r}" data-col="${c}" style="${wordColorStyle}" aria-label="${cell.letter} — hidden">
                     <span class="cell-letter cell-letter--hidden"> ${cell.letter} </span>
                 </button>`;
@@ -105,10 +124,11 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
 
     wordCells.forEach((word, wordIdx) => {
         const color = wordColor(wordIdx);
+        const bgColor = wordBgColor(wordIdx);
         word.cells.forEach((cell, cellIdx) => {
             const key = `${cell.row},${cell.col}`;
             if (!(key in cellWordMap)) {
-                cellWordMap[key] = { wordIdx, color };
+                cellWordMap[key] = { wordIdx, color, bgColor };
             }
             if (cellIdx === 0 && !(key in cellIsFirst)) {
                 cellIsFirst[key] = true;
@@ -162,7 +182,7 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
             if (cell.isBlocked) {
                 html += `<div class="wend-cell wend-cell--blocked" data-row="${r}" data-col="${c}" aria-hidden="true"></div>`;
             } else if (key in cellWordMap) {
-                const { wordIdx, color } = cellWordMap[key];
+                const { wordIdx, color, bgColor } = cellWordMap[key];
                 const delay = cellDelayMap[key] || 0;
 
                 let inner = `<span class="cell-letter">${cell.letter}</span>`;
@@ -173,17 +193,17 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
                 if (hConn && (hConn.left || hConn.right)) {
                     const leftPct = hConn.left ? '0' : '25%';
                     const rightPct = hConn.right ? '0' : '25%';
-                    inner += `<span class="cell-tube cell-tube-h" style="left:${leftPct};right:${rightPct};background:color-mix(in srgb, ${color} 65%, white);"></span>`;
+                    inner += `<span class="cell-tube cell-tube-h" style="left:${leftPct};right:${rightPct};background:${bgColor};"></span>`;
                 }
                 if (vConn && (vConn.top || vConn.bottom)) {
                     const topPct = vConn.top ? '0' : '25%';
                     const bottomPct = vConn.bottom ? '0' : '25%';
-                    inner += `<span class="cell-tube cell-tube-v" style="top:${topPct};bottom:${bottomPct};background:color-mix(in srgb, ${color} 65%, white);"></span>`;
+                    inner += `<span class="cell-tube cell-tube-v" style="top:${topPct};bottom:${bottomPct};background:${bgColor};"></span>`;
                 }
 
                 // Circle for first letter
                 if (cellIsFirst[key]) {
-                    inner += `<span class="cell-circle" style="border-color:${color};outline-color:color-mix(in srgb, ${color} 65%, white);"></span>`;
+                    inner += `<span class="cell-circle" style="border-color:${color};outline-color:${bgColor};"></span>`;
                     inner += `<span class="cell-check-badge" style="background:${color};">&#10003;</span>`;
                 }
 
@@ -208,7 +228,7 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
                     }
                 }
 
-                html += `<div class="wend-cell wend-cell--revealed wend-cell--pulse" data-row="${r}" data-col="${c}" style="--word-color:${color};--cell-delay:${delay};" aria-label="${cell.letter} — revealed">${inner}</div>`;
+                html += `<div class="wend-cell wend-cell--revealed wend-cell--pulse" data-row="${r}" data-col="${c}" style="--word-color:${color};--word-bg-color:${bgColor};--cell-delay:${delay};" aria-label="${cell.letter} — revealed">${inner}</div>`;
             } else {
                 html += `<div class="wend-cell wend-cell--letter" data-row="${r}" data-col="${c}">
                     <span class="cell-letter">${cell.letter}</span>
@@ -223,32 +243,71 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
 // Word cards
 // =========================================================
 
-// BEFORE reveal: gray bubbles
-function generateWordCardsBefore(words) {
+// BEFORE reveal: gray rounded-rect bubbles with arrows between them
+function generateWordCardsBefore(words, wordCells) {
     return words.map((word, idx) => {
         const color = wordColor(idx);
-        const bubbles = Array.from({ length: word.length }, () =>
-            `<div class="letter-bubble letter-bubble--hidden"></div>`
-        ).join('');
+        const bgColor = wordBgColor(idx);
+        const cells = wordCells[idx] ? wordCells[idx].cells : null;
+        
+        let bubbles = '';
+        for (let i = 0; i < word.length; i++) {
+            // Add direction arrow between bubbles
+            if (i > 0 && cells) {
+                const prev = cells[i - 1];
+                const curr = cells[i];
+                const dc = curr.col - prev.col;
+                const dr = curr.row - prev.row;
+                let arrowSvg = '';
+                if (dc > 0) arrowSvg = '<svg viewBox="0 0 24 24"><path d="M8 4l8 8-8 8" fill="currentColor"/></svg>';
+                else if (dc < 0) arrowSvg = '<svg viewBox="0 0 24 24"><path d="M16 4l-8 8 8 8" fill="currentColor"/></svg>';
+                else if (dr > 0) arrowSvg = '<svg viewBox="0 0 24 24"><path d="M4 8l8 8 8-8" fill="currentColor"/></svg>';
+                else if (dr < 0) arrowSvg = '<svg viewBox="0 0 24 24"><path d="M4 16l8-8 8 8" fill="currentColor"/></svg>';
+                if (arrowSvg) {
+                    bubbles += `<span class="bubble-arrow">${arrowSvg}</span>`;
+                }
+            }
+            bubbles += `<div class="letter-bubble letter-bubble--hidden"></div>`;
+        }
 
-        return `<div class="word-blank" style="--word-color:${color};">
+        return `<div class="word-blank" style="--word-color:${color};--word-bg-color:${bgColor};">
             <div class="letter-row">${bubbles}</div>
         </div>`;
     }).join('');
 }
 
-// AFTER reveal: colored bubbles with letters
+// AFTER reveal: colored rounded-rect bubbles with letters and arrows between them
 function generateWordCardsAfter(words, wordCells) {
     return words.map((word, idx) => {
         const color = wordColor(idx);
-        const textColor = isLightColor(color) ? '#1a1a1a' : '#ffffff';
-        const bubbles = word.split('').map((letter, li) =>
-            `<div class="letter-bubble letter-bubble--revealed" style="background:${color};color:${textColor};--bubble-delay:${li};">
+        const bgColor = wordBgColor(idx);
+        const textColor = isLightColor(color) ? '#2d2d2d' : '#ffffff';
+        const cells = wordCells[idx] ? wordCells[idx].cells : null;
+        
+        let bubbles = '';
+        for (let li = 0; li < word.length; li++) {
+            // Add direction arrow between bubbles
+            if (li > 0 && cells) {
+                const prev = cells[li - 1];
+                const curr = cells[li];
+                const dc = curr.col - prev.col;
+                const dr = curr.row - prev.row;
+                let arrowSvg = '';
+                if (dc > 0) arrowSvg = '<svg viewBox="0 0 24 24"><path d="M8 4l8 8-8 8" fill="currentColor"/></svg>';
+                else if (dc < 0) arrowSvg = '<svg viewBox="0 0 24 24"><path d="M16 4l-8 8 8 8" fill="currentColor"/></svg>';
+                else if (dr > 0) arrowSvg = '<svg viewBox="0 0 24 24"><path d="M4 8l8 8 8-8" fill="currentColor"/></svg>';
+                else if (dr < 0) arrowSvg = '<svg viewBox="0 0 24 24"><path d="M4 16l8-8 8 8" fill="currentColor"/></svg>';
+                if (arrowSvg) {
+                    bubbles += `<span class="bubble-arrow">${arrowSvg}</span>`;
+                }
+            }
+            const letter = word[li];
+            bubbles += `<div class="letter-bubble letter-bubble--revealed" style="background:${color};color:${textColor};--bubble-delay:${li};">
                 <span class="bubble-letter" style="color:${textColor};">${letter}</span>
-            </div>`
-        ).join('');
+            </div>`;
+        }
 
-        return `<div class="word-blank word-blank--revealed" style="--word-color:${color};--card-delay:${idx};">
+        return `<div class="word-blank word-blank--revealed" style="--word-color:${color};--word-bg-color:${bgColor};--card-delay:${idx};">
             <div class="letter-row">${bubbles}</div>
             <div class="revealed-label" style="color:${color};"><strong>${word}</strong></div>
         </div>`;
@@ -273,7 +332,7 @@ function isLightColor(hex) {
     const g = parseInt(hex.slice(3, 5), 16);
     const b = parseInt(hex.slice(5, 7), 16);
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    return luminance > 0.55;
+    return luminance > 0.65;
 }
 
 // =========================================================
@@ -459,7 +518,7 @@ async function buildSite() {
         '{{WORD_CHIPS}}': generateWordChips(puzzle.words),
         '{{GRID_CELLS}}': generateGridCells(puzzle.grid, puzzle.rows, puzzle.cols, puzzle.word_cells),
         '{{GRID_CELLS_SOLVED}}': generateSolvedGridCells(puzzle.grid, puzzle.word_cells, puzzle.rows, puzzle.cols),
-        '{{WORD_CARDS_BEFORE}}': generateWordCardsBefore(puzzle.words),
+        '{{WORD_CARDS_BEFORE}}': generateWordCardsBefore(puzzle.words, puzzle.word_cells),
         '{{WORD_CARDS_AFTER}}': generateWordCardsAfter(puzzle.words, puzzle.word_cells),
         '{{HINTS_CONTENT}}': generateHints(puzzle.words, puzzle.puzzle_number),
         '{{RECENT_PUZZLES}}': generateRecentPuzzles(allPuzzles),
@@ -525,7 +584,7 @@ async function buildArchivePage(allPuzzles, outputDir) {
     const puzzleDetailsHtml = fullPuzzles.map(p => {
         const gridBefore = generateGridCells(p.grid, p.rows, p.cols, p.word_cells);
         const gridAfter = generateSolvedGridCells(p.grid, p.word_cells, p.rows, p.cols);
-        const wordsBefore = generateWordCardsBefore(p.words);
+        const wordsBefore = generateWordCardsBefore(p.words, p.word_cells);
         const wordsAfter = generateWordCardsAfter(p.words, p.word_cells);
         const wordChips = generateWordChips(p.words);
         const dateDisplay = formatDate(p.date);
