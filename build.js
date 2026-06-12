@@ -502,6 +502,8 @@ async function buildArchivePage(allPuzzles, outputDir) {
         #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .archive-grid-after .wend-cell--revealed { animation: cellPop 0.28s ease backwards; }
         #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .archive-words-before { display: none; }
         #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .archive-words-after { display: block; }
+        #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .words-list:not(.words-list-revealed) { display: none; }
+        #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .words-list-revealed { display: flex; }
         #archive-reveal-${p.puzzle_number}:checked ~ .archive-layout .progress-fill { width: 100% !important; }
         #archive-reveal-${p.puzzle_number}:checked ~ .archive-reveal-container .archive-reveal-btn { background: linear-gradient(135deg, #4b5563, #6b7280); }
         #archive-reveal-${p.puzzle_number}:checked ~ .archive-reveal-container .archive-reveal-show { display: none; }

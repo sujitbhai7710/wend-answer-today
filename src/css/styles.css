@@ -725,21 +725,21 @@ img {
 }
 
 /* When checkbox is checked: show the solved state */
+.reveal-checkbox:checked ~ .game-layout .grid-view:not(.grid-view-revealed) {
+    display: none;
+}
+
 .reveal-checkbox:checked ~ .game-layout .grid-view-revealed {
     display: block;
     animation: revealPuzzle 0.6s ease-out;
 }
 
-.reveal-checkbox:checked ~ .game-layout .grid-view {
+.reveal-checkbox:checked ~ .game-layout .words-list:not(.words-list-revealed) {
     display: none;
 }
 
 .reveal-checkbox:checked ~ .game-layout .words-list-revealed {
     display: flex;
-}
-
-.reveal-checkbox:checked ~ .game-layout .words-list {
-    display: none;
 }
 
 .reveal-checkbox:checked ~ .game-layout .wend-words-label {
@@ -1253,6 +1253,14 @@ img {
 
 .archive-reveal-checkbox:checked ~ .archive-words-before {
     display: none;
+}
+
+.archive-reveal-checkbox:checked ~ .archive-layout .words-list:not(.words-list-revealed) {
+    display: none;
+}
+
+.archive-reveal-checkbox:checked ~ .archive-layout .words-list-revealed {
+    display: flex;
 }
 
 .archive-reveal-checkbox:checked ~ .archive-words-after {
