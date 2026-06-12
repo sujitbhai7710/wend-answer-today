@@ -251,7 +251,7 @@ button { cursor: pointer; font-family: inherit; }
     background: #f8f8f5 !important;
 }
 .wend-cell--revealed {
-    background: color-mix(in srgb, var(--word-color) 35%, white) !important;
+    background: color-mix(in srgb, var(--word-color) 50%, white) !important;
     box-shadow: none;
 }
 .wend-cell--revealed:hover {
@@ -291,12 +291,12 @@ button { cursor: pointer; font-family: inherit; }
     pointer-events: none;
 }
 .cell-tube-h {
-    top: 22.5%;
-    bottom: 22.5%;
+    top: 20%;
+    bottom: 20%;
 }
 .cell-tube-v {
-    left: 22.5%;
-    right: 22.5%;
+    left: 20%;
+    right: 20%;
 }
 
 /* --- Cell circle (first letter indicator) --- */
@@ -307,7 +307,7 @@ button { cursor: pointer; font-family: inherit; }
     border-radius: 50%;
     z-index: 2;
     pointer-events: none;
-    outline: 6px solid color-mix(in srgb, var(--word-color) 35%, white);
+    outline: 6px solid color-mix(in srgb, var(--word-color) 50%, white);
     border: 3.5px solid var(--word-color);
 }
 

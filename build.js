@@ -173,17 +173,17 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
                 if (hConn && (hConn.left || hConn.right)) {
                     const leftPct = hConn.left ? '0' : '25%';
                     const rightPct = hConn.right ? '0' : '25%';
-                    inner += `<span class="cell-tube cell-tube-h" style="left:${leftPct};right:${rightPct};background:color-mix(in srgb, ${color} 35%, white);"></span>`;
+                    inner += `<span class="cell-tube cell-tube-h" style="left:${leftPct};right:${rightPct};background:color-mix(in srgb, ${color} 50%, white);"></span>`;
                 }
                 if (vConn && (vConn.top || vConn.bottom)) {
                     const topPct = vConn.top ? '0' : '25%';
                     const bottomPct = vConn.bottom ? '0' : '25%';
-                    inner += `<span class="cell-tube cell-tube-v" style="top:${topPct};bottom:${bottomPct};background:color-mix(in srgb, ${color} 35%, white);"></span>`;
+                    inner += `<span class="cell-tube cell-tube-v" style="top:${topPct};bottom:${bottomPct};background:color-mix(in srgb, ${color} 50%, white);"></span>`;
                 }
 
                 // Circle for first letter
                 if (cellIsFirst[key]) {
-                    inner += `<span class="cell-circle" style="border-color:${color};outline-color:color-mix(in srgb, ${color} 35%, white);"></span>`;
+                    inner += `<span class="cell-circle" style="border-color:${color};outline-color:color-mix(in srgb, ${color} 50%, white);"></span>`;
                     inner += `<span class="cell-check-badge" style="background:${color};">&#10003;</span>`;
                 }
 
