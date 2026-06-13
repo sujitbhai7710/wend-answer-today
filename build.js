@@ -1,7 +1,7 @@
 /**
  * Build script for Wend Answer Today
  * Fetches puzzle data from the Worker API and generates static HTML pages
- * with thewordfinder.com-style layout, CSS-only reveal, and animations
+ * matching LinkedIn Wend game layout, CSS-only reveal, and animations
  */
 
 const fs = require('fs');
@@ -10,28 +10,28 @@ const path = require('path');
 const WORKER_URL = process.env.WORKER_URL || 'https://wend-api-worker.wendapi.workers.dev';
 const API_KEY = process.env.WORKER_API_KEY || '';
 
-// Word colors - vibrant but clean matching thewordfinder.com
+// Word colors - matching LinkedIn Wend game solved state
 const WORD_COLORS = [
-    '#F06030',  // Vibrant coral/orange
-    '#E0408A',  // Vibrant pink/rose
-    '#40A8D0',  // Vibrant sky blue
-    '#68C060',  // Vibrant mint green
-    '#5080D0',  // Vibrant blue
-    '#F09030',  // Vibrant golden orange
-    '#9878C0',  // Vibrant lavender
-    '#40B0A8',  // Vibrant teal
+    '#E8572A',  // Orange-red
+    '#D4449A',  // Pink
+    '#00B5B0',  // Teal
+    '#8DC63F',  // Green
+    '#4A90D9',  // Blue
+    '#F5A623',  // Amber
+    '#9B59B6',  // Purple
+    '#26C0A6',  // Mint
 ];
 
-// Pastel background colors for grid cells (lighter but visible)
+// Lighter tints for grid cell backgrounds when revealed
 const WORD_BG_COLORS = [
-    '#FCCEC0',  // orange tint
-    '#F5C2D6',  // pink tint
-    '#C4E4F4',  // blue tint
-    '#C8E8D2',  // green tint
-    '#C6DAF0',  // medium blue tint
-    '#FAE0B0',  // golden tint
-    '#D8CEE6',  // lavender tint
-    '#C4E8E4',  // teal tint
+    '#FDE8DF',  // orange tint
+    '#FADFE8',  // pink tint
+    '#CCF0EE',  // teal tint
+    '#E5F5D0',  // green tint
+    '#D6E8F8',  // blue tint
+    '#FEECC4',  // amber tint
+    '#E6D8F0',  // purple tint
+    '#D4F2EC',  // mint tint
 ];
 
 function wordColor(idx) {

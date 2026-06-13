@@ -1,52 +1,55 @@
 /* ================================================
-   Wend Answer Today - Matching thewordfinder.com
-   Pastel, clean, soft design with rounded rectangles
+   Wend Answer Today - Matching LinkedIn Wend Game
+   Exact visual match with linkedin.com/games/wend
    ================================================ */
 
 /* --- CSS Variables --- */
 :root {
-    /* Word colors - vibrant but clean matching thewordfinder.com */
-    --word-0: #F06030;  /* Vibrant coral/orange */
-    --word-1: #E0408A;  /* Vibrant pink/rose */
-    --word-2: #40A8D0;  /* Vibrant sky blue */
-    --word-3: #68C060;  /* Vibrant mint green */
-    --word-4: #5080D0;  /* Vibrant blue */
-    --word-5: #F09030;  /* Vibrant golden orange */
-    --word-6: #9878C0;  /* Vibrant lavender */
-    --word-7: #40B0A8;  /* Vibrant teal */
+    /* Word colors - matching LinkedIn Wend solved state */
+    --word-0: #E8572A;  /* Orange-red */
+    --word-1: #D4449A;  /* Pink */
+    --word-2: #00B5B0;  /* Teal */
+    --word-3: #8DC63F;  /* Green */
+    --word-4: #4A90D9;  /* Blue */
+    --word-5: #F5A623;  /* Amber */
+    --word-6: #9B59B6;  /* Purple */
+    --word-7: #26C0A6;  /* Mint */
 
-    /* Pastel backgrounds for grid cells (lighter but visible) */
-    --word-bg-0: #FCCEC0;
-    --word-bg-1: #F5C2D6;
-    --word-bg-2: #C4E4F4;
-    --word-bg-3: #C8E8D2;
-    --word-bg-4: #C6DAF0;
-    --word-bg-5: #FAE0B0;
-    --word-bg-6: #D8CEE6;
-    --word-bg-7: #C4E8E4;
+    /* Lighter tints for cell backgrounds when revealed */
+    --word-bg-0: #FDE8DF;
+    --word-bg-1: #FADFE8;
+    --word-bg-2: #CCF0EE;
+    --word-bg-3: #E5F5D0;
+    --word-bg-4: #D6E8F8;
+    --word-bg-5: #FEECC4;
+    --word-bg-6: #E6D8F0;
+    --word-bg-7: #D4F2EC;
 
-    --clr-bg: #ffffff;
+    --clr-bg: #F4F2EE;
+    --clr-card: #F8FAFD;
     --clr-white: #ffffff;
-    --clr-blocked: #b0b0b0;
-    --clr-border: #c8c8c8;
-    --clr-text: #2d2d2d;
-    --clr-text-muted: #6b7280;
-    --clr-card-border: #e0e0db;
-    --clr-primary: #5B9BD5;
-    --clr-primary-dark: #4A89C4;
+    --clr-blocked: #B2B2B2;
+    --clr-border: #424242;
+    --clr-text: rgba(0, 0, 0, 0.9);
+    --clr-text-muted: rgba(0, 0, 0, 0.6);
+    --clr-text-light: rgba(0, 0, 0, 0.75);
+    --clr-card-border: #E0E0DB;
+    --clr-primary: #0A66C2;
+    --clr-primary-dark: #004182;
     --clr-grey-900: #1f2933;
     --clr-grey-700: #4b5563;
     --clr-grey-500: #6b7280;
     --clr-grey-300: #d1d5db;
     --clr-grey-200: #e5e7eb;
     --clr-grey-100: #f3f4f6;
+    --clr-bubble: #E4E4E4;
 
-    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, Oxygen, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', Arial, sans-serif;
     --radius-sm: 6px;
-    --radius-md: 10px;
-    --radius-lg: 14px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
     --radius-full: 9999px;
-    --shadow-card: 0 2px 8px rgba(0,0,0,0.08);
+    --shadow-card: 0 1px 3px rgba(0,0,0,0.08);
     --shadow-hover: 0 4px 16px rgba(0,0,0,0.12);
     --transition: 0.2s ease;
 }
@@ -107,7 +110,7 @@ button { cursor: pointer; font-family: inherit; }
     height: 30px;
     background: var(--clr-primary);
     color: #fff;
-    border-radius: 8px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -122,7 +125,7 @@ button { cursor: pointer; font-family: inherit; }
 .nav-links a {
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--clr-grey-700);
+    color: var(--clr-text-muted);
     padding: 4px 0;
     transition: color var(--transition);
 }
@@ -149,7 +152,7 @@ button { cursor: pointer; font-family: inherit; }
     padding: 10px 0;
     font-size: 0.9375rem;
     font-weight: 500;
-    color: var(--clr-grey-700);
+    color: var(--clr-text-muted);
     border-bottom: 1px solid var(--clr-grey-100);
 }
 .mobile-menu a.active { color: var(--clr-text); font-weight: 600; }
@@ -173,16 +176,18 @@ button { cursor: pointer; font-family: inherit; }
 }
 .page-subtitle {
     font-size: 0.875rem;
-    color: var(--clr-grey-500);
+    color: var(--clr-text-muted);
     margin-top: 4px;
 }
 
-/* --- Game Container --- */
+/* --- Game Section --- */
 .game-section {
     padding: 8px 0 24px;
 }
 .game-container {
     position: relative;
+    display: flex;
+    justify-content: center;
 }
 
 /* Hidden checkbox for CSS-only reveal */
@@ -195,25 +200,25 @@ button { cursor: pointer; font-family: inherit; }
     pointer-events: none;
 }
 
-/* --- Two-Column Layout (matches thewordfinder.com) --- */
+/* --- Game Card (matching LinkedIn's centered card) --- */
 .game-layout {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-    align-items: start;
-}
-@media (min-width: 768px) {
-    .game-layout {
-        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-        gap: 32px;
-    }
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    background: var(--clr-card);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    box-shadow: var(--shadow-card);
 }
 
 /* --- Board Column --- */
 .game-board-col {
     display: flex;
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
     width: 100%;
 }
 
@@ -223,53 +228,48 @@ button { cursor: pointer; font-family: inherit; }
     justify-content: center;
 }
 
-/* --- Wend Board Grid (matching thewordfinder.com exactly) --- */
+/* --- Wend Board Grid (matching LinkedIn exactly) --- */
 .wend-board-wrapper {
     display: grid;
     width: 100%;
-    max-width: 420px;
-    aspect-ratio: 1;
-    border: 5px solid #1a1a1a;
-    border-radius: 10px;
+    max-width: 416px;
+    border: 4px solid #424242;
+    border-radius: var(--radius-md);
     overflow: hidden;
     gap: 0;
     background: #fff;
-    box-shadow: 0 3px 16px rgba(0,0,0,0.15);
 }
 
-/* --- Grid Cells --- */
+/* --- Grid Cells (matching LinkedIn) --- */
 .wend-cell {
     display: flex;
     align-items: center;
     justify-content: center;
-    aspect-ratio: 1;
     position: relative;
     overflow: visible;
-    border: 1px solid #ccc;
+    border: 1px solid #C8C8C8;
+    background: transparent;
 }
 .wend-cell--blocked {
     background: var(--clr-blocked);
     cursor: default;
-    box-sizing: border-box;
+    border: 1px solid #A0A0A0;
 }
 .wend-cell--letter {
-    background: #fff !important;
+    background: #fff;
     appearance: none;
-    border: none;
+    border: 1px solid #C8C8C8;
     padding: 0;
     outline: none;
     cursor: pointer;
     font-family: inherit;
-    box-sizing: border-box;
-    border: 1px solid #ddd;
     transition: background 0.2s ease;
 }
 .wend-cell--letter:hover {
-    background: #f5f5f2 !important;
+    background: #F5F5F5 !important;
 }
 .wend-cell--revealed {
-    background: var(--word-bg-color, color-mix(in srgb, var(--word-color) 30%, white)) !important;
-    border-color: color-mix(in srgb, var(--word-color) 20%, #ddd);
+    background: var(--word-bg-color, color-mix(in srgb, var(--word-color) 20%, white)) !important;
 }
 
 /* Cell pop animation */
@@ -282,20 +282,20 @@ button { cursor: pointer; font-family: inherit; }
     animation: cellPop 0.28s ease forwards;
 }
 
-/* Cell letter styling */
+/* Cell letter styling (matching LinkedIn: 24px, 600 weight, 0.912px spacing) */
 .cell-letter {
-    font-size: clamp(16px, 5vw, 26px);
+    font-size: clamp(16px, 5vw, 24px);
     font-weight: 700;
-    line-height: 1;
-    letter-spacing: -0.01em;
+    line-height: 30px;
+    letter-spacing: 0.9px;
     user-select: none;
     pointer-events: none;
     position: relative;
     z-index: 4;
-    color: #2d2d2d;
+    color: var(--clr-text);
 }
 .cell-letter--hidden {
-    color: #2d2d2d;
+    color: var(--clr-text);
 }
 
 /* --- Tube connectors --- */
@@ -321,8 +321,8 @@ button { cursor: pointer; font-family: inherit; }
     border-radius: 50%;
     z-index: 2;
     pointer-events: none;
-    outline: 5px solid var(--word-bg-color, color-mix(in srgb, var(--word-color) 25%, white));
-    border: 3px solid var(--word-color);
+    outline: 4px solid var(--word-bg-color, color-mix(in srgb, var(--word-color) 25%, white));
+    border: 2.5px solid var(--word-color);
 }
 
 /* --- Check badge on first cell --- */
@@ -350,7 +350,7 @@ button { cursor: pointer; font-family: inherit; }
     position: absolute;
     width: clamp(10px, 25%, 18px);
     height: clamp(10px, 25%, 18px);
-    color: rgba(0,0,0,0.6);
+    color: rgba(0,0,0,0.5);
     z-index: 999;
     pointer-events: none;
     display: flex;
@@ -383,10 +383,11 @@ button { cursor: pointer; font-family: inherit; }
     transform: translate(50%) translateY(-50%) rotate(90deg);
 }
 
-/* --- Board instruction text --- */
+/* --- Board instruction text (matching LinkedIn hint text) --- */
 .board-instruction {
-    font-size: 0.8rem;
-    color: #888;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--clr-text);
     text-align: center;
     margin-top: 8px;
     align-self: center;
@@ -394,11 +395,11 @@ button { cursor: pointer; font-family: inherit; }
 .board-instruction b { color: var(--clr-text); font-weight: 600; }
 .revealed-text { display: none; }
 
-/* --- Reveal / Clear Buttons --- */
+/* --- Reveal / Clear Buttons (matching LinkedIn style) --- */
 .reveal-buttons {
     display: flex;
     gap: 8px;
-    margin-top: 10px;
+    margin-top: 8px;
     justify-content: center;
     flex-wrap: wrap;
 }
@@ -407,14 +408,20 @@ button { cursor: pointer; font-family: inherit; }
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 0.55em 1.6em;
-    font-size: 0.875rem;
+    padding: 8px 24px;
+    font-size: 14px;
     font-weight: 600;
     border-radius: var(--radius-full);
-    border: 2px solid transparent;
+    border: 1px solid var(--clr-primary);
     cursor: pointer;
     transition: all 0.2s ease;
     user-select: none;
+    background: var(--clr-primary);
+    color: #fff;
+}
+.reveal-btn:hover {
+    background: var(--clr-primary-dark);
+    border-color: var(--clr-primary-dark);
 }
 .reveal-btn--primary {
     background: var(--clr-primary);
@@ -449,26 +456,27 @@ button { cursor: pointer; font-family: inherit; }
     color: #fff;
 }
 
-/* --- Words Column --- */
+/* --- Words Column (matching LinkedIn: single column within game card) --- */
 .game-words-col {
     width: 100%;
+    margin-top: 8px;
 }
 
 /* --- Progress Bar --- */
 .progress-section {
     margin-top: 0;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 }
 .progress-label {
-    font-size: 0.8rem;
-    color: #666;
-    margin-bottom: 5px;
+    font-size: 14px;
+    color: var(--clr-text-muted);
+    margin-bottom: 4px;
     font-weight: 500;
 }
 .progress-label b { font-weight: 700; }
 .progress-bar {
     height: 6px;
-    background: #e0e0db;
+    background: #E0E0DB;
     border-radius: 3px;
     overflow: hidden;
 }
@@ -480,29 +488,25 @@ button { cursor: pointer; font-family: inherit; }
     width: 0%;
 }
 
-/* --- Word Cards List --- */
+/* --- Word Cards List (matching LinkedIn: single column, simple) --- */
 .words-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 2px;
 }
 
-/* --- Word Blank Card --- */
+/* --- Word Blank Card (matching LinkedIn's word rows) --- */
 .word-blank {
-    background: var(--clr-white);
-    border: 1.5px solid var(--clr-card-border);
-    border-radius: var(--radius-lg);
-    padding: 12px 14px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
     transition: all 0.3s ease;
     display: flex;
-    flex-direction: column;
-    gap: 6px;
-    box-shadow: var(--shadow-card);
+    align-items: center;
+    gap: 0;
 }
 .word-blank--revealed {
-    border-color: color-mix(in srgb, var(--word-color, #5B9BD5) 50%, #e0e0db);
-    background: var(--clr-white);
-    box-shadow: 0 3px 14px color-mix(in srgb, var(--word-color, #5B9BD5) 18%, transparent);
     animation: wordSlideDown 0.4s ease backwards;
     animation-delay: calc(var(--card-delay, 0) * 0.12s);
 }
@@ -512,46 +516,45 @@ button { cursor: pointer; font-family: inherit; }
     100% { opacity: 1; transform: translateY(0); }
 }
 
-/* --- Letter Row --- */
+/* --- Letter Row (matching LinkedIn: flex with 2px gap) --- */
 .letter-row {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
     flex-wrap: wrap;
 }
 
-/* --- Letter Bubbles (ROUNDED RECTANGLES like thewordfinder.com) --- */
+/* --- Letter Bubbles (matching LinkedIn: 22px rounded rects, #E4E4E4 bg) --- */
 .letter-bubble {
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
-    font-size: 15px;
+    font-weight: 600;
+    font-size: 14px;
     flex-shrink: 0;
     transition: background 0.28s ease, transform 0.2s ease;
+    color: var(--clr-text-light);
 }
 .letter-bubble--hidden {
-    background: #d8d8d0;
+    background: var(--clr-bubble);
     border-radius: 8px;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
 }
 .letter-bubble--revealed {
     color: #fff;
     transform: scale(1);
     border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     animation: bubbleBounce 0.3s ease backwards;
     animation-delay: calc(var(--bubble-delay, 0) * 0.08s);
 }
 .bubble-letter {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 700;
     color: inherit;
     line-height: 1;
-    letter-spacing: -0.01em;
+    letter-spacing: 0;
 }
 
 @keyframes bubbleBounce {
@@ -565,24 +568,24 @@ button { cursor: pointer; font-family: inherit; }
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 18px;
-    height: 18px;
+    width: 14px;
+    height: 14px;
     flex-shrink: 0;
-    color: #333;
-    font-size: 10px;
+    color: var(--clr-text-light);
+    font-size: 8px;
     line-height: 1;
-    margin: 0 1px;
+    margin: 0;
 }
 .bubble-arrow svg {
-    width: 13px;
-    height: 13px;
-    fill: #333;
+    width: 10px;
+    height: 10px;
+    fill: var(--clr-text-light);
 }
 
 /* --- Revealed label under word --- */
 .revealed-label {
     font-size: 0.8rem;
-    color: #555;
+    color: var(--clr-text-muted);
     letter-spacing: 0.03em;
 }
 .revealed-label strong {
@@ -595,17 +598,16 @@ button { cursor: pointer; font-family: inherit; }
 /* --- Wend #N Words label --- */
 .wend-words-label {
     display: none;
-    margin-top: 14px;
-    padding: 12px 14px;
+    margin-top: 10px;
+    padding: 10px 12px;
     background: var(--clr-white);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     border: 1px solid var(--clr-grey-200);
-    box-shadow: var(--shadow-card);
 }
 .wend-words-label h3 {
     font-size: 0.9rem;
     font-weight: 700;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     color: var(--clr-text);
 }
 .wend-words-summary {
@@ -619,7 +621,7 @@ button { cursor: pointer; font-family: inherit; }
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    padding: 5px 10px;
+    padding: 4px 10px;
     border-radius: var(--radius-full);
     font-size: 0.72rem;
     font-weight: 700;
@@ -627,7 +629,7 @@ button { cursor: pointer; font-family: inherit; }
     opacity: 0;
     animation: chipFadeIn 0.3s ease forwards;
     animation-delay: var(--chip-delay, 0s);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    color: #fff;
 }
 .chip-check {
     display: flex;
@@ -977,7 +979,7 @@ button { cursor: pointer; font-family: inherit; }
 }
 .calendar-day--has-puzzle:hover {
     transform: scale(1.1);
-    box-shadow: 0 2px 8px rgba(91,155,213,0.3);
+    box-shadow: 0 2px 8px rgba(10,102,194,0.3);
 }
 .calendar-day--has-puzzle.calendar-day--today {
     box-shadow: 0 0 0 2px var(--clr-text);
@@ -1025,18 +1027,18 @@ button { cursor: pointer; font-family: inherit; }
     color: var(--clr-grey-500);
 }
 
-/* Archive layout - same two-column as main */
+/* Archive layout - single column like main */
 .archive-layout {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 16px;
-    align-items: start;
-}
-@media (min-width: 768px) {
-    .archive-layout {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
-        gap: 24px;
-    }
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    background: var(--clr-card);
+    border-radius: var(--radius-lg);
+    padding: 16px;
 }
 
 /* Archive grid before/after */
@@ -1056,15 +1058,14 @@ button { cursor: pointer; font-family: inherit; }
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 0.55em 1.6em;
-    font-size: 0.875rem;
+    padding: 8px 24px;
+    font-size: 14px;
     font-weight: 600;
     border-radius: var(--radius-full);
-    border: 2px solid transparent;
+    border: 1px solid var(--clr-primary);
     cursor: pointer;
     background: var(--clr-primary);
     color: #fff;
-    border-color: var(--clr-primary);
     transition: all 0.2s;
 }
 .archive-reveal-btn:hover {
@@ -1145,13 +1146,14 @@ button { cursor: pointer; font-family: inherit; }
     }
     .game-layout,
     .archive-layout {
-        grid-template-columns: 1fr;
-        gap: 16px;
+        max-width: 100%;
+        padding: 12px;
+        border-radius: 8px;
     }
     .game-board-col {
         align-items: stretch;
     }
-    /* Make the grid nearly full width on mobile */
+    /* Grid takes full width on mobile */
     .wend-board-wrapper {
         max-width: 100%;
         width: 100%;
@@ -1167,37 +1169,33 @@ button { cursor: pointer; font-family: inherit; }
     .game-section {
         padding: 4px 0 16px;
     }
-    .word-blank {
-        padding: 10px 12px;
-        border-radius: 12px;
-    }
+    /* Scale down letter bubbles proportionally on mobile */
     .letter-bubble {
-        width: 32px;
-        height: 32px;
-        font-size: 13px;
-        border-radius: 7px;
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
     }
     .bubble-letter {
-        font-size: 13px;
+        font-size: 12px;
     }
     .letter-row {
-        gap: 3px;
+        gap: 2px;
     }
     .bubble-arrow {
-        width: 14px;
-        height: 14px;
+        width: 12px;
+        height: 12px;
     }
     .bubble-arrow svg {
-        width: 10px;
-        height: 10px;
+        width: 8px;
+        height: 8px;
     }
     .reveal-btn {
-        font-size: 0.82rem;
-        padding: 0.5em 1.2em;
+        font-size: 14px;
+        padding: 7px 20px;
     }
     .progress-section {
         margin-top: 0;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
     }
     .hints-section,
     .recent-section,
@@ -1218,20 +1216,15 @@ button { cursor: pointer; font-family: inherit; }
         padding: 0 8px;
     }
     .letter-bubble {
-        width: 28px;
-        height: 28px;
-        font-size: 11px;
-        border-radius: 6px;
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
     }
     .bubble-letter {
-        font-size: 11px;
-    }
-    .word-blank {
-        padding: 8px 10px;
-        gap: 4px;
+        font-size: 10px;
     }
     .letter-row {
-        gap: 2px;
+        gap: 1px;
     }
     .wend-board-wrapper {
         border-width: 3px;

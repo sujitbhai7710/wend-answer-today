@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
-    <meta name="theme-color" content="#5B9BD5">
+    <meta name="theme-color" content="#0A66C2">
     <meta name="color-scheme" content="light">
     <meta name="robots" content="index, follow">
     <meta name="googlebot" content="index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1">
@@ -75,9 +75,9 @@
                     <div class="game-container">
                         <input type="checkbox" id="reveal-toggle" class="reveal-checkbox" aria-label="Reveal answer">
 
-                        <!-- Two-column layout: Grid + Words (stacks on mobile) -->
+                        <!-- Single-column card layout matching LinkedIn Wend -->
                         <div class="game-layout">
-                            <!-- LEFT / TOP: Board column -->
+                            <!-- Board (top) -->
                             <div class="game-board-col">
                                 <!-- Before reveal grid -->
                                 <div class="grid-view" id="grid-before">
@@ -93,36 +93,28 @@
                                     </div>
                                 </div>
 
-                                <!-- Click instruction (matches thewordfinder.com) -->
-                                <p class="board-instruction" id="board-instruction"><b>Click any letter</b> to reveal where it belongs within its word.</p>
+                                <!-- Hint instruction -->
+                                <p class="board-instruction" id="board-instruction">Find the {{WORD_COUNT}} hidden words</p>
                                 <p class="board-instruction revealed-text" id="board-instruction-revealed">All words revealed!</p>
 
                                 <!-- Reveal / Clear buttons -->
                                 <div class="reveal-buttons">
                                     <label for="reveal-toggle" class="reveal-btn reveal-btn--primary">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                                         <span class="reveal-text-show">Reveal all</span>
                                         <span class="reveal-text-hide">Clear all</span>
                                     </label>
                                 </div>
                             </div>
 
-                            <!-- RIGHT / BOTTOM: Words column -->
+                            <!-- Words (below grid, matching LinkedIn's word list) -->
                             <div class="game-words-col">
-                                <!-- Progress Bar -->
-                                <div class="progress-section">
-                                    <div class="progress-label">Words found: <span class="progress-count" id="progress-count" data-total="{{WORD_COUNT}}">0 / {{WORD_COUNT}}</span></div>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
-                                    </div>
-                                </div>
-
-                                <!-- Word Cards - Before Reveal (hidden letters) -->
+                                <!-- Word Cards - Before Reveal (gray bubbles) -->
                                 <div class="words-list" id="words-before">
                                     {{WORD_CARDS_BEFORE}}
                                 </div>
 
-                                <!-- Word Cards - After Reveal (shown letters) -->
+                                <!-- Word Cards - After Reveal (colored bubbles) -->
                                 <div class="words-list words-list-revealed" id="words-after">
                                     {{WORD_CARDS_AFTER}}
                                 </div>
