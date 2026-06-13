@@ -352,7 +352,9 @@ button { cursor: pointer; font-family: inherit; }
     font-weight: 800;
 }
 
-/* --- Direction arrows (EXACT match from TWF: chevron SVG, #0009 color, clamp size) --- */
+/* --- Direction arrows (EXACT match from TWF: chevron SVG, rgba(0,0,0,0.6) color, clamp size) --- */
+/* Arrow direction = direction of movement from prev cell to this cell */
+/* Arrow is positioned on the side where the prev cell is */
 .cell-arrow {
     position: absolute;
     width: clamp(10px, 3vw, 16px);
@@ -369,21 +371,25 @@ button { cursor: pointer; font-family: inherit; }
     height: 100%;
     display: block;
 }
+/* Moved DOWN to reach this cell → prev is above → arrow at top edge, pointing down */
 .cell-arrow--down {
     top: 0;
     left: 50%;
-    transform: translate(-50%) translateY(-50%) rotate(0);
+    transform: translate(-50%) translateY(-50%) rotate(0deg);
 }
+/* Moved UP to reach this cell → prev is below → arrow at bottom edge, pointing up */
 .cell-arrow--up {
     bottom: 0;
     left: 50%;
     transform: translate(-50%) translateY(50%) rotate(180deg);
 }
+/* Moved RIGHT to reach this cell → prev is to the left → arrow at left edge, pointing right */
 .cell-arrow--right {
     left: 0;
     top: 50%;
     transform: translate(-50%) translateY(-50%) rotate(-90deg);
 }
+/* Moved LEFT to reach this cell → prev is to the right → arrow at right edge, pointing left */
 .cell-arrow--left {
     right: 0;
     top: 50%;

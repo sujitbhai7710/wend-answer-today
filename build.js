@@ -135,7 +135,7 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
     const cellIsLast = {};   // last letter of a word
     const cellConnectH = {}; // horizontal tube connections
     const cellConnectV = {}; // vertical tube connections
-    const cellArrowDir = {}; // arrow direction for non-last cells
+    const cellArrowDir = {}; // arrow direction: direction from prev cell to this cell
 
     wordCells.forEach((word, wordIdx) => {
         const color = wordColor(wordIdx);
@@ -166,6 +166,16 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
                 if (dc < 0) cellConnectH[key].right = true;  // prev is to the right
                 if (dr > 0) cellConnectV[key].top = true;    // prev is above
                 if (dr < 0) cellConnectV[key].bottom = true; // prev is below
+
+                // Arrow direction: direction from prev cell to this cell (matches TWF)
+                // Arrow is positioned on the side where the prev cell is and points
+                // in the direction of movement (prev → current)
+                if (!(key in cellArrowDir)) {
+                    if (dc > 0) cellArrowDir[key] = 'right';  // moved right to reach this cell
+                    else if (dc < 0) cellArrowDir[key] = 'left';  // moved left to reach this cell
+                    else if (dr > 0) cellArrowDir[key] = 'down';  // moved down to reach this cell
+                    else if (dr < 0) cellArrowDir[key] = 'up';    // moved up to reach this cell
+                }
             }
             if (nextCell) {
                 const dc = nextCell.col - cell.col;
@@ -175,14 +185,6 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
                 if (dc < 0) cellConnectH[key].left = true;   // next is to the left
                 if (dr > 0) cellConnectV[key].bottom = true; // next is below
                 if (dr < 0) cellConnectV[key].top = true;    // next is above
-
-                // Arrow direction: direction from this cell to next cell
-                if (!(key in cellArrowDir)) {
-                    if (dc > 0) cellArrowDir[key] = 'right';
-                    else if (dc < 0) cellArrowDir[key] = 'left';
-                    else if (dr > 0) cellArrowDir[key] = 'down';
-                    else if (dr < 0) cellArrowDir[key] = 'up';
-                }
             }
         });
     });
@@ -297,18 +299,20 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
                     inner += `<span class="cell-tube cell-tube-v" style="top:${topVal};bottom:${bottomVal};border-radius:${borderRadius};background:${rgbColor};"></span>`;
                 }
 
-                // Circle at word END (last letter) — EXACT match from TWF
-                if (cellIsLast[key]) {
+                // Circle at word START (first letter) — EXACT match from TWF
+                if (cellIsFirst[key]) {
                     inner += `<span class="cell-circle" style="background:${rgbColor};"></span>`;
-                    // Check badge at word end
+                }
+                // Check badge at word END (last letter)
+                if (cellIsLast[key]) {
                     inner += `<span class="cell-check-badge" style="background:${color};">&#10003;</span>`;
                 }
 
                 // Letter text (z-index:4, above tubes)
                 inner += `<span class="cell-letter">${cell.letter}</span>`;
 
-                // Direction arrows on non-last cells (EXACT match from TWF: chevron SVG)
-                if (cellArrowDir[key] && !cellIsLast[key]) {
+                // Direction arrows on non-first cells — shows direction from prev to this cell (EXACT match from TWF)
+                if (cellArrowDir[key] && !cellIsFirst[key]) {
                     inner += `<span class="cell-arrow cell-arrow--${cellArrowDir[key]}">${chevronSvg}</span>`;
                 }
 
