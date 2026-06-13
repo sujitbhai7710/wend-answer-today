@@ -10,28 +10,22 @@ const path = require('path');
 const WORKER_URL = process.env.WORKER_URL || 'https://wend-api-worker.wendapi.workers.dev';
 const API_KEY = process.env.WORKER_API_KEY || '';
 
-// Word colors - matching LinkedIn Wend game solved state
+// Word colors — EXACT match from thewordfinder.com Wend hints page
 const WORD_COLORS = [
     '#E8572A',  // Orange-red
     '#D4449A',  // Pink
-    '#00B5B0',  // Teal
-    '#8DC63F',  // Green
-    '#4A90D9',  // Blue
-    '#F5A623',  // Amber
-    '#9B59B6',  // Purple
-    '#26C0A6',  // Mint
+    '#4DBDBA',  // Teal
+    '#98C21F',  // Green
+    '#5B8DD9',  // Blue
 ];
 
-// Lighter tints for grid cell backgrounds when revealed
+// Lighter tints for grid cell backgrounds when revealed (using color-mix in CSS)
 const WORD_BG_COLORS = [
     '#FDE8DF',  // orange tint
     '#FADFE8',  // pink tint
-    '#CCF0EE',  // teal tint
-    '#E5F5D0',  // green tint
+    '#D5F0EE',  // teal tint
+    '#EDF5D0',  // green tint
     '#D6E8F8',  // blue tint
-    '#FEECC4',  // amber tint
-    '#E6D8F0',  // purple tint
-    '#D4F2EC',  // mint tint
 ];
 
 function wordColor(idx) {
@@ -243,71 +237,40 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
 // Word cards
 // =========================================================
 
-// BEFORE reveal: gray rounded-rect bubbles with arrows between them
+// BEFORE reveal: gray CIRCLE bubbles — matching thewordfinder.com exactly (no arrows)
 function generateWordCardsBefore(words, wordCells) {
     return words.map((word, idx) => {
         const color = wordColor(idx);
-        const bgColor = wordBgColor(idx);
-        const cells = wordCells[idx] ? wordCells[idx].cells : null;
         
         let bubbles = '';
         for (let i = 0; i < word.length; i++) {
-            // Add direction arrow between bubbles
-            if (i > 0 && cells) {
-                const prev = cells[i - 1];
-                const curr = cells[i];
-                const dc = curr.col - prev.col;
-                const dr = curr.row - prev.row;
-                let arrowSvg = '';
-                if (dc > 0) arrowSvg = '<svg viewBox="0 0 24 24"><path d="M8 4l8 8-8 8" fill="currentColor"/></svg>';
-                else if (dc < 0) arrowSvg = '<svg viewBox="0 0 24 24"><path d="M16 4l-8 8 8 8" fill="currentColor"/></svg>';
-                else if (dr > 0) arrowSvg = '<svg viewBox="0 0 24 24"><path d="M4 8l8 8 8-8" fill="currentColor"/></svg>';
-                else if (dr < 0) arrowSvg = '<svg viewBox="0 0 24 24"><path d="M4 16l8-8 8 8" fill="currentColor"/></svg>';
-                if (arrowSvg) {
-                    bubbles += `<span class="bubble-arrow">${arrowSvg}</span>`;
-                }
-            }
             bubbles += `<div class="letter-bubble letter-bubble--hidden"></div>`;
         }
 
-        return `<div class="word-blank" style="--word-color:${color};--word-bg-color:${bgColor};">
+        return `<div class="word-blank" style="--word-color:${color};">
             <div class="letter-row">${bubbles}</div>
+            <div class="word-actions">
+                <span class="btn-reveal-letter" style="--word-color:${color};">Reveal Letter</span>
+                <span class="btn-reveal-word" style="--word-color:${color};">Reveal Word</span>
+            </div>
         </div>`;
     }).join('');
 }
 
-// AFTER reveal: colored rounded-rect bubbles with letters and arrows between them
+// AFTER reveal: colored CIRCLE bubbles with dark text — matching thewordfinder.com exactly
 function generateWordCardsAfter(words, wordCells) {
     return words.map((word, idx) => {
         const color = wordColor(idx);
-        const bgColor = wordBgColor(idx);
-        const textColor = isLightColor(color) ? '#2d2d2d' : '#ffffff';
-        const cells = wordCells[idx] ? wordCells[idx].cells : null;
         
         let bubbles = '';
         for (let li = 0; li < word.length; li++) {
-            // Add direction arrow between bubbles
-            if (li > 0 && cells) {
-                const prev = cells[li - 1];
-                const curr = cells[li];
-                const dc = curr.col - prev.col;
-                const dr = curr.row - prev.row;
-                let arrowSvg = '';
-                if (dc > 0) arrowSvg = '<svg viewBox="0 0 24 24"><path d="M8 4l8 8-8 8" fill="currentColor"/></svg>';
-                else if (dc < 0) arrowSvg = '<svg viewBox="0 0 24 24"><path d="M16 4l-8 8 8 8" fill="currentColor"/></svg>';
-                else if (dr > 0) arrowSvg = '<svg viewBox="0 0 24 24"><path d="M4 8l8 8 8-8" fill="currentColor"/></svg>';
-                else if (dr < 0) arrowSvg = '<svg viewBox="0 0 24 24"><path d="M4 16l8-8 8 8" fill="currentColor"/></svg>';
-                if (arrowSvg) {
-                    bubbles += `<span class="bubble-arrow">${arrowSvg}</span>`;
-                }
-            }
             const letter = word[li];
-            bubbles += `<div class="letter-bubble letter-bubble--revealed" style="background:${color};color:${textColor};--bubble-delay:${li};">
-                <span class="bubble-letter" style="color:${textColor};">${letter}</span>
+            bubbles += `<div class="letter-bubble letter-bubble--revealed" style="background:${color};--bubble-delay:${li};">
+                <span class="bubble-letter">${letter}</span>
             </div>`;
         }
 
-        return `<div class="word-blank word-blank--revealed" style="--word-color:${color};--word-bg-color:${bgColor};--card-delay:${idx};">
+        return `<div class="word-blank word-blank--revealed" style="--word-color:${color};--card-delay:${idx};">
             <div class="letter-row">${bubbles}</div>
             <div class="revealed-label" style="color:${color};"><strong>${word}</strong></div>
         </div>`;
@@ -318,8 +281,7 @@ function generateWordCardsAfter(words, wordCells) {
 function generateWordChips(words) {
     return words.map((word, idx) => {
         const color = wordColor(idx);
-        const textColor = isLightColor(color) ? '#1a1a1a' : '#ffffff';
-        return `<span class="word-chip" style="background:${color};color:${textColor};--chip-delay:${(idx + 1) * 0.15}s;">
+        return `<span class="word-chip" style="background:${color};color:#fff;--chip-delay:${(idx + 1) * 0.15}s;">
             <span class="chip-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
             ${word}
         </span>`;

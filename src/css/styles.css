@@ -1,39 +1,27 @@
 /* ================================================
-   Wend Answer Today - Matching LinkedIn Wend Game
-   Exact visual match with linkedin.com/games/wend
+   Wend Answer Today — Matching thewordfinder.com
+   Wend hints page design exactly
    ================================================ */
 
 /* --- CSS Variables --- */
 :root {
-    /* Word colors - matching LinkedIn Wend solved state */
+    /* Word colors — EXACT match from thewordfinder.com Wend hints */
     --word-0: #E8572A;  /* Orange-red */
     --word-1: #D4449A;  /* Pink */
-    --word-2: #00B5B0;  /* Teal */
-    --word-3: #8DC63F;  /* Green */
-    --word-4: #4A90D9;  /* Blue */
-    --word-5: #F5A623;  /* Amber */
-    --word-6: #9B59B6;  /* Purple */
-    --word-7: #26C0A6;  /* Mint */
+    --word-2: #4DBDBA;  /* Teal */
+    --word-3: #98C21F;  /* Green */
+    --word-4: #5B8DD9;  /* Blue */
 
-    /* Lighter tints for cell backgrounds when revealed */
-    --word-bg-0: #FDE8DF;
-    --word-bg-1: #FADFE8;
-    --word-bg-2: #CCF0EE;
-    --word-bg-3: #E5F5D0;
-    --word-bg-4: #D6E8F8;
-    --word-bg-5: #FEECC4;
-    --word-bg-6: #E6D8F0;
-    --word-bg-7: #D4F2EC;
-
-    --clr-bg: #F4F2EE;
+    --clr-bg: #ffffff;
     --clr-card: #F8FAFD;
     --clr-white: #ffffff;
     --clr-blocked: #B2B2B2;
-    --clr-border: #424242;
+    --clr-border: #333333;
     --clr-text: rgba(0, 0, 0, 0.9);
+    --clr-text-dark: #1A1A1A;
     --clr-text-muted: rgba(0, 0, 0, 0.6);
     --clr-text-light: rgba(0, 0, 0, 0.75);
-    --clr-card-border: #E0E0DB;
+    --clr-card-border: #E5E5E0;
     --clr-primary: #0A66C2;
     --clr-primary-dark: #004182;
     --clr-grey-900: #1f2933;
@@ -42,15 +30,16 @@
     --clr-grey-300: #d1d5db;
     --clr-grey-200: #e5e7eb;
     --clr-grey-100: #f3f4f6;
-    --clr-bubble: #E4E4E4;
+    --clr-bubble: #DEDED8;
 
-    --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, Oxygen, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', Arial, sans-serif;
+    --font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     --radius-sm: 6px;
     --radius-md: 8px;
-    --radius-lg: 12px;
+    --radius-lg: 14px;
     --radius-full: 9999px;
     --shadow-card: 0 1px 3px rgba(0,0,0,0.08);
     --shadow-hover: 0 4px 16px rgba(0,0,0,0.12);
+    --shadow-board: rgba(0, 0, 0, 0.1) 0px 2px 12px;
     --transition: 0.2s ease;
 }
 
@@ -200,18 +189,21 @@ button { cursor: pointer; font-family: inherit; }
     pointer-events: none;
 }
 
-/* --- Game Card (matching LinkedIn's centered card) --- */
+/* --- Game Layout: 2-column on desktop, single on mobile (matching TWF) --- */
 .game-layout {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
     width: 100%;
-    max-width: 480px;
+    max-width: 100%;
     margin: 0 auto;
-    background: var(--clr-card);
-    border-radius: var(--radius-lg);
-    padding: 16px;
-    box-shadow: var(--shadow-card);
+}
+@media (min-width: 768px) {
+    .game-layout {
+        grid-template-columns: minmax(380px, 480px) 1fr;
+        gap: 24px;
+        align-items: start;
+    }
 }
 
 /* --- Board Column --- */
@@ -226,50 +218,63 @@ button { cursor: pointer; font-family: inherit; }
 .grid-view {
     display: flex;
     justify-content: center;
+    width: 100%;
 }
 
-/* --- Wend Board Grid (matching LinkedIn exactly) --- */
+/* --- Wend Board Grid (EXACT match from thewordfinder.com) --- */
 .wend-board-wrapper {
     display: grid;
     width: 100%;
-    max-width: 416px;
-    border: 4px solid #424242;
-    border-radius: var(--radius-md);
+    aspect-ratio: 1 / 1;
+    border: 3px solid #333;
+    border-radius: 14px;
     overflow: hidden;
     gap: 0;
     background: #fff;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 12px;
+    max-width: 480px;
 }
 
-/* --- Grid Cells (matching LinkedIn) --- */
+/* --- Grid Cells (EXACT match from TWF) --- */
 .wend-cell {
     display: flex;
     align-items: center;
     justify-content: center;
+    aspect-ratio: 1 / 1;
     position: relative;
     overflow: visible;
-    border: 1px solid #C8C8C8;
-    background: transparent;
 }
 .wend-cell--blocked {
-    background: var(--clr-blocked);
+    background: #B2B2B2;
     cursor: default;
-    border: 1px solid #A0A0A0;
+    box-sizing: border-box;
 }
 .wend-cell--letter {
-    background: #fff;
     appearance: none;
-    border: 1px solid #C8C8C8;
+    border: none;
     padding: 0;
     outline: none;
     cursor: pointer;
     font-family: inherit;
-    transition: background 0.2s ease;
+    box-sizing: border-box;
+    /* Inset shadow borders — matching TWF exactly */
+    box-shadow: rgb(228, 228, 228) 1px 0px inset,
+                rgb(228, 228, 228) -1px 0px inset,
+                rgb(228, 228, 228) 0px 1px inset,
+                rgb(228, 228, 228) 0px -1px inset;
+    transition: background 0.15s;
+    background: #fff !important;
 }
 .wend-cell--letter:hover {
     background: #F5F5F5 !important;
 }
 .wend-cell--revealed {
-    background: var(--word-bg-color, color-mix(in srgb, var(--word-color) 20%, white)) !important;
+    /* TWF: color-mix(in srgb, var(--word-color) 22%, white) */
+    background: color-mix(in srgb, var(--word-color) 22%, white) !important;
+    box-shadow: none;
+}
+.wend-cell--revealed:hover {
+    filter: brightness(1.04);
 }
 
 /* Cell pop animation */
@@ -282,20 +287,24 @@ button { cursor: pointer; font-family: inherit; }
     animation: cellPop 0.28s ease forwards;
 }
 
-/* Cell letter styling (matching LinkedIn: 24px, 600 weight, 0.912px spacing) */
+/* Cell letter styling (EXACT match from TWF: 900 weight, -0.03em spacing, dark color) */
 .cell-letter {
-    font-size: clamp(16px, 5vw, 24px);
-    font-weight: 700;
-    line-height: 30px;
-    letter-spacing: 0.9px;
+    font-size: clamp(14px, 4.5vw, 28px);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
     user-select: none;
     pointer-events: none;
     position: relative;
     z-index: 4;
-    color: var(--clr-text);
+    color: #1A1A1A;
 }
 .cell-letter--hidden {
-    color: var(--clr-text);
+    color: #1A1A1A;
+}
+.cell-letter--revealed {
+    color: #1A1A1A;
+    text-shadow: none;
 }
 
 /* --- Tube connectors --- */
@@ -321,7 +330,7 @@ button { cursor: pointer; font-family: inherit; }
     border-radius: 50%;
     z-index: 2;
     pointer-events: none;
-    outline: 4px solid var(--word-bg-color, color-mix(in srgb, var(--word-color) 25%, white));
+    outline: 4px solid color-mix(in srgb, var(--word-color) 25%, white);
     border: 2.5px solid var(--word-color);
 }
 
@@ -383,19 +392,19 @@ button { cursor: pointer; font-family: inherit; }
     transform: translate(50%) translateY(-50%) rotate(90deg);
 }
 
-/* --- Board instruction text (matching LinkedIn hint text) --- */
+/* --- Board instruction text --- */
 .board-instruction {
     font-size: 14px;
     font-weight: 600;
     color: var(--clr-text);
     text-align: center;
-    margin-top: 8px;
+    margin-top: 12px;
     align-self: center;
 }
 .board-instruction b { color: var(--clr-text); font-weight: 600; }
 .revealed-text { display: none; }
 
-/* --- Reveal / Clear Buttons (matching LinkedIn style) --- */
+/* --- Reveal / Clear Buttons --- */
 .reveal-buttons {
     display: flex;
     gap: 8px;
@@ -408,37 +417,24 @@ button { cursor: pointer; font-family: inherit; }
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 8px 24px;
-    font-size: 14px;
-    font-weight: 600;
-    border-radius: var(--radius-full);
-    border: 1px solid var(--clr-primary);
+    padding: 6px 14px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    border-radius: 999px;
+    border: 2px solid;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: 0.2s;
+    letter-spacing: 0.01em;
     user-select: none;
-    background: var(--clr-primary);
+    /* Match TWF style: filled colored button */
+    background: var(--word-color, var(--clr-primary));
     color: #fff;
+    border-color: var(--word-color, var(--clr-primary));
 }
 .reveal-btn:hover {
-    background: var(--clr-primary-dark);
-    border-color: var(--clr-primary-dark);
-}
-.reveal-btn--primary {
-    background: var(--clr-primary);
-    color: #fff;
-    border-color: var(--clr-primary);
-}
-.reveal-btn--primary:hover {
-    background: var(--clr-primary-dark);
-    border-color: var(--clr-primary-dark);
-}
-.reveal-btn--secondary {
-    background: #fff;
-    border-color: #555;
-    color: #555;
-}
-.reveal-btn--secondary:hover {
-    background: var(--clr-grey-100);
+    filter: brightness(1.12);
+    transform: translateY(-1px);
+    box-shadow: rgba(0, 0, 0, 0.18) 0px 4px 12px;
 }
 
 /* Toggle text on reveal */
@@ -450,16 +446,10 @@ button { cursor: pointer; font-family: inherit; }
     border-color: #555;
     color: #555;
 }
-.reveal-checkbox:checked ~ .game-layout .reveal-btn--secondary {
-    background: var(--clr-primary);
-    border-color: var(--clr-primary);
-    color: #fff;
-}
 
-/* --- Words Column (matching LinkedIn: single column within game card) --- */
+/* --- Words Column --- */
 .game-words-col {
     width: 100%;
-    margin-top: 8px;
 }
 
 /* --- Progress Bar --- */
@@ -488,25 +478,28 @@ button { cursor: pointer; font-family: inherit; }
     width: 0%;
 }
 
-/* --- Word Cards List (matching LinkedIn: single column, simple) --- */
+/* --- Word Cards List (matching TWF: single column, gap 10px) --- */
 .words-list {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 10px;
 }
 
-/* --- Word Blank Card (matching LinkedIn's word rows) --- */
+/* --- Word Blank Card (EXACT match from TWF: white bg, border, rounded corners) --- */
 .word-blank {
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    padding: 0;
-    transition: all 0.3s ease;
+    background: #fff;
+    border: 2px solid #E5E5E0;
+    border-radius: 16px;
+    padding: 12px 14px;
+    transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
     display: flex;
-    align-items: center;
-    gap: 0;
+    flex-direction: column;
+    gap: 10px;
 }
 .word-blank--revealed {
+    border-color: var(--word-color, #22c55e);
+    background: color-mix(in srgb, var(--word-color, #22c55e) 5%, white);
+    box-shadow: 0 2px 16px color-mix(in srgb, var(--word-color, #22c55e) 18%, transparent);
     animation: wordSlideDown 0.4s ease backwards;
     animation-delay: calc(var(--card-delay, 0) * 0.12s);
 }
@@ -516,45 +509,43 @@ button { cursor: pointer; font-family: inherit; }
     100% { opacity: 1; transform: translateY(0); }
 }
 
-/* --- Letter Row (matching LinkedIn: flex with 2px gap) --- */
+/* --- Letter Row (matching TWF: flex, gap 5px) --- */
 .letter-row {
     display: flex;
     align-items: center;
-    gap: 2px;
+    gap: 5px;
     flex-wrap: wrap;
 }
 
-/* --- Letter Bubbles (matching LinkedIn: 22px rounded rects, #E4E4E4 bg) --- */
+/* --- Letter Bubbles (EXACT match from TWF: 38px CIRCLES, 800 weight) --- */
 .letter-bubble {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: 800;
+    font-size: 16px;
     flex-shrink: 0;
-    transition: background 0.28s ease, transform 0.2s ease;
-    color: var(--clr-text-light);
+    transition: background 0.28s, transform 0.2s;
 }
 .letter-bubble--hidden {
-    background: var(--clr-bubble);
-    border-radius: 8px;
+    background: #DEDED8;
 }
 .letter-bubble--revealed {
-    color: #fff;
-    transform: scale(1);
-    border-radius: 8px;
+    color: #1A1A1A;
+    transform: scale(1.05);
+    box-shadow: rgba(0, 0, 0, 0.18) 0px 2px 8px;
     animation: bubbleBounce 0.3s ease backwards;
     animation-delay: calc(var(--bubble-delay, 0) * 0.08s);
 }
 .bubble-letter {
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 16px;
+    font-weight: 800;
     color: inherit;
     line-height: 1;
-    letter-spacing: 0;
+    letter-spacing: -0.02em;
 }
 
 @keyframes bubbleBounce {
@@ -568,8 +559,8 @@ button { cursor: pointer; font-family: inherit; }
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     flex-shrink: 0;
     color: var(--clr-text-light);
     font-size: 8px;
@@ -577,9 +568,47 @@ button { cursor: pointer; font-family: inherit; }
     margin: 0;
 }
 .bubble-arrow svg {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     fill: var(--clr-text-light);
+}
+
+/* --- Word actions row (matching TWF: Reveal Letter / Reveal Word buttons) --- */
+.word-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.btn-reveal-letter,
+.btn-reveal-word {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+    border: 2px solid;
+    letter-spacing: 0.01em;
+    font-family: inherit;
+}
+.btn-reveal-letter {
+    background: transparent;
+    border-color: var(--word-color, #6b7280);
+    color: var(--word-color, #374151);
+}
+.btn-reveal-letter:hover {
+    background: var(--word-color, #e5e7eb);
+    color: #fff;
+}
+.btn-reveal-word {
+    background: var(--word-color, #6b7280);
+    border-color: var(--word-color, #6b7280);
+    color: #fff;
+}
+.btn-reveal-word:hover {
+    filter: brightness(1.12);
+    transform: translateY(-1px);
+    box-shadow: rgba(0, 0, 0, 0.18) 0px 4px 12px;
 }
 
 /* --- Revealed label under word --- */
@@ -1027,18 +1056,20 @@ button { cursor: pointer; font-family: inherit; }
     color: var(--clr-grey-500);
 }
 
-/* Archive layout - single column like main */
+/* Archive layout */
 .archive-layout {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr;
     gap: 16px;
     width: 100%;
-    max-width: 480px;
     margin: 0 auto;
-    background: var(--clr-card);
-    border-radius: var(--radius-lg);
-    padding: 16px;
+}
+@media (min-width: 768px) {
+    .archive-layout {
+        grid-template-columns: auto 1fr;
+        gap: 24px;
+        align-items: start;
+    }
 }
 
 /* Archive grid before/after */
@@ -1058,19 +1089,21 @@ button { cursor: pointer; font-family: inherit; }
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 8px 24px;
-    font-size: 14px;
-    font-weight: 600;
-    border-radius: var(--radius-full);
-    border: 1px solid var(--clr-primary);
+    padding: 6px 14px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    border-radius: 999px;
+    border: 2px solid var(--clr-primary);
     cursor: pointer;
     background: var(--clr-primary);
     color: #fff;
     transition: all 0.2s;
+    letter-spacing: 0.01em;
 }
 .archive-reveal-btn:hover {
-    background: var(--clr-primary-dark);
-    border-color: var(--clr-primary-dark);
+    filter: brightness(1.12);
+    transform: translateY(-1px);
+    box-shadow: rgba(0, 0, 0, 0.18) 0px 4px 12px;
 }
 .archive-reveal-hide { display: none; }
 
@@ -1118,7 +1151,7 @@ button { cursor: pointer; font-family: inherit; }
 }
 
 /* ================================================
-   Puzzle Picker - HIDDEN (removed per user request)
+   Puzzle Picker - HIDDEN
    ================================================ */
 .puzzle-picker-section { display: none !important; }
 .puzzle-picker-btn { display: none !important; }
@@ -1146,19 +1179,17 @@ button { cursor: pointer; font-family: inherit; }
     }
     .game-layout,
     .archive-layout {
-        max-width: 100%;
-        padding: 12px;
-        border-radius: 8px;
+        grid-template-columns: 1fr;
+        gap: 16px;
     }
     .game-board-col {
         align-items: stretch;
     }
     /* Grid takes full width on mobile */
     .wend-board-wrapper {
-        max-width: 100%;
         width: 100%;
-        border-radius: 8px;
-        border-width: 4px;
+        border-radius: 14px;
+        border-width: 3px;
     }
     .page-title-section {
         padding: 12px 0 4px;
@@ -1171,31 +1202,31 @@ button { cursor: pointer; font-family: inherit; }
     }
     /* Scale down letter bubbles proportionally on mobile */
     .letter-bubble {
-        width: 24px;
-        height: 24px;
-        font-size: 12px;
+        width: 34px;
+        height: 34px;
+        font-size: 14px;
     }
     .bubble-letter {
-        font-size: 12px;
+        font-size: 14px;
     }
     .letter-row {
-        gap: 2px;
+        gap: 4px;
     }
     .bubble-arrow {
-        width: 12px;
-        height: 12px;
+        width: 14px;
+        height: 14px;
     }
     .bubble-arrow svg {
-        width: 8px;
-        height: 8px;
+        width: 10px;
+        height: 10px;
     }
-    .reveal-btn {
-        font-size: 14px;
-        padding: 7px 20px;
+    .word-blank {
+        padding: 10px 12px;
     }
-    .progress-section {
-        margin-top: 0;
-        margin-bottom: 6px;
+    .btn-reveal-letter,
+    .btn-reveal-word {
+        padding: 5px 10px;
+        font-size: 0.7rem;
     }
     .hints-section,
     .recent-section,
@@ -1206,7 +1237,7 @@ button { cursor: pointer; font-family: inherit; }
         gap: 12px;
     }
     .cell-letter {
-        font-size: clamp(13px, 4.5vw, 22px);
+        font-size: clamp(12px, 4.5vw, 22px);
     }
 }
 
@@ -1216,19 +1247,19 @@ button { cursor: pointer; font-family: inherit; }
         padding: 0 8px;
     }
     .letter-bubble {
-        width: 20px;
-        height: 20px;
-        font-size: 12px;
+        width: 30px;
+        height: 30px;
+        font-size: 13px;
     }
     .bubble-letter {
-        font-size: 10px;
+        font-size: 13px;
     }
     .letter-row {
-        gap: 1px;
+        gap: 3px;
     }
     .wend-board-wrapper {
-        border-width: 3px;
-        border-radius: 6px;
+        border-width: 2px;
+        border-radius: 10px;
     }
     .cell-letter {
         font-size: clamp(11px, 4vw, 18px);
@@ -1243,5 +1274,14 @@ button { cursor: pointer; font-family: inherit; }
     .cell-circle {
         outline-width: 3px;
         border-width: 2px;
+    }
+    .word-blank {
+        padding: 8px 10px;
+        border-radius: 12px;
+    }
+    .btn-reveal-letter,
+    .btn-reveal-word {
+        padding: 4px 8px;
+        font-size: 0.65rem;
     }
 }
