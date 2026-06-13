@@ -161,14 +161,20 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
             if (prevCell) {
                 const dc = cell.col - prevCell.col;
                 const dr = cell.row - prevCell.row;
-                if (dc !== 0) cellConnectH[key].left = true;
-                if (dr !== 0) cellConnectV[key].top = true;
+                // Tube must extend toward the previous cell
+                if (dc > 0) cellConnectH[key].left = true;   // prev is to the left
+                if (dc < 0) cellConnectH[key].right = true;  // prev is to the right
+                if (dr > 0) cellConnectV[key].top = true;    // prev is above
+                if (dr < 0) cellConnectV[key].bottom = true; // prev is below
             }
             if (nextCell) {
                 const dc = nextCell.col - cell.col;
                 const dr = nextCell.row - cell.row;
-                if (dc !== 0) cellConnectH[key].right = true;
-                if (dr !== 0) cellConnectV[key].bottom = true;
+                // Tube must extend toward the next cell
+                if (dc > 0) cellConnectH[key].right = true;  // next is to the right
+                if (dc < 0) cellConnectH[key].left = true;   // next is to the left
+                if (dr > 0) cellConnectV[key].bottom = true; // next is below
+                if (dr < 0) cellConnectV[key].top = true;    // next is above
 
                 // Arrow direction: direction from this cell to next cell
                 if (!(key in cellArrowDir)) {
