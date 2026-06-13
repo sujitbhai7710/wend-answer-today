@@ -1,11 +1,11 @@
 name: Daily Wend Puzzle Update
 
+# Runs on a daily schedule to scrape the latest puzzle, build, and deploy.
+# Code-change deployments are handled by the separate deploy.yml workflow.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
   schedule:
-    - cron: '1 8 * * *'
+    - cron: "1 8 * * *" # 08:01 UTC = 1:31 PM IST
 
 env:
   WORKER_URL: ${{ secrets.WORKER_URL }}
@@ -17,28 +17,28 @@ jobs:
   scrape-and-deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      
+          node-version: "20"
+
       - name: Install root dependencies
         run: npm install
-      
+
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
-      
+
       - name: Install scraper dependencies
         run: |
           cd scraper
           npm init -y
           npm install playwright
-      
+
       - name: Scrape latest Wend puzzle
         run: node scrape-wend.js
         working-directory: scraper
@@ -46,13 +46,13 @@ jobs:
         env:
           WORKER_URL: ${{ secrets.WORKER_URL }}
           WORKER_API_KEY: ${{ secrets.WORKER_API_KEY }}
-      
+
       - name: Build site
         run: npm run build
         env:
           WORKER_URL: ${{ secrets.WORKER_URL }}
           WORKER_API_KEY: ${{ secrets.WORKER_API_KEY }}
-      
+
       - name: Deploy to Cloudflare Pages
         run: npx wrangler pages deploy dist --project-name=wend-answer-today
         env:
