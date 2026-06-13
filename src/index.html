@@ -14,8 +14,6 @@
         <meta name="author" content="Wend Answer Today" />
         <meta property="og:locale" content="en_US" />
         <meta property="og:site_name" content="Wend Answer Today" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link rel="canonical" href="https://wendanswertoday.online" />
         <title>LinkedIn Wend Hints and Answers — {{DATE_DISPLAY}}</title>
         <meta name="description" content="{{META_DESCRIPTION}}" />
@@ -47,8 +45,11 @@
             content="https://wendanswertoday.online/images/og-image.png"
         />
         <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-            rel="stylesheet"
+            rel="preload"
+            href="/fonts/inter-700.ttf"
+            as="font"
+            type="font/ttf"
+            crossorigin
         />
         <link rel="stylesheet" href="/css/styles.css" />
         <script type="application/ld+json">
@@ -171,7 +172,8 @@
                                         class="board-instruction"
                                         id="board-instruction"
                                     >
-                                        Find the {{WORD_COUNT}} hidden words
+                                        <b>Click any letter</b> to reveal where
+                                        it belongs within its word.
                                     </p>
                                     <p
                                         class="board-instruction revealed-text"
@@ -213,6 +215,23 @@
 
                                 <!-- Words (below grid, matching LinkedIn's word list) -->
                                 <div class="game-words-col">
+                                    <div class="progress-section">
+                                        <div class="progress-label">
+                                            Words found:
+                                            <span
+                                                class="progress-count"
+                                                data-total="{{WORD_COUNT}}"
+                                                >0 / {{WORD_COUNT}}</span
+                                            >
+                                        </div>
+                                        <div class="progress-bar">
+                                            <div
+                                                class="progress-fill"
+                                                style="width: 0%"
+                                            ></div>
+                                        </div>
+                                    </div>
+
                                     <!-- Word Cards - Before Reveal (gray bubbles) -->
                                     <div class="words-list" id="words-before">
                                         {{WORD_CARDS_BEFORE}}
@@ -239,6 +258,201 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </section>
+
+                <!-- SEO Content Section -->
+                <section class="content-section">
+                    <div class="container">
+                        <article class="content-card">
+                            <h2>
+                                Today&rsquo;s LinkedIn Wend answer, with the
+                                part most answer pages skip
+                            </h2>
+                            <p>
+                                Most people land here for one reason: the Wend
+                                grid is sitting open, one word is refusing to
+                                appear, and the official game is not giving
+                                enough of a nudge. That is exactly what this
+                                page is for. You can reveal the whole answer if
+                                you want the fastest route, but you can also use
+                                the board the slower way: click one letter,
+                                watch where it fits in the word list, and keep
+                                solving without fully spoiling the puzzle.
+                            </p>
+                            <p>
+                                That small difference matters. A plain answer
+                                list is useful for two seconds, then it is gone.
+                                A mapped Wend solution helps you understand the
+                                path. You can see where a word starts, how it
+                                bends through the grid, and why the next letter
+                                is not always the one your eyes first expect.
+                                Wend is not a normal word search. The words are
+                                short enough to look easy, but the paths turn
+                                just often enough to make your brain
+                                second-guess itself.
+                            </p>
+                            <div class="content-highlight">
+                                <p>
+                                    <strong>Quick tip:</strong> if you do not
+                                    want a full spoiler, start by clicking a
+                                    letter that looks unusual in the grid.
+                                    Letters like X, Q, Z, J, or a repeated vowel
+                                    often reveal the shape of one word without
+                                    giving away the entire puzzle.
+                                </p>
+                            </div>
+                            <h3>
+                                How to use this page without ruining the fun
+                            </h3>
+                            <p>
+                                If you still want to play, do not hit
+                                &ldquo;Reveal all&rdquo; first. Click any
+                                visible letter on the board. If that letter
+                                belongs to a hidden answer, the matching bubble
+                                in the word area lights up. Click a few more
+                                letters around it and you will start to see the
+                                word shape. The &ldquo;Reveal Letter&rdquo;
+                                button gives you the next missing character for
+                                one word. &ldquo;Reveal Word&rdquo; fills that
+                                one word only. Use those controls when you want
+                                a hint, not a full answer dump.
+                            </p>
+                            <p>
+                                The solved board is there for checking your
+                                work. Once you reveal everything, the colored
+                                paths show the complete solution. The circle
+                                marks the starting cell, the check mark sits on
+                                the start like the official solved path view,
+                                and the arrows show how the path moves from one
+                                cell to the next. The color order can change
+                                from day to day, so do not use color as the main
+                                clue. Use position and direction.
+                            </p>
+                            <div class="content-grid">
+                                <div class="mini-card">
+                                    <strong>Need one hint?</strong> Click a
+                                    board letter. It reveals where that letter
+                                    belongs in the answer list.
+                                </div>
+                                <div class="mini-card">
+                                    <strong>Need one word?</strong> Use Reveal
+                                    Word on that row. The rest of the puzzle
+                                    stays hidden.
+                                </div>
+                                <div class="mini-card">
+                                    <strong>Need the full solve?</strong> Use
+                                    Reveal all and compare the colored route
+                                    with your board.
+                                </div>
+                            </div>
+                            <h3>Why Wend answers are easy to misread</h3>
+                            <p>
+                                Wend tricks you because nearby letters are not
+                                enough. A word can move right, turn down, move
+                                left, then turn again. Your eye expects straight
+                                lines because most word searches train you that
+                                way. Wend does the opposite. The shortest word
+                                is usually the best starting point because there
+                                are fewer possible routes. Once you find that
+                                path, the intersections start doing some of the
+                                work for you.
+                            </p>
+                            <p>
+                                Another common mistake is treating blocked cells
+                                like empty space. They are not decoration. The
+                                grey blocks shape the puzzle and narrow down
+                                where a word can bend. If a route feels possible
+                                but runs into a block, back up one cell and try
+                                the other adjacent letter. That one move is
+                                usually where the puzzle opens up.
+                            </p>
+                            <h3>Daily update schedule</h3>
+                            <p>
+                                LinkedIn publishes a fresh Wend puzzle every
+                                day. This site updates shortly after the new
+                                puzzle goes live, then keeps previous puzzles in
+                                the archive. If you missed yesterday&rsquo;s
+                                puzzle, want to compare streaks, or are checking
+                                an older answer from search, the
+                                <a href="/archive.html">Wend archive</a> keeps
+                                those solved boards in one place.
+                            </p>
+                            <h3>
+                                A better way to check today&rsquo;s Wend
+                                solution
+                            </h3>
+                            <p>
+                                The most useful Wend answer page is not the one
+                                that shouts the words at you first. It is the
+                                one that lets you choose how much help you want.
+                                Some days you only need to know whether a letter
+                                belongs to the first word or the second word.
+                                Some days you want the whole route because the
+                                path doubles back in a way that feels unfair.
+                                Both are normal. The controls above are designed
+                                around those two moods.
+                            </p>
+                            <p>
+                                If you are trying to keep a streak clean, use
+                                the smallest hint that gets you moving again.
+                                Click one grid cell. If the matching bubble
+                                appears, you have a starting point. If it does
+                                not help, reveal one letter in the shortest
+                                word. Short words are usually the lowest-risk
+                                hint because they give you direction without
+                                revealing the long answer. Save the full solved
+                                board for the end, when you are checking whether
+                                you followed the right path.
+                            </p>
+                            <p>
+                                Wend also rewards patience more than speed. The
+                                board can look messy at first, especially when
+                                multiple words share the same area. Instead of
+                                scanning randomly, pick one open region and
+                                follow every possible bend from there. Count the
+                                word length, then test whether the route has
+                                enough open cells. That simple check prevents a
+                                lot of wrong guesses. If a five-letter word
+                                would need six moves to reach the ending letter
+                                you have in mind, the path is wrong. Back up
+                                early.
+                            </p>
+                            <h3>What changes from puzzle to puzzle</h3>
+                            <p>
+                                The word count, board shape, blocked-cell
+                                pattern, and route difficulty can all shift. One
+                                puzzle might be friendly because the shortest
+                                word is obvious. The next one might hide a
+                                common word behind an awkward turn. That is why
+                                this page does not rely on one static
+                                explanation. The board, word list, puzzle
+                                number, date, and archive links update with the
+                                latest data so the page stays useful for
+                                today&rsquo;s search result, not last
+                                week&rsquo;s.
+                            </p>
+                            <p>
+                                Colors are mostly a reading aid. They make the
+                                solved board easier to scan, but they are not a
+                                clue in the official puzzle. A green path today
+                                may not represent the same word position
+                                tomorrow. The reliable information is the cell
+                                order: start marker, direction arrows, and the
+                                checked start cell. Follow those and the
+                                solution makes sense even if the color palette
+                                changes.
+                            </p>
+                            <p>
+                                We keep the page simple on purpose:
+                                today&rsquo;s grid first, hint controls next,
+                                then the explanation. No popups. No fake
+                                countdown. No twenty-paragraph delay before the
+                                answer. The writing here is meant to help
+                                someone who is actually playing, not just fill
+                                space around keywords.
+                            </p>
+                        </article>
                     </div>
                 </section>
 
