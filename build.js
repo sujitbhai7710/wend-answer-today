@@ -10,6 +10,12 @@ const path = require("path");
 const WORKER_URL =
   process.env.WORKER_URL || "https://wend-api-worker.wendapi.workers.dev";
 const API_KEY = process.env.WORKER_API_KEY || "";
+const SITE_NAME = "Wend Answer Today";
+const SITE_URL = process.env.SITE_URL || "https://wendanswertoday.me";
+const OG_IMAGE_NAME = "wend-answer-today.webp";
+const OG_IMAGE_URL = `${SITE_URL}/${OG_IMAGE_NAME}`;
+const OG_IMAGE_ALT =
+  "Wend Answer Today preview image with the daily puzzle board and answer path styling";
 
 // Word colors — EXACT match from thewordfinder.com Wend hints page
 const WORD_COLORS = [
@@ -52,6 +58,72 @@ function formatDateShort(dateStr) {
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
+function absoluteUrl(pathname = "/") {
+  return new URL(pathname, `${SITE_URL}/`).toString();
+}
+
+function escapeXml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+function generateShareBar(title, url) {
+  return `<div class="share-bar" aria-label="Share this page">
+        <span class="share-bar-label">Share this page</span>
+        <div class="share-buttons">
+            <button type="button" class="share-button" data-share-service="native" data-share-title="${escapeXml(title)}" data-share-url="${escapeXml(url)}">Share</button>
+            <button type="button" class="share-button" data-share-service="copy" data-share-title="${escapeXml(title)}" data-share-url="${escapeXml(url)}">Copy link</button>
+            <button type="button" class="share-button" data-share-service="x" data-share-title="${escapeXml(title)}" data-share-url="${escapeXml(url)}">X</button>
+            <button type="button" class="share-button" data-share-service="facebook" data-share-title="${escapeXml(title)}" data-share-url="${escapeXml(url)}">Facebook</button>
+            <button type="button" class="share-button" data-share-service="whatsapp" data-share-title="${escapeXml(title)}" data-share-url="${escapeXml(url)}">WhatsApp</button>
+        </div>
+    </div>`;
+}
+
+function generateRobotsTxt() {
+  return `User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: ${absoluteUrl("/sitemap.xml")}
+`;
+}
+
+function generateSitemapXml(latestPuzzleDate) {
+  const pages = [
+    {
+      loc: absoluteUrl("/"),
+      lastmod: latestPuzzleDate,
+      changefreq: "daily",
+      priority: "1.0",
+    },
+    {
+      loc: absoluteUrl("/archive.html"),
+      lastmod: latestPuzzleDate,
+      changefreq: "daily",
+      priority: "0.9",
+    },
+    {
+      loc: absoluteUrl("/how-to-play.html"),
+      lastmod: new Date().toISOString(),
+      changefreq: "monthly",
+      priority: "0.7",
+    },
+  ];
+
+  const items = pages
+    .map(
+      (page) => `  <url>\n    <loc>${escapeXml(page.loc)}</loc>\n    <lastmod>${escapeXml(page.lastmod)}</lastmod>\n    <changefreq>${page.changefreq}</changefreq>\n    <priority>${page.priority}</priority>\n  </url>`,
+    )
+    .join("\n");
+
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${items}\n</urlset>\n`;
+}
+
 function getDirection(prevCell, currCell, nextCell) {
   if (nextCell) {
     const dr = nextCell.row - currCell.row;
@@ -81,6 +153,7 @@ function generateGridCells(grid, rows, cols, wordCells) {
   // Build maps for interactive per-letter reveals in the unsolved board.
   const cellColorMap = {};
   const cellRevealMap = {};
+  const cellSolvedMetaMap = {};
   if (wordCells) {
     wordCells.forEach((word, wordIdx) => {
       const color = wordColor(wordIdx);
@@ -97,6 +170,55 @@ function generateGridCells(grid, rows, cols, wordCells) {
           letterIdx,
           letter: grid[cell.row][cell.col].letter,
         });
+
+        const prevCell = letterIdx > 0 ? word.cells[letterIdx - 1] : null;
+        const nextCell =
+          letterIdx < word.cells.length - 1 ? word.cells[letterIdx + 1] : null;
+
+        let connectLeft = false;
+        let connectRight = false;
+        let connectTop = false;
+        let connectBottom = false;
+        let prevDir = "";
+
+        if (prevCell) {
+          const dc = cell.col - prevCell.col;
+          const dr = cell.row - prevCell.row;
+          if (dc > 0) {
+            connectLeft = true;
+            prevDir = "right";
+          } else if (dc < 0) {
+            connectRight = true;
+            prevDir = "left";
+          } else if (dr > 0) {
+            connectTop = true;
+            prevDir = "down";
+          } else if (dr < 0) {
+            connectBottom = true;
+            prevDir = "up";
+          }
+        }
+
+        if (nextCell) {
+          const dc = nextCell.col - cell.col;
+          const dr = nextCell.row - cell.row;
+          if (dc > 0) connectRight = true;
+          else if (dc < 0) connectLeft = true;
+          else if (dr > 0) connectBottom = true;
+          else if (dr < 0) connectTop = true;
+        }
+
+        if (!(key in cellSolvedMetaMap)) {
+          cellSolvedMetaMap[key] = {
+            color,
+            isFirst: letterIdx === 0,
+            connectLeft,
+            connectRight,
+            connectTop,
+            connectBottom,
+            prevDir,
+          };
+        }
       });
     });
   }
@@ -136,9 +258,10 @@ function generateGridCells(grid, rows, cols, wordCells) {
           ? `--word-color:${cellColorMap[key]};`
           : "";
         const revealData = cellRevealMap[key] || [];
+        const solvedMeta = cellSolvedMetaMap[key] || {};
         const primaryReveal = revealData[0];
         const revealAttrs = primaryReveal
-          ? `data-reveal='${JSON.stringify(revealData)}' data-word-index="${primaryReveal.wordIdx}" data-letter-index="${primaryReveal.letterIdx}"`
+          ? `data-reveal='${JSON.stringify(revealData)}' data-word-index="${primaryReveal.wordIdx}" data-letter-index="${primaryReveal.letterIdx}" data-cell-letter="${cell.letter}" data-connect-left="${solvedMeta.connectLeft ? "1" : "0"}" data-connect-right="${solvedMeta.connectRight ? "1" : "0"}" data-connect-top="${solvedMeta.connectTop ? "1" : "0"}" data-connect-bottom="${solvedMeta.connectBottom ? "1" : "0"}" data-prev-dir="${solvedMeta.prevDir || ""}" data-is-first="${solvedMeta.isFirst ? "1" : "0"}"`
           : "";
         html += `<button type="button" class="wend-cell wend-cell--letter" data-row="${r}" data-col="${c}" ${revealAttrs} style="${wordColorStyle}" aria-label="${cell.letter} — click to reveal this letter in the word list">
                     <span class="cell-letter cell-letter--hidden"> ${cell.letter} </span>
@@ -523,23 +646,61 @@ function generateRecentPuzzles(puzzles) {
 function generateSchema(puzzleData, allPuzzles) {
   const words = puzzleData.words;
   const date = formatDate(puzzleData.date);
+  const canonicalUrl = absoluteUrl("/");
+  const answerTitle = `Wend Answer Today for ${date}`;
 
   const schema = [
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      name: "Wend Answer Today",
-      url: "https://wendanswertoday.online",
+      name: SITE_NAME,
+      url: SITE_URL,
+      logo: OG_IMAGE_URL,
       description:
         "Daily answers, explanations, and a full puzzle archive for the LinkedIn Wend word search game.",
     },
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      name: "Wend Answer Today",
-      url: "https://wendanswertoday.online",
+      name: SITE_NAME,
+      url: SITE_URL,
       description:
         "Daily answers and hints for LinkedIn Wend. Updated every day with solutions and a full puzzle archive.",
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      name: answerTitle,
+      url: canonicalUrl,
+      description: `Find the Wend answer today for ${date}, including the full word list, step-by-step reveal hints, and archive links for older puzzles.`,
+      primaryImageOfPage: {
+        "@type": "ImageObject",
+        url: OG_IMAGE_URL,
+      },
+      dateModified: puzzleData.date,
+      inLanguage: "en-US",
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: answerTitle,
+      mainEntityOfPage: canonicalUrl,
+      image: [OG_IMAGE_URL],
+      datePublished: puzzleData.date,
+      dateModified: puzzleData.date,
+      author: {
+        "@type": "Organization",
+        name: SITE_NAME,
+      },
+      publisher: {
+        "@type": "Organization",
+        name: SITE_NAME,
+        logo: {
+          "@type": "ImageObject",
+          url: OG_IMAGE_URL,
+        },
+      },
+      description: `Wend answer today for puzzle #${puzzleData.puzzle_number} with route hints and the full answer list: ${words.join(", ")}.`,
     },
     {
       "@context": "https://schema.org",
@@ -571,12 +732,80 @@ function generateSchema(puzzleData, allPuzzles) {
         "@type": "ListItem",
         position: i + 1,
         name: `LinkedIn Wend #${p.puzzle_number} — ${formatDateShort(p.date)}`,
-        url: `https://wendanswertoday.online/archive.html#puzzle-${p.puzzle_number}`,
+        url: `${absoluteUrl("/archive.html")}#puzzle-${p.puzzle_number}`,
       })),
     },
   ];
 
   return JSON.stringify(schema);
+}
+
+function generateArchiveSchema(fullPuzzles) {
+  return JSON.stringify([
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      name: "Wend Answer Archive by Date",
+      url: absoluteUrl("/archive.html"),
+      description:
+        "Browse past Wend answers by date, puzzle number, and solved board path.",
+      isPartOf: {
+        "@type": "WebSite",
+        name: SITE_NAME,
+        url: SITE_URL,
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      numberOfItems: fullPuzzles.length,
+      itemListElement: fullPuzzles.slice(0, 20).map((p, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: `Wend answer for ${formatDate(p.date)}`,
+        url: `${absoluteUrl("/archive.html")}#puzzle-${p.puzzle_number}`,
+      })),
+    },
+  ]);
+}
+
+function generateHowToPlaySchema() {
+  return JSON.stringify([
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      name: "How to Play LinkedIn Wend",
+      url: absoluteUrl("/how-to-play.html"),
+      description:
+        "Learn how to play LinkedIn Wend with rules, route examples, and strategy tips.",
+      isPartOf: {
+        "@type": "WebSite",
+        name: SITE_NAME,
+        url: SITE_URL,
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: "How to Play LinkedIn Wend",
+      mainEntityOfPage: absoluteUrl("/how-to-play.html"),
+      image: [OG_IMAGE_URL],
+      author: {
+        "@type": "Organization",
+        name: SITE_NAME,
+      },
+      publisher: {
+        "@type": "Organization",
+        name: SITE_NAME,
+        logo: {
+          "@type": "ImageObject",
+          url: OG_IMAGE_URL,
+        },
+      },
+      description:
+        "Rules, route-reading tips, and strategy advice for solving LinkedIn Wend puzzles.",
+    },
+  ]);
 }
 
 // =========================================================
@@ -613,15 +842,22 @@ async function buildSite() {
   // Generate all replacement values
   const dateDisplay = formatDate(puzzle.date);
   const dateShort = formatDateShort(puzzle.date);
-  const metaDescription = `LinkedIn Wend answer today - Updated with ${dateDisplay} answers, full word list, grid walkthrough, and archive access for puzzle #${puzzle.puzzle_number}.`;
+  const metaTitle = `Wend Answer Today for ${dateDisplay} | LinkedIn Wend Answer & Hints`;
+  const metaDescription = `Find the Wend answer today for ${dateDisplay}, including today's LinkedIn Wend word list, reveal-letter hints, solved path view, and archive access by date for puzzle #${puzzle.puzzle_number}.`;
+  const canonicalUrl = absoluteUrl("/");
 
   const replacements = {
+    "{{CANONICAL_URL}}": canonicalUrl,
+    "{{META_TITLE}}": metaTitle,
     "{{META_DESCRIPTION}}": metaDescription,
+    "{{OG_IMAGE_URL}}": OG_IMAGE_URL,
+    "{{OG_IMAGE_ALT}}": OG_IMAGE_ALT,
     "{{SCHEMA_JSON}}": generateSchema(puzzle, allPuzzles),
     "{{PUZZLE_NUMBER}}": puzzle.puzzle_number,
     "{{DATE_DISPLAY}}": dateDisplay,
     "{{DATE_SHORT}}": dateShort,
     "{{WORD_COUNT}}": puzzle.words.length,
+    "{{SHARE_BAR}}": generateShareBar(metaTitle, canonicalUrl),
     "{{GRID_COLS}}": puzzle.cols,
     "{{GRID_ROWS}}": puzzle.rows,
     "{{WORD_CHIPS}}": generateWordChips(puzzle.words),
@@ -671,12 +907,22 @@ async function buildSite() {
     path.join(outputDir, "images"),
   );
   copyDir(path.join(__dirname, "src", "fonts"), path.join(outputDir, "fonts"));
+  fs.copyFileSync(
+    path.join(__dirname, OG_IMAGE_NAME),
+    path.join(outputDir, OG_IMAGE_NAME),
+  );
 
   // Generate archive page
   await buildArchivePage(allPuzzles, outputDir);
 
   // Generate how-to-play page
   buildHowToPlayPage(outputDir);
+
+  fs.writeFileSync(path.join(outputDir, "robots.txt"), generateRobotsTxt());
+  fs.writeFileSync(
+    path.join(outputDir, "sitemap.xml"),
+    generateSitemapXml(puzzle.date),
+  );
 
   console.log("Build complete!");
 }
@@ -801,17 +1047,40 @@ async function buildArchivePage(allPuzzles, outputDir) {
     })
     .join("\n");
 
+  const archiveTitle = "Wend Answer Archive by Date | Past LinkedIn Wend Answers";
+  const archiveDescription =
+    "Browse past Wend answers by date with solved boards, route hints, puzzle numbers, and archive access for older LinkedIn Wend puzzles.";
+  const archiveUrl = absoluteUrl("/archive.html");
+  const archiveSchema = generateArchiveSchema(fullPuzzles);
+
   const archiveHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
-    <title>LinkedIn Wend Archive — Past Answers, Hints and Solved Boards</title>
-    <meta name="description" content="Browse the full LinkedIn Wend archive with past answers, solved boards, word routes, daily puzzle dates, and hint controls for older Wend puzzles.">
-    <link rel="canonical" href="https://wendanswertoday.online/archive.html">
+    <meta name="theme-color" content="#0A66C2">
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1">
+    <title>${archiveTitle}</title>
+    <meta name="description" content="${archiveDescription}">
+    <meta name="keywords" content="wend answer by date, wend archive, past wend answers, linkedin wend answer archive, wend answers by date">
+    <link rel="canonical" href="${archiveUrl}">
+    <meta property="og:site_name" content="${SITE_NAME}">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:title" content="${archiveTitle}">
+    <meta property="og:description" content="${archiveDescription}">
+    <meta property="og:url" content="${archiveUrl}">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="${OG_IMAGE_URL}">
+    <meta property="og:image:alt" content="${OG_IMAGE_ALT}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="${archiveTitle}">
+    <meta name="twitter:description" content="${archiveDescription}">
+    <meta name="twitter:image" content="${OG_IMAGE_URL}">
     <link rel="preload" href="/fonts/inter-700.ttf" as="font" type="font/ttf" crossorigin>
     <link rel="stylesheet" href="/css/styles.css">
+    <script type="application/ld+json">${archiveSchema}</script>
     <style>
         ${archiveRevealCSS}
     </style>
@@ -843,8 +1112,9 @@ async function buildArchivePage(allPuzzles, outputDir) {
         <main class="page-content">
             <div class="archive-header">
                 <div class="container">
-                    <h1>Wend Puzzle Archive</h1>
-                    <p>Browse all past LinkedIn Wend puzzles with complete answers and word lists.</p>
+              <h1>Wend Answer Archive by Date</h1>
+              <p>Browse past LinkedIn Wend answers, solved boards, and route hints for every saved puzzle date.</p>
+              ${generateShareBar(archiveTitle, archiveUrl)}
                 </div>
             </div>
 
@@ -930,17 +1200,40 @@ async function buildArchivePage(allPuzzles, outputDir) {
 // =========================================================
 
 function buildHowToPlayPage(outputDir) {
+  const howToTitle = "How to Play Wend | Rules, Routes and Daily Solver Tips";
+  const howToDescription =
+    "Learn how to play LinkedIn Wend with clear rules, route examples, solving tips, and daily puzzle strategy from Wend Answer Today.";
+  const howToUrl = absoluteUrl("/how-to-play.html");
+  const howToSchema = generateHowToPlaySchema();
+
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
-    <title>How to Play LinkedIn Wend — Rules, Routes and Solving Tips</title>
-    <meta name="description" content="Learn how to play LinkedIn Wend with clear rules, route examples, solving tips, and strategy for the daily winding word puzzle.">
-    <link rel="canonical" href="https://wendanswertoday.online/how-to-play.html">
+    <meta name="theme-color" content="#0A66C2">
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1">
+    <title>${howToTitle}</title>
+    <meta name="description" content="${howToDescription}">
+    <meta name="keywords" content="how to play wend, wend rules, wend solver tips, linkedin wend strategy">
+    <link rel="canonical" href="${howToUrl}">
+    <meta property="og:site_name" content="${SITE_NAME}">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:title" content="${howToTitle}">
+    <meta property="og:description" content="${howToDescription}">
+    <meta property="og:url" content="${howToUrl}">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="${OG_IMAGE_URL}">
+    <meta property="og:image:alt" content="${OG_IMAGE_ALT}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="${howToTitle}">
+    <meta name="twitter:description" content="${howToDescription}">
+    <meta name="twitter:image" content="${OG_IMAGE_URL}">
     <link rel="preload" href="/fonts/inter-700.ttf" as="font" type="font/ttf" crossorigin>
     <link rel="stylesheet" href="/css/styles.css">
+    <script type="application/ld+json">${howToSchema}</script>
 </head>
 <body>
     <div class="page-wrapper">
@@ -971,6 +1264,7 @@ function buildHowToPlayPage(outputDir) {
                 <div class="container">
                     <h1 class="section-title">How to Play LinkedIn Wend</h1>
                     <p style="color:#666;font-size:0.9375rem;margin-bottom:24px;">Wend is a word search puzzle where words wind through a letter grid. Here's everything you need to know to start solving puzzles like a pro.</p>
+                ${generateShareBar(howToTitle, howToUrl)}
 
                     <div class="steps-grid">
                         <div class="step-card">

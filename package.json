@@ -4,8 +4,11 @@
   "private": true,
   "scripts": {
     "build": "node build.js",
-    "dev": "npx serve dist -p 3000"
+    "dev": "npx serve dist -p 3000",
+    "notify-google": "node scripts/notify-google.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "googleapis": "^144.0.0"
+  },
   "devDependencies": {}
 }

@@ -34,6 +34,82 @@
     });
   }
 
+  function currentShareUrl(button) {
+    const explicit = button.getAttribute("data-share-url");
+    if (explicit) return explicit;
+    return window.location.href;
+  }
+
+  function currentShareTitle(button) {
+    return (
+      button.getAttribute("data-share-title") ||
+      document.title ||
+      "Wend Answer Today"
+    );
+  }
+
+  function flashCopiedState(button) {
+    const originalText = button.textContent;
+    button.textContent = "Copied";
+    button.classList.add("is-copied");
+    window.setTimeout(function () {
+      button.textContent = originalText;
+      button.classList.remove("is-copied");
+    }, 1800);
+  }
+
+  async function copyShareLink(button) {
+    const url = currentShareUrl(button);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(url);
+      flashCopiedState(button);
+      return;
+    }
+
+    const textArea = document.createElement("textarea");
+    textArea.value = url;
+    textArea.setAttribute("readonly", "true");
+    textArea.style.position = "absolute";
+    textArea.style.left = "-9999px";
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textArea);
+    flashCopiedState(button);
+  }
+
+  async function handleShareButton(button) {
+    const service = button.getAttribute("data-share-service");
+    const url = currentShareUrl(button);
+    const title = currentShareTitle(button);
+    const encodedUrl = encodeURIComponent(url);
+    const encodedTitle = encodeURIComponent(title);
+
+    if (service === "copy") {
+      await copyShareLink(button);
+      return;
+    }
+
+    if (service === "native") {
+      if (navigator.share) {
+        await navigator.share({ title, url });
+        return;
+      }
+      await copyShareLink(button);
+      return;
+    }
+
+    const targets = {
+      x: `https://x.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+      whatsapp: `https://api.whatsapp.com/send?text=${encodedTitle}%20${encodedUrl}`,
+    };
+
+    if (targets[service]) {
+      window.open(targets[service], "_blank", "noopener,noreferrer,width=640,height=720");
+    }
+  }
+
   function cssEscape(value) {
     if (window.CSS && typeof window.CSS.escape === "function") {
       return window.CSS.escape(String(value));
@@ -60,6 +136,58 @@
     return true;
   }
 
+  function getTubeBorderRadius(startEdge, endEdge) {
+    if (startEdge && endEdge) return "0px";
+    if (startEdge === "left" && !endEdge) return "0px 14px 14px 0px";
+    if (startEdge === "right" && !endEdge) return "14px 0px 0px 14px";
+    if (startEdge === "top" && !endEdge) return "0px 0px 14px 14px";
+    if (startEdge === "bottom" && !endEdge) return "14px 14px 0px 0px";
+    return "0px";
+  }
+
+  function chevronSvgMarkup() {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+  }
+
+  function renderRevealedBoardCell(cell) {
+    if (!cell || cell.classList.contains("wend-cell--revealed")) return;
+
+    const letter = cell.getAttribute("data-cell-letter") || "";
+    const wordColor = cell.style.getPropertyValue("--word-color") || "#0a66c2";
+    const connectLeft = cell.getAttribute("data-connect-left") === "1";
+    const connectRight = cell.getAttribute("data-connect-right") === "1";
+    const connectTop = cell.getAttribute("data-connect-top") === "1";
+    const connectBottom = cell.getAttribute("data-connect-bottom") === "1";
+    const prevDir = cell.getAttribute("data-prev-dir") || "";
+    const isFirst = cell.getAttribute("data-is-first") === "1";
+
+    let markup = "";
+
+    if (connectLeft || connectRight) {
+      markup += `<span class="cell-tube cell-tube-h" style="left:${connectLeft ? "0px" : "22.5%"};right:${connectRight ? "0px" : "22.5%"};border-radius:${getTubeBorderRadius(connectLeft ? "left" : "right", connectLeft && connectRight)};background:${wordColor};"></span>`;
+    }
+
+    if (connectTop || connectBottom) {
+      markup += `<span class="cell-tube cell-tube-v" style="top:${connectTop ? "0px" : "22.5%"};bottom:${connectBottom ? "0px" : "22.5%"};border-radius:${getTubeBorderRadius(connectTop ? "top" : "bottom", connectTop && connectBottom)};background:${wordColor};"></span>`;
+    }
+
+    if (isFirst) {
+      markup += `<span class="cell-circle" style="background:${wordColor};"></span>`;
+      markup += `<span class="cell-check-badge" style="background:${wordColor};">&#10003;</span>`;
+    }
+
+    markup += `<span class="cell-letter cell-letter--revealed"> ${letter} </span>`;
+
+    if (prevDir && !isFirst) {
+      markup += `<span class="cell-arrow cell-arrow--${prevDir}" aria-hidden="true">${chevronSvgMarkup()}</span>`;
+    }
+
+    cell.innerHTML = markup;
+    cell.classList.add("wend-cell--revealed", "wend-cell--pulse");
+    cell.classList.remove("cell-revealed-hint");
+    cell.setAttribute("aria-label", `${letter} — revealed`);
+  }
+
   function markBoardCell(scope, wordIdx, letterIdx) {
     scope
       .querySelectorAll(".wend-cell--letter[data-reveal]")
@@ -79,7 +207,7 @@
         });
 
         if (isMatch) {
-          cell.classList.add("cell-revealed-hint");
+          renderRevealedBoardCell(cell);
         }
       });
   }
@@ -176,8 +304,14 @@
       if (text) text.textContent = "";
       bubble.setAttribute("aria-hidden", "true");
     });
-    scope.querySelectorAll(".cell-revealed-hint").forEach(function (cell) {
-      cell.classList.remove("cell-revealed-hint");
+    scope.querySelectorAll(".wend-cell--letter[data-reveal]").forEach(function (cell) {
+      cell.classList.remove("cell-revealed-hint", "wend-cell--revealed", "wend-cell--pulse");
+      const letter = cell.getAttribute("data-cell-letter") || "";
+      cell.innerHTML = `<span class="cell-letter cell-letter--hidden"> ${letter} </span>`;
+      cell.setAttribute(
+        "aria-label",
+        `${letter} — click to reveal this letter in the word list`,
+      );
     });
     scope.querySelectorAll(".word-complete").forEach(function (card) {
       card.classList.remove("word-complete");
@@ -227,6 +361,14 @@
   });
 
   document.addEventListener("click", function (event) {
+    const shareButton = event.target.closest(".share-button[data-share-service]");
+    if (shareButton) {
+      handleShareButton(shareButton).catch(function (error) {
+        console.error("Share action failed", error);
+      });
+      return;
+    }
+
     const gridCell = event.target.closest(".wend-cell--letter[data-reveal]");
     if (gridCell) {
       const scope = puzzleScopeFrom(gridCell);

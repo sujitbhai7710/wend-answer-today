@@ -38,3 +38,12 @@ jobs:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           command: pages deploy dist --project-name=wend-answer-today
+
+      - name: Notify Google and submit sitemap
+        if: success()
+        continue-on-error: true
+        run: npm run notify-google
+        env:
+          SITE_URL: https://wendanswertoday.me
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          GOOGLE_SEARCH_CONSOLE_SITE_URL: ${{ vars.GOOGLE_SEARCH_CONSOLE_SITE_URL }}
