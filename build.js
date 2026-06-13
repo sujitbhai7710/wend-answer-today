@@ -19,7 +19,8 @@ const WORD_COLORS = [
     '#5B8DD9',  // Blue
 ];
 
-// Lighter tints for grid cell backgrounds when revealed (using color-mix in CSS)
+// Lighter tints no longer needed — using CSS color-mix() instead
+// (kept for backward compat with any remaining references)
 const WORD_BG_COLORS = [
     '#FDE8DF',  // orange tint
     '#FADFE8',  // pink tint
@@ -74,16 +75,13 @@ function getDirection(prevCell, currCell, nextCell) {
 function generateGridCells(grid, rows, cols, wordCells) {
     // Build a map of which word color each cell belongs to (for --word-color on letter cells)
     const cellColorMap = {};
-    const cellBgColorMap = {};
     if (wordCells) {
         wordCells.forEach((word, wordIdx) => {
             const color = wordColor(wordIdx);
-            const bgColor = wordBgColor(wordIdx);
             word.cells.forEach((cell) => {
                 const key = `${cell.row},${cell.col}`;
                 if (!(key in cellColorMap)) {
                     cellColorMap[key] = color;
-                    cellBgColorMap[key] = bgColor;
                 }
             });
         });
@@ -94,10 +92,31 @@ function generateGridCells(grid, rows, cols, wordCells) {
         for (let c = 0; c < cols; c++) {
             const cell = grid[r][c];
             if (cell.isBlocked) {
-                html += `<div class="wend-cell wend-cell--blocked" data-row="${r}" data-col="${c}" aria-hidden="true"></div>`;
+                // Blocked cells: add 3px solid #333 borders on sides facing letter cells
+                const neighbors = [
+                    { dr: -1, dc: 0, side: 'top' },
+                    { dr: 1, dc: 0, side: 'bottom' },
+                    { dc: -1, dr: 0, side: 'left' },
+                    { dc: 1, dr: 0, side: 'right' },
+                ];
+                const borderParts = [];
+                for (const n of neighbors) {
+                    const nr = r + n.dr;
+                    const nc = c + n.dc;
+                    let isLetterCell = false;
+                    if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+                        if (!grid[nr][nc].isBlocked) {
+                            isLetterCell = true;
+                        }
+                    }
+                    borderParts.push(`border-${n.side}: ${isLetterCell ? '3px solid #333' : '0'}`);
+                }
+                const borderStyle = borderParts.join('; ');
+
+                html += `<div class="wend-cell wend-cell--blocked" style="${borderStyle}" data-row="${r}" data-col="${c}" aria-hidden="true"></div>`;
             } else {
                 const key = `${r},${c}`;
-                const wordColorStyle = cellColorMap[key] ? `--word-color:${cellColorMap[key]};--word-bg-color:${cellBgColorMap[key]};` : '';
+                const wordColorStyle = cellColorMap[key] ? `--word-color:${cellColorMap[key]};` : '';
                 html += `<button class="wend-cell wend-cell--letter" data-row="${r}" data-col="${c}" style="${wordColorStyle}" aria-label="${cell.letter} — hidden">
                     <span class="cell-letter cell-letter--hidden"> ${cell.letter} </span>
                 </button>`;
@@ -108,21 +127,22 @@ function generateGridCells(grid, rows, cols, wordCells) {
 }
 
 // AFTER reveal: cells with colored backgrounds, tube connectors, circles, check badges
+// EXACT match to thewordfinder.com structure
 function generateSolvedGridCells(grid, wordCells, rows, cols) {
     // Build maps for cell word assignments
     const cellWordMap = {};
-    const cellIsFirst = {};
-    const cellIsLast = {};
-    const cellConnectH = {};
-    const cellConnectV = {};
+    const cellIsFirst = {};  // first letter of a word
+    const cellIsLast = {};   // last letter of a word
+    const cellConnectH = {}; // horizontal tube connections
+    const cellConnectV = {}; // vertical tube connections
+    const cellArrowDir = {}; // arrow direction for non-last cells
 
     wordCells.forEach((word, wordIdx) => {
         const color = wordColor(wordIdx);
-        const bgColor = wordBgColor(wordIdx);
         word.cells.forEach((cell, cellIdx) => {
             const key = `${cell.row},${cell.col}`;
             if (!(key in cellWordMap)) {
-                cellWordMap[key] = { wordIdx, color, bgColor };
+                cellWordMap[key] = { wordIdx, color };
             }
             if (cellIdx === 0 && !(key in cellIsFirst)) {
                 cellIsFirst[key] = true;
@@ -149,6 +169,14 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
                 const dr = nextCell.row - cell.row;
                 if (dc !== 0) cellConnectH[key].right = true;
                 if (dr !== 0) cellConnectV[key].bottom = true;
+
+                // Arrow direction: direction from this cell to next cell
+                if (!(key in cellArrowDir)) {
+                    if (dc > 0) cellArrowDir[key] = 'right';
+                    else if (dc < 0) cellArrowDir[key] = 'left';
+                    else if (dr > 0) cellArrowDir[key] = 'down';
+                    else if (dr < 0) cellArrowDir[key] = 'up';
+                }
             }
         });
     });
@@ -167,6 +195,17 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
         totalDelay += word.cells.length + 2;
     });
 
+    // Helper: convert hex color to rgb() string for inline styles
+    function hexToRgb(hex) {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    // Chevron SVG for arrows (EXACT match from thewordfinder.com)
+    const chevronSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+
     let html = '';
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
@@ -174,55 +213,100 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
             const key = `${r},${c}`;
 
             if (cell.isBlocked) {
-                html += `<div class="wend-cell wend-cell--blocked" data-row="${r}" data-col="${c}" aria-hidden="true"></div>`;
+                // Blocked cells: add 3px solid #333 borders on sides facing letter cells
+                let borderStyle = '';
+                // Check each neighbor - add border on side facing a non-blocked cell
+                const neighbors = [
+                    { dr: -1, dc: 0, side: 'top' },
+                    { dr: 1, dc: 0, side: 'bottom' },
+                    { dc: -1, dr: 0, side: 'left' },
+                    { dc: 1, dr: 0, side: 'right' },
+                ];
+                const borderParts = [];
+                for (const n of neighbors) {
+                    const nr = r + n.dr;
+                    const nc = c + n.dc;
+                    let isLetterCell = false;
+                    if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+                        if (!grid[nr][nc].isBlocked) {
+                            isLetterCell = true;
+                        }
+                    }
+                    borderParts.push(`border-${n.side}: ${isLetterCell ? '3px solid #333' : '0'}`);
+                }
+                borderStyle = borderParts.join('; ');
+
+                html += `<div class="wend-cell wend-cell--blocked" style="${borderStyle}" data-row="${r}" data-col="${c}" aria-hidden="true"></div>`;
             } else if (key in cellWordMap) {
-                const { wordIdx, color, bgColor } = cellWordMap[key];
+                const { wordIdx, color } = cellWordMap[key];
                 const delay = cellDelayMap[key] || 0;
+                const rgbColor = hexToRgb(color);
 
-                let inner = `<span class="cell-letter">${cell.letter}</span>`;
+                let inner = '';
 
-                // Tube connectors
+                // Tube connectors (EXACT match from TWF: 22.5% positioning, border-radius)
                 const hConn = cellConnectH[key];
                 const vConn = cellConnectV[key];
+
                 if (hConn && (hConn.left || hConn.right)) {
-                    const leftPct = hConn.left ? '0' : '25%';
-                    const rightPct = hConn.right ? '0' : '25%';
-                    inner += `<span class="cell-tube cell-tube-h" style="left:${leftPct};right:${rightPct};background:${bgColor};"></span>`;
+                    // left: tube extends from left edge (0px) or starts at center (22.5%)
+                    // right: tube extends to right edge (0px) or ends at center (22.5%)
+                    const leftVal = hConn.left ? '0px' : '22.5%';
+                    const rightVal = hConn.right ? '0px' : '22.5%';
+
+                    // Border-radius: rounded on the end that terminates at center
+                    // 4 values: top-left top-right bottom-right bottom-left
+                    let borderRadius;
+                    if (hConn.left && hConn.right) {
+                        borderRadius = '0px'; // passes through, no rounding
+                    } else if (hConn.left && !hConn.right) {
+                        // Tube goes from left to center: round on right side
+                        borderRadius = '0px 14px 14px 0px';
+                    } else if (!hConn.left && hConn.right) {
+                        // Tube goes from center to right: round on left side
+                        borderRadius = '14px 0px 0px 14px';
+                    } else {
+                        borderRadius = '0px';
+                    }
+
+                    inner += `<span class="cell-tube cell-tube-h" style="left:${leftVal};right:${rightVal};border-radius:${borderRadius};background:${rgbColor};"></span>`;
                 }
                 if (vConn && (vConn.top || vConn.bottom)) {
-                    const topPct = vConn.top ? '0' : '25%';
-                    const bottomPct = vConn.bottom ? '0' : '25%';
-                    inner += `<span class="cell-tube cell-tube-v" style="top:${topPct};bottom:${bottomPct};background:${bgColor};"></span>`;
+                    const topVal = vConn.top ? '0px' : '22.5%';
+                    const bottomVal = vConn.bottom ? '0px' : '22.5%';
+
+                    let borderRadius;
+                    if (vConn.top && vConn.bottom) {
+                        borderRadius = '0px'; // passes through, no rounding
+                    } else if (vConn.top && !vConn.bottom) {
+                        // Tube goes from top to center: round on bottom side
+                        borderRadius = '0px 0px 14px 14px';
+                    } else if (!vConn.top && vConn.bottom) {
+                        // Tube goes from center to bottom: round on top side
+                        borderRadius = '14px 14px 0px 0px';
+                    } else {
+                        borderRadius = '0px';
+                    }
+
+                    inner += `<span class="cell-tube cell-tube-v" style="top:${topVal};bottom:${bottomVal};border-radius:${borderRadius};background:${rgbColor};"></span>`;
                 }
 
-                // Circle for first letter
-                if (cellIsFirst[key]) {
-                    inner += `<span class="cell-circle" style="border-color:${color};outline-color:${bgColor};"></span>`;
+                // Circle at word END (last letter) — EXACT match from TWF
+                if (cellIsLast[key]) {
+                    inner += `<span class="cell-circle" style="background:${rgbColor};"></span>`;
+                    // Check badge at word end
                     inner += `<span class="cell-check-badge" style="background:${color};">&#10003;</span>`;
                 }
 
-                // Direction arrow for last cell of each word
-                if (cellIsLast[key]) {
-                    // Find the direction from second-to-last to last cell
-                    const word = wordCells[wordIdx];
-                    const lastIdx = word.cells.length - 1;
-                    const prev = word.cells[lastIdx - 1];
-                    const curr = word.cells[lastIdx];
-                    if (prev) {
-                        const dr = curr.row - prev.row;
-                        const dc = curr.col - prev.col;
-                        let arrowDir = '';
-                        if (dc > 0) arrowDir = 'right';
-                        else if (dc < 0) arrowDir = 'left';
-                        else if (dr > 0) arrowDir = 'down';
-                        else if (dr < 0) arrowDir = 'up';
-                        if (arrowDir) {
-                            inner += `<span class="cell-arrow cell-arrow--${arrowDir}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 16l-6-6h12z"/></svg></span>`;
-                        }
-                    }
+                // Letter text (z-index:4, above tubes)
+                inner += `<span class="cell-letter">${cell.letter}</span>`;
+
+                // Direction arrows on non-last cells (EXACT match from TWF: chevron SVG)
+                if (cellArrowDir[key] && !cellIsLast[key]) {
+                    inner += `<span class="cell-arrow cell-arrow--${cellArrowDir[key]}">${chevronSvg}</span>`;
                 }
 
-                html += `<div class="wend-cell wend-cell--revealed wend-cell--pulse" data-row="${r}" data-col="${c}" style="--word-color:${color};--word-bg-color:${bgColor};--cell-delay:${delay};" aria-label="${cell.letter} — revealed">${inner}</div>`;
+                html += `<div class="wend-cell wend-cell--revealed wend-cell--pulse" data-row="${r}" data-col="${c}" style="--word-color:${color};--cell-delay:${delay};" aria-label="${cell.letter} — revealed">${inner}</div>`;
             } else {
                 html += `<div class="wend-cell wend-cell--letter" data-row="${r}" data-col="${c}">
                     <span class="cell-letter">${cell.letter}</span>

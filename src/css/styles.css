@@ -307,42 +307,40 @@ button { cursor: pointer; font-family: inherit; }
     text-shadow: none;
 }
 
-/* --- Tube connectors --- */
+/* --- Tube connectors (EXACT match from TWF: 22.5% positioning) --- */
 .cell-tube {
     position: absolute;
     z-index: 1;
     pointer-events: none;
 }
 .cell-tube-h {
-    top: 25%;
-    bottom: 25%;
+    top: 22.5%;
+    bottom: 22.5%;
 }
 .cell-tube-v {
-    left: 25%;
-    right: 25%;
+    left: 22.5%;
+    right: 22.5%;
 }
 
-/* --- Cell circle (first letter indicator) --- */
+/* --- Cell circle (word END indicator — EXACT match from TWF: 55% size, 5px outline) --- */
 .cell-circle {
     position: absolute;
-    width: 58%;
-    height: 58%;
+    width: 55%;
+    height: 55%;
     border-radius: 50%;
     z-index: 2;
     pointer-events: none;
-    outline: 4px solid color-mix(in srgb, var(--word-color) 25%, white);
-    border: 2.5px solid var(--word-color);
+    outline: 5px solid color-mix(in srgb, var(--word-color) 22%, white);
 }
 
-/* --- Check badge on first cell --- */
+/* --- Check badge on word end cell — EXACT match from TWF --- */
 .cell-check-badge {
     position: absolute;
-    top: 5%;
-    left: 5%;
-    width: 24%;
-    height: 24%;
-    min-width: 12px;
-    min-height: 12px;
+    top: 5px;
+    left: 5px;
+    width: 16px;
+    height: 16px;
+    background: rgba(255, 255, 255, 0.3);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -350,16 +348,16 @@ button { cursor: pointer; font-family: inherit; }
     color: #fff;
     z-index: 5;
     pointer-events: none;
-    font-size: clamp(6px, 1.6vw, 10px);
+    font-size: 9px;
     font-weight: 800;
 }
 
-/* --- Direction arrows --- */
+/* --- Direction arrows (EXACT match from TWF: chevron SVG, #0009 color, clamp size) --- */
 .cell-arrow {
     position: absolute;
-    width: clamp(10px, 25%, 18px);
-    height: clamp(10px, 25%, 18px);
-    color: rgba(0,0,0,0.5);
+    width: clamp(10px, 3vw, 16px);
+    height: clamp(10px, 3vw, 16px);
+    color: rgba(0, 0, 0, 0.6);
     z-index: 999;
     pointer-events: none;
     display: flex;
@@ -1265,15 +1263,14 @@ button { cursor: pointer; font-family: inherit; }
         font-size: clamp(11px, 4vw, 18px);
     }
     .cell-check-badge {
-        width: 10px;
-        height: 10px;
-        font-size: 6px;
-        top: 2px;
-        left: 2px;
+        width: 12px;
+        height: 12px;
+        font-size: 7px;
+        top: 3px;
+        left: 3px;
     }
     .cell-circle {
         outline-width: 3px;
-        border-width: 2px;
     }
     .word-blank {
         padding: 8px 10px;
