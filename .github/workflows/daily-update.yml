@@ -30,7 +30,13 @@ jobs:
       - name: Install root dependencies
         run: npm install
 
-      - name: Scrape latest Wend puzzle
+      - name: Install Playwright Chromium
+        run: |
+          cd scraper
+          npm install
+          npx playwright install chromium --with-deps
+
+      - name: Scrape latest Wend puzzle (LinkedIn + fallback)
         run: node scrape-wend.js
         working-directory: scraper
         env:
