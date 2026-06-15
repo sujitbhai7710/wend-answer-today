@@ -248,7 +248,7 @@ export default {
   },
 
   async scheduled(event, env, ctx) {
-    // Cron trigger: runs at 1:31 PM IST (08:01 UTC) daily
+    // Cron trigger: runs at 1:30 PM IST (08:00 UTC) daily
     // Triggers the GitHub Actions workflow to scrape and rebuild
     ctx.waitUntil(
       (async () => {

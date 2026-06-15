@@ -4,4 +4,6 @@ dist/
 .env.local
 test-results/
 playwright-report/
+puppeteer-report/
 .cache/
+.chrome/

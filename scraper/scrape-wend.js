@@ -1,14 +1,16 @@
 /**
- * Wend Puzzle Updater — Playwright Edition
- * Scrapes the latest Wend puzzle directly from LinkedIn using Playwright,
- * then uploads the data to the Cloudflare Worker API.
+ * Wend Puzzle Updater — Puppeteer-Core Edition
+ * Scrapes the latest Wend puzzle directly from LinkedIn using puppeteer-core
+ * with the system Google Chrome (pre-installed on GitHub Actions runners).
+ * No browser download needed — saves ~150MB and 30-90 seconds per run.
  *
- * Falls back to the third-party Word Finder API if Playwright fails.
+ * Falls back to the third-party Word Finder API if Puppeteer fails.
  */
 
 const WORKER_URL = process.env.WORKER_URL || 'https://wend-api-worker.wendapi.workers.dev';
 const API_KEY = process.env.WORKER_API_KEY;
 const FALLBACK_URL = process.env.WEND_SOURCE_URL || 'https://api.thewordfinder.com/wend/latest';
+const CHROME_PATH = process.env.CHROME_PATH || '/usr/bin/google-chrome-stable';
 
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -58,7 +60,7 @@ async function fetchJsonWithRetry(url, options = {}, config = {}) {
     throw lastError;
 }
 
-// ─── LinkedIn Playwright Scraper ────────────────────────────────────────────
+// ─── LinkedIn Puppeteer-Core Scraper ────────────────────────────────────────
 
 /**
  * Parse the RSC (React Server Component) response body from LinkedIn
@@ -117,8 +119,7 @@ function parseLinkedInRSC(rscBody) {
         indices.map(idx => puzzleLetters[idx]).join('')
     );
 
-    // 7. Build grid in the format the worker/build script expects:
-    //    grid[row][col] = { col, row, letter, isBlocked }
+    // 7. Build grid in the format the worker/build script expects
     const grid = [];
     for (let r = 0; r < gridRows; r++) {
         const row = [];
@@ -135,8 +136,7 @@ function parseLinkedInRSC(rscBody) {
         grid.push(row);
     }
 
-    // 8. Build word_cells: array of objects with word + cell positions
-    //    Format matches what build.js expects from the Word Finder API
+    // 8. Build word_cells
     const word_cells = solutionWords.map((indices, wordIdx) => {
         const cells = indices.map(idx => ({
             col: idx % gridCols,
@@ -160,26 +160,36 @@ function parseLinkedInRSC(rscBody) {
 }
 
 async function scrapeFromLinkedIn() {
-    console.log('Scraping Wend puzzle directly from LinkedIn via Playwright...');
+    console.log('Scraping Wend puzzle directly from LinkedIn via puppeteer-core...');
+    console.log(`Using Chrome at: ${CHROME_PATH}`);
 
-    // Use playwright-core (lighter — no bundled browsers) + system chromium
-    const { chromium } = require('playwright-core');
+    const puppeteer = require('puppeteer-core');
 
-    const browser = await chromium.launch({
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+    const browser = await puppeteer.launch({
+        executablePath: CHROME_PATH,
+        headless: 'new',
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+            '--disable-software-rasterizer',
+            '--disable-extensions',
+            '--no-first-run',
+            '--no-default-browser-check',
+        ],
     });
 
     let puzzleData = null;
 
     try {
-        const context = await browser.newContext({
-            userAgent:
-                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
-            viewport: { width: 1280, height: 900 },
-        });
+        const page = await browser.newPage();
 
-        const page = await context.newPage();
+        // Set viewport and user agent
+        await page.setViewport({ width: 1280, height: 900 });
+        await page.setUserAgent(
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36'
+        );
 
         // Capture the RSC response when "Start game" is clicked
         let rscResponseBody = null;
@@ -204,24 +214,23 @@ async function scrapeFromLinkedIn() {
         // Navigate to LinkedIn Wend start screen
         console.log('Navigating to LinkedIn Wend...');
         await page.goto('https://www.linkedin.com/games/wend/', {
-            waitUntil: 'networkidle',
+            waitUntil: 'networkidle2',
             timeout: 30000,
         });
-        await page.waitForTimeout(3000);
+        await delay(3000);
 
         // Click "Start game"
         console.log('Clicking "Start game"...');
-        const startBtn = page.locator('text=Start game');
-        const btnCount = await startBtn.count();
-        if (btnCount > 0) {
-            await startBtn.first().click();
+        const startBtn = await page.waitForSelector('text/Start game', { timeout: 10000 });
+        if (startBtn) {
+            await startBtn.click();
             console.log('Clicked Start game button');
         } else {
             throw new Error('Could not find "Start game" button on the page');
         }
 
         // Wait for the game board to load and RSC response to arrive
-        await page.waitForTimeout(10000);
+        await delay(10000);
 
         if (!rscResponseBody) {
             throw new Error(
@@ -235,7 +244,7 @@ async function scrapeFromLinkedIn() {
             `Successfully parsed LinkedIn puzzle #${puzzleData.puzzle_number}: ${puzzleData.words.join(', ')}`
         );
     } catch (error) {
-        console.error('LinkedIn Playwright scraping failed:', error.message);
+        console.error('LinkedIn Puppeteer scraping failed:', error.message);
         throw error;
     } finally {
         await browser.close();
@@ -337,7 +346,8 @@ async function uploadPuzzleData(puzzleData) {
 // ─── Main ───────────────────────────────────────────────────────────────────
 
 async function main() {
-    console.log('Starting Wend puzzle updater (Playwright + LinkedIn direct)...');
+    console.log('Starting Wend puzzle updater (puppeteer-core + LinkedIn direct)...');
+    console.log(`Chrome path: ${CHROME_PATH}`);
 
     let puzzleData;
 

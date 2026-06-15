@@ -1,7 +1,6 @@
 name: Daily Wend Puzzle Update
 
-# Runs on a daily schedule to scrape the latest puzzle, build, and deploy.
-# Code-change deployments are handled by the separate deploy.yml workflow.
+# Runs daily at 1:30 PM IST (08:00 UTC) to scrape, build, and deploy.
 on:
   workflow_dispatch:
   schedule:
@@ -16,11 +15,20 @@ env:
 jobs:
   scrape-and-deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      # Clear all caches to prevent stale data
+      - name: Clear all caches and temp files
+        run: |
+          echo "Clearing npm cache..."
+          npm cache clean --force 2>/dev/null || true
+          echo "Clearing any previous dist/build output..."
+          rm -rf dist/ .cache/
+          echo "Caches cleared."
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -28,22 +36,20 @@ jobs:
           node-version: "20"
           cache: "npm"
 
+      # Verify system Chrome is available (no download needed!)
+      - name: Verify system Google Chrome
+        run: |
+          echo "Chrome path: $(which google-chrome-stable)"
+          echo "Chrome version: $(google-chrome-stable --version)"
+          echo "CHROME_PATH=/usr/bin/google-chrome-stable" >> "$GITHUB_ENV"
+
       - name: Install root dependencies
         run: npm ci
 
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-chromium-${{ runner.os }}-v1
-          restore-keys: |
-            playwright-chromium-${{ runner.os }}-
-
-      - name: Install scraper dependencies + Chromium
+      - name: Install scraper dependencies (puppeteer-core only, ~8MB)
         run: |
           cd scraper
           npm ci
-          npx playwright install chromium --with-deps
 
       - name: Scrape latest Wend puzzle (LinkedIn + fallback)
         run: node scrape-wend.js
@@ -51,6 +57,7 @@ jobs:
         env:
           WORKER_URL: ${{ secrets.WORKER_URL }}
           WORKER_API_KEY: ${{ secrets.WORKER_API_KEY }}
+          CHROME_PATH: /usr/bin/google-chrome-stable
 
       - name: Build site
         run: npm run build
