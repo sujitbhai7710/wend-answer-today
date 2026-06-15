@@ -49,7 +49,7 @@ jobs:
       - name: Install scraper dependencies (puppeteer-core only, ~8MB)
         run: |
           cd scraper
-          npm ci
+          npm install --no-package-lock
 
       - name: Scrape latest Wend puzzle (LinkedIn + fallback)
         run: node scrape-wend.js
