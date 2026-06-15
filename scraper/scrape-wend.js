@@ -162,7 +162,8 @@ function parseLinkedInRSC(rscBody) {
 async function scrapeFromLinkedIn() {
     console.log('Scraping Wend puzzle directly from LinkedIn via Playwright...');
 
-    const { chromium } = require('playwright');
+    // Use playwright-core (lighter — no bundled browsers) + system chromium
+    const { chromium } = require('playwright-core');
 
     const browser = await chromium.launch({
         headless: true,

@@ -17,7 +17,7 @@ const OG_IMAGE_URL = `${SITE_URL}/${OG_IMAGE_NAME}`;
 const OG_IMAGE_ALT =
   "Wend Answer Today preview image with the daily puzzle board and answer path styling";
 
-// Word colors — EXACT match from thewordfinder.com Wend hints page
+// Word colors — matching LinkedIn Wend game
 const WORD_COLORS = [
   "#E8572A", // Orange-red
   "#D4449A", // Pink
@@ -26,22 +26,8 @@ const WORD_COLORS = [
   "#5B8DD9", // Blue
 ];
 
-// Lighter tints no longer needed — using CSS color-mix() instead
-// (kept for backward compat with any remaining references)
-const WORD_BG_COLORS = [
-  "#FDE8DF", // orange tint
-  "#FADFE8", // pink tint
-  "#D5F0EE", // teal tint
-  "#EDF5D0", // green tint
-  "#D6E8F8", // blue tint
-];
-
 function wordColor(idx) {
   return WORD_COLORS[idx % WORD_COLORS.length];
-}
-
-function wordBgColor(idx) {
-  return WORD_BG_COLORS[idx % WORD_BG_COLORS.length];
 }
 
 function formatDate(dateStr) {
@@ -148,7 +134,7 @@ function getDirection(prevCell, currCell, nextCell) {
 // Grid cell generation
 // =========================================================
 
-// BEFORE reveal: letter cells with white background, matching thewordfinder.com
+// BEFORE reveal: letter cells with white background
 function generateGridCells(grid, rows, cols, wordCells) {
   // Build maps for interactive per-letter reveals in the unsolved board.
   const cellColorMap = {};
@@ -273,7 +259,7 @@ function generateGridCells(grid, rows, cols, wordCells) {
 }
 
 // AFTER reveal: cells with colored backgrounds, tube connectors, circles, check badges
-// EXACT match to thewordfinder.com structure
+// Grid layout matching LinkedIn Wend structure
 function generateSolvedGridCells(grid, wordCells, rows, cols) {
   // Build maps for cell word assignments
   const cellWordMap = {};
@@ -363,7 +349,7 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
     return `rgb(${r}, ${g}, ${b})`;
   }
 
-  // Chevron SVG for arrows (EXACT match from thewordfinder.com)
+  // Chevron SVG for arrows (matching LinkedIn Wend)
   const chevronSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
 
   let html = "";
@@ -507,7 +493,7 @@ function generateWordCardsBefore(words, wordCells) {
     .join("");
 }
 
-// AFTER reveal: colored CIRCLE bubbles with dark text — matching thewordfinder.com exactly
+// AFTER reveal: colored CIRCLE bubbles with dark text — matching LinkedIn Wend
 function generateWordCardsAfter(words, wordCells) {
   return words
     .map((word, idx) => {

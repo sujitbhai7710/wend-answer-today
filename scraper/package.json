@@ -6,6 +6,6 @@
     "scrape": "node scrape-wend.js"
   },
   "dependencies": {
-    "playwright": "^1.49.0"
+    "playwright-core": "^1.49.0"
   }
 }

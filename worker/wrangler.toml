@@ -11,7 +11,7 @@ database_name = "wend-game-db"
 database_id = "32480e2b-b712-47a3-8d04-caa665c3a183"
 
 [triggers]
-crons = ["1 8 * * *"]
+crons = ["0 8 * * *"]
 
 [observability]
 enabled = true

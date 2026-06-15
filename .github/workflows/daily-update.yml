@@ -5,7 +5,7 @@ name: Daily Wend Puzzle Update
 on:
   workflow_dispatch:
   schedule:
-    - cron: "1 8 * * *" # 08:01 UTC = 1:31 PM IST
+    - cron: "0 8 * * *" # 08:00 UTC = 1:30 PM IST
 
 env:
   WORKER_URL: ${{ secrets.WORKER_URL }}
@@ -26,14 +26,23 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "npm"
 
       - name: Install root dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Install Playwright Chromium
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ runner.os }}-v1
+          restore-keys: |
+            playwright-chromium-${{ runner.os }}-
+
+      - name: Install scraper dependencies + Chromium
         run: |
           cd scraper
-          npm install
+          npm ci
           npx playwright install chromium --with-deps
 
       - name: Scrape latest Wend puzzle (LinkedIn + fallback)
