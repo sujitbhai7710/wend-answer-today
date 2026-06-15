@@ -30,19 +30,9 @@ jobs:
       - name: Install root dependencies
         run: npm install
 
-      - name: Install Playwright browsers
-        run: npx playwright install chromium --with-deps
-
-      - name: Install scraper dependencies
-        run: |
-          cd scraper
-          npm init -y
-          npm install playwright
-
       - name: Scrape latest Wend puzzle
         run: node scrape-wend.js
         working-directory: scraper
-        continue-on-error: true
         env:
           WORKER_URL: ${{ secrets.WORKER_URL }}
           WORKER_API_KEY: ${{ secrets.WORKER_API_KEY }}

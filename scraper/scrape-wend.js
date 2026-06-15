@@ -1,126 +1,139 @@
 /**
- * Wend Puzzle Scraper
- * Uses Playwright to scrape the latest Wend puzzle from thewordfinder.com
- * and sends the data to the Cloudflare Worker API
+ * Wend Puzzle Updater
+ * Pulls the latest Wend puzzle from The Word Finder's upstream JSON API
+ * and writes it into the Cloudflare Worker API.
  */
-
-const { chromium } = require('playwright');
 
 const WORKER_URL = process.env.WORKER_URL || 'https://wend-api-worker.wendapi.workers.dev';
 const API_KEY = process.env.WORKER_API_KEY;
+const SOURCE_URL = process.env.WEND_SOURCE_URL || 'https://api.thewordfinder.com/wend/latest';
+
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function fetchJsonWithRetry(url, options = {}, config = {}) {
+    const attempts = config.attempts || 3;
+    const timeoutMs = config.timeoutMs || 30000;
+    const label = config.label || url;
+    let lastError;
+
+    for (let attempt = 1; attempt <= attempts; attempt++) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+        try {
+            const response = await fetch(url, {
+                ...options,
+                signal: controller.signal,
+                headers: {
+                    Accept: 'application/json',
+                    ...(options.headers || {}),
+                },
+            });
+            const text = await response.text();
+
+            if (!response.ok) {
+                throw new Error(`${label} failed with status ${response.status}: ${text.slice(0, 300)}`);
+            }
+
+            try {
+                return JSON.parse(text);
+            } catch (error) {
+                throw new Error(`${label} returned invalid JSON: ${text.slice(0, 300)}`);
+            }
+        } catch (error) {
+            lastError = error;
+            console.warn(`Attempt ${attempt}/${attempts} failed for ${label}: ${error.message}`);
+            if (attempt < attempts) {
+                await delay(attempt * 2000);
+            }
+        } finally {
+            clearTimeout(timeoutId);
+        }
+    }
+
+    throw lastError;
+}
+
+function normalizePuzzleData(payload) {
+    const result = payload?.result;
+    const game = result?.game;
+
+    if (!result || !game || !Array.isArray(game.words) || !Array.isArray(game.grid)) {
+        throw new Error('Upstream API response is missing expected Wend puzzle data');
+    }
+
+    return {
+        puzzle_number: game.puzzleNumber || result.puzzle_number,
+        date: result.date,
+        words: game.words.map(item => item.word),
+        grid: game.grid,
+        rows: game.rows,
+        cols: game.cols,
+        word_cells: game.words,
+    };
+}
+
+async function uploadPuzzleData(puzzleData) {
+    if (!API_KEY) {
+        console.log('No API key provided, skipping data upload');
+        console.log('Puzzle data:', JSON.stringify(puzzleData, null, 2));
+        return puzzleData;
+    }
+
+    console.log('Sending puzzle data to Worker API...');
+    const saveResult = await fetchJsonWithRetry(`${WORKER_URL}/api/puzzle`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-API-Key': API_KEY,
+        },
+        body: JSON.stringify(puzzleData),
+    }, {
+        label: 'worker upload',
+        attempts: 3,
+        timeoutMs: 30000,
+    });
+
+    if (!saveResult.success) {
+        throw new Error(`Worker API did not accept puzzle data: ${JSON.stringify(saveResult)}`);
+    }
+
+    const latestResult = await fetchJsonWithRetry(`${WORKER_URL}/api/puzzle/latest`, {}, {
+        label: 'worker latest verification',
+        attempts: 3,
+        timeoutMs: 15000,
+    });
+
+    if (!latestResult.success || latestResult.data?.puzzle_number !== puzzleData.puzzle_number) {
+        throw new Error(
+            `Worker verification failed. Expected latest puzzle #${puzzleData.puzzle_number}, got #${latestResult.data?.puzzle_number ?? 'unknown'}`,
+        );
+    }
+
+    console.log(`Puzzle data saved successfully for puzzle #${puzzleData.puzzle_number}`);
+    return puzzleData;
+}
 
 async function scrapeLatestPuzzle() {
-    console.log('Starting Wend puzzle scraper...');
-    
-    const browser = await chromium.launch({ headless: true });
-    const context = await browser.newContext({
-        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-    });
-    const page = await context.newPage();
-    
+    console.log('Starting Wend puzzle updater...');
+
     try {
-        // Navigate to the wordfinder Wend hints page
-        console.log('Navigating to thewordfinder.com...');
-        await page.goto('https://www.thewordfinder.com/linkedin-games-hub/wend-hints', {
-            waitUntil: 'networkidle',
-            timeout: 45000
+        console.log(`Fetching upstream JSON from ${SOURCE_URL}...`);
+        const upstreamPayload = await fetchJsonWithRetry(SOURCE_URL, {}, {
+            label: 'upstream Wend API',
+            attempts: 3,
+            timeoutMs: 30000,
         });
-        
-        await page.waitForTimeout(3000);
-        
-        // Extract game data from the page's embedded JSON
-        console.log('Extracting puzzle data...');
-        const gameDataText = await page.evaluate(() => {
-            const scripts = document.querySelectorAll('script');
-            for (const s of scripts) {
-                const text = s.textContent;
-                if (text && text.includes('firstGameDate') && text.includes('wend')) {
-                    return text;
-                }
-            }
-            return null;
-        });
-        
-        if (!gameDataText) {
-            throw new Error('No game data found on the page');
-        }
-        
-        // Parse the JSON data
-        const startIndex = gameDataText.indexOf('{');
-        let jsonStr = gameDataText.substring(startIndex);
-        
-        // Find matching closing brace
-        let depth = 0;
-        let endIndex = 0;
-        for (let i = 0; i < jsonStr.length; i++) {
-            if (jsonStr[i] === '{') depth++;
-            else if (jsonStr[i] === '}') {
-                depth--;
-                if (depth === 0) {
-                    endIndex = i + 1;
-                    break;
-                }
-            }
-        }
-        
-        const parsed = JSON.parse(jsonStr.substring(0, endIndex));
-        
-        // Navigate to the game data
-        let result = null;
-        for (const key of Object.keys(parsed)) {
-            if (parsed[key]?.b?.result) {
-                result = parsed[key].b.result;
-                break;
-            }
-        }
-        
-        if (!result) {
-            throw new Error('Could not find puzzle result in the data');
-        }
-        
-        const game = result.game;
-        const puzzleData = {
-            puzzle_number: game.puzzleNumber || result.puzzle_number,
-            date: result.date,
-            words: game.words.map(w => w.word),
-            grid: game.grid,
-            rows: game.rows,
-            cols: game.cols,
-            word_cells: game.words
-        };
-        
+
+        const puzzleData = normalizePuzzleData(upstreamPayload);
         console.log(`Found puzzle #${puzzleData.puzzle_number}: ${puzzleData.words.join(', ')}`);
-        
-        // Send to Worker API
-        if (API_KEY) {
-            console.log('Sending puzzle data to Worker API...');
-            const response = await fetch(`${WORKER_URL}/api/puzzle`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-API-Key': API_KEY
-                },
-                body: JSON.stringify(puzzleData)
-            });
-            
-            const result = await response.json();
-            if (result.success) {
-                console.log('Puzzle data saved successfully!');
-            } else {
-                console.error('Failed to save puzzle data:', result);
-            }
-        } else {
-            console.log('No API key provided, skipping data upload');
-            console.log('Puzzle data:', JSON.stringify(puzzleData, null, 2));
-        }
-        
+        await uploadPuzzleData(puzzleData);
         return puzzleData;
-        
     } catch (error) {
         console.error('Scraping failed:', error);
         throw error;
-    } finally {
-        await browser.close();
     }
 }
 
