@@ -896,8 +896,8 @@ async function buildSite() {
   fs.writeFileSync(path.join(outputDir, "index.html"), template);
   console.log("Built index.html");
 
-  // Copy static assets — CSS is now inlined into HTML, so we don't ship a separate stylesheet
-  // (still copy the css/ dir for any future pages that might want a fallback, but it's optional)
+  // Copy static assets — CSS is inlined into home + how-to pages, but archive page uses
+  // external CSS (better FCP on mobile for the larger archive HTML)
   copyDir(path.join(__dirname, "src", "js"), path.join(outputDir, "js"));
   copyDir(
     path.join(__dirname, "src", "images"),
@@ -907,6 +907,12 @@ async function buildSite() {
   fs.copyFileSync(
     path.join(__dirname, OG_IMAGE_NAME),
     path.join(outputDir, OG_IMAGE_NAME),
+  );
+
+  // Ship a minified external CSS file (used by archive.html)
+  fs.writeFileSync(
+    path.join(outputDir, "css", "styles.css"),
+    INLINED_CSS,
   );
 
   // Minify JS for performance
@@ -1081,8 +1087,9 @@ async function buildArchivePage(allPuzzles, outputDir) {
     <meta name="twitter:title" content="${archiveTitle}">
     <meta name="twitter:description" content="${archiveDescription}">
     <meta name="twitter:image" content="${OG_IMAGE_URL}">
+    <link rel="preload" href="/css/styles.css" as="style">
     <link rel="preload" href="/fonts/inter-700.ttf" as="font" type="font/ttf" crossorigin>
-    <style>${INLINED_CSS}</style>
+    <link rel="stylesheet" href="/css/styles.css">
     <script type="application/ld+json">${archiveSchema}</script>
     <style>
         ${archiveRevealCSS}
