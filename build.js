@@ -66,7 +66,7 @@ function escapeXml(value) {
 }
 
 function generateShareBar(title, url) {
-  return `<div class="share-bar" aria-label="Share this page">
+  return `<div class="share-bar" role="group" aria-label="Share this page">
         <span class="share-bar-label">Share this page</span>
         <div class="share-buttons">
             <button type="button" class="share-button" data-share-service="native" data-share-title="${escapeXml(title)}" data-share-url="${escapeXml(url)}">Share</button>
