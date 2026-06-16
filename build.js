@@ -910,10 +910,11 @@ async function buildSite() {
   );
 
   // Ship a minified external CSS file (used by archive.html)
-  fs.writeFileSync(
-    path.join(outputDir, "css", "styles.css"),
-    INLINED_CSS,
-  );
+  const cssOutDir = path.join(outputDir, "css");
+  if (!fs.existsSync(cssOutDir)) {
+    fs.mkdirSync(cssOutDir, { recursive: true });
+  }
+  fs.writeFileSync(path.join(cssOutDir, "styles.css"), INLINED_CSS);
 
   // Minify JS for performance
   minifyJsFile(
