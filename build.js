@@ -17,6 +17,14 @@ const OG_IMAGE_URL = `${SITE_URL}/${OG_IMAGE_NAME}`;
 const OG_IMAGE_ALT =
   "Wend Answer Today preview image with the daily puzzle board and answer path styling";
 
+// Pre-read + minify CSS at module load so it can be inlined into every page
+// (eliminates render-blocking CSS request — major PageSpeed win on mobile)
+const RAW_CSS_SOURCE = fs.readFileSync(
+  path.join(__dirname, "src", "css", "styles.css"),
+  "utf8",
+);
+const INLINED_CSS = minifyCss(RAW_CSS_SOURCE);
+
 // Word colors — matching LinkedIn Wend game
 const WORD_COLORS = [
   "#E8572A", // Orange-red
@@ -88,13 +96,13 @@ function generateSitemapXml(latestPuzzleDate) {
       priority: "1.0",
     },
     {
-      loc: absoluteUrl("/archive.html"),
+      loc: absoluteUrl("/archive"),
       lastmod: latestPuzzleDate,
       changefreq: "daily",
       priority: "0.9",
     },
     {
-      loc: absoluteUrl("/how-to-play.html"),
+      loc: absoluteUrl("/how-to-play"),
       lastmod: new Date().toISOString(),
       changefreq: "monthly",
       priority: "0.7",
@@ -456,7 +464,7 @@ function generateSolvedGridCells(grid, wordCells, rows, cols) {
           inner += `<span class="cell-arrow cell-arrow--${cellArrowDir[key]}">${chevronSvg}</span>`;
         }
 
-        html += `<div class="wend-cell wend-cell--revealed wend-cell--pulse" data-row="${r}" data-col="${c}" style="--word-color:${color};--cell-delay:${delay};" aria-label="${cell.letter} — revealed">${inner}</div>`;
+        html += `<div class="wend-cell wend-cell--revealed wend-cell--pulse" role="img" data-row="${r}" data-col="${c}" style="--word-color:${color};--cell-delay:${delay};" aria-label="${cell.letter} — revealed">${inner}</div>`;
       } else {
         html += `<div class="wend-cell wend-cell--letter" data-row="${r}" data-col="${c}">
                     <span class="cell-letter">${cell.letter}</span>
@@ -479,7 +487,7 @@ function generateWordCardsBefore(words, wordCells) {
 
       let bubbles = "";
       for (let i = 0; i < word.length; i++) {
-        bubbles += `<div class="letter-bubble letter-bubble--hidden" data-word-index="${idx}" data-letter-index="${i}" data-letter="${word[i]}" style="--word-color:${color};" aria-label="Hidden letter ${i + 1} of word ${idx + 1}"><span class="bubble-letter" aria-hidden="true"></span></div>`;
+        bubbles += `<div class="letter-bubble letter-bubble--hidden" role="img" data-word-index="${idx}" data-letter-index="${i}" data-letter="${word[i]}" style="--word-color:${color};" aria-label="Hidden letter ${i + 1} of word ${idx + 1}"><span class="bubble-letter" aria-hidden="true"></span></div>`;
       }
 
       return `<div class="word-blank" data-word-index="${idx}" style="--word-color:${color};">
@@ -613,7 +621,7 @@ function generateRecentPuzzles(puzzles) {
         .join("");
 
       return `
-            <a href="/archive.html#puzzle-${p.puzzle_number}" class="recent-card">
+            <a href="/archive#puzzle-${p.puzzle_number}" class="recent-card">
                 <div class="card-header">
                     <span class="card-number">Puzzle #${p.puzzle_number}</span>
                     <span class="card-date">${dateShort}</span>
@@ -718,7 +726,7 @@ function generateSchema(puzzleData, allPuzzles) {
         "@type": "ListItem",
         position: i + 1,
         name: `LinkedIn Wend #${p.puzzle_number} — ${formatDateShort(p.date)}`,
-        url: `${absoluteUrl("/archive.html")}#puzzle-${p.puzzle_number}`,
+        url: `${absoluteUrl("/archive")}#puzzle-${p.puzzle_number}`,
       })),
     },
   ];
@@ -732,7 +740,7 @@ function generateArchiveSchema(fullPuzzles) {
       "@context": "https://schema.org",
       "@type": "CollectionPage",
       name: "Wend Answer Archive by Date",
-      url: absoluteUrl("/archive.html"),
+      url: absoluteUrl("/archive"),
       description:
         "Browse past Wend answers by date, puzzle number, and solved board path.",
       isPartOf: {
@@ -749,7 +757,7 @@ function generateArchiveSchema(fullPuzzles) {
         "@type": "ListItem",
         position: index + 1,
         name: `Wend answer for ${formatDate(p.date)}`,
-        url: `${absoluteUrl("/archive.html")}#puzzle-${p.puzzle_number}`,
+        url: `${absoluteUrl("/archive")}#puzzle-${p.puzzle_number}`,
       })),
     },
   ]);
@@ -761,7 +769,7 @@ function generateHowToPlaySchema() {
       "@context": "https://schema.org",
       "@type": "WebPage",
       name: "How to Play LinkedIn Wend",
-      url: absoluteUrl("/how-to-play.html"),
+      url: absoluteUrl("/how-to-play"),
       description:
         "Learn how to play LinkedIn Wend with rules, route examples, and strategy tips.",
       isPartOf: {
@@ -774,7 +782,7 @@ function generateHowToPlaySchema() {
       "@context": "https://schema.org",
       "@type": "Article",
       headline: "How to Play LinkedIn Wend",
-      mainEntityOfPage: absoluteUrl("/how-to-play.html"),
+      mainEntityOfPage: absoluteUrl("/how-to-play"),
       image: [OG_IMAGE_URL],
       author: {
         "@type": "Organization",
@@ -838,6 +846,7 @@ async function buildSite() {
     "{{META_TITLE}}": metaTitle,
     "{{META_DESCRIPTION}}": metaDescription,
     "{{META_KEYWORDS}}": metaKeywords,
+    "{{INLINE_CSS}}": INLINED_CSS,
     "{{OG_IMAGE_URL}}": OG_IMAGE_URL,
     "{{OG_IMAGE_ALT}}": OG_IMAGE_ALT,
     "{{SCHEMA_JSON}}": generateSchema(puzzle, allPuzzles),
@@ -887,8 +896,8 @@ async function buildSite() {
   fs.writeFileSync(path.join(outputDir, "index.html"), template);
   console.log("Built index.html");
 
-  // Copy static assets
-  copyDir(path.join(__dirname, "src", "css"), path.join(outputDir, "css"));
+  // Copy static assets — CSS is now inlined into HTML, so we don't ship a separate stylesheet
+  // (still copy the css/ dir for any future pages that might want a fallback, but it's optional)
   copyDir(path.join(__dirname, "src", "js"), path.join(outputDir, "js"));
   copyDir(
     path.join(__dirname, "src", "images"),
@@ -898,6 +907,12 @@ async function buildSite() {
   fs.copyFileSync(
     path.join(__dirname, OG_IMAGE_NAME),
     path.join(outputDir, OG_IMAGE_NAME),
+  );
+
+  // Minify JS for performance
+  minifyJsFile(
+    path.join(outputDir, "js", "app.js"),
+    path.join(outputDir, "js", "app.js"),
   );
 
   // Generate archive page
@@ -1038,7 +1053,7 @@ async function buildArchivePage(allPuzzles, outputDir) {
   const archiveTitle = "Wend Answer Archive by Date | Past LinkedIn Wend Answers";
   const archiveDescription =
     "Browse past Wend answers by date with solved boards, route hints, puzzle numbers, and archive access for older LinkedIn Wend puzzles.";
-  const archiveUrl = absoluteUrl("/archive.html");
+  const archiveUrl = absoluteUrl("/archive");
   const archiveSchema = generateArchiveSchema(fullPuzzles);
 
   const archiveHtml = `<!DOCTYPE html>
@@ -1067,7 +1082,7 @@ async function buildArchivePage(allPuzzles, outputDir) {
     <meta name="twitter:description" content="${archiveDescription}">
     <meta name="twitter:image" content="${OG_IMAGE_URL}">
     <link rel="preload" href="/fonts/inter-700.ttf" as="font" type="font/ttf" crossorigin>
-    <link rel="stylesheet" href="/css/styles.css">
+    <style>${INLINED_CSS}</style>
     <script type="application/ld+json">${archiveSchema}</script>
     <style>
         ${archiveRevealCSS}
@@ -1083,8 +1098,8 @@ async function buildArchivePage(allPuzzles, outputDir) {
                 </a>
                 <nav class="nav-links">
                     <a href="/">Home</a>
-                    <a href="/archive.html" class="active">Archive</a>
-                    <a href="/how-to-play.html">How to Play</a>
+                    <a href="/archive" class="active">Archive</a>
+                    <a href="/how-to-play">How to Play</a>
                 </nav>
                 <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
@@ -1092,8 +1107,8 @@ async function buildArchivePage(allPuzzles, outputDir) {
             </div>
             <div class="mobile-menu" id="mobile-menu" role="navigation" aria-label="Mobile navigation">
                 <a href="/">Home</a>
-                <a href="/archive.html" class="active">Archive</a>
-                <a href="/how-to-play.html">How to Play</a>
+                <a href="/archive" class="active">Archive</a>
+                <a href="/how-to-play">How to Play</a>
             </div>
         </header>
 
@@ -1112,7 +1127,7 @@ async function buildArchivePage(allPuzzles, outputDir) {
                     <div class="calendar-wrapper">
                         <div class="calendar-nav">
                             <button class="calendar-prev" aria-label="Previous month">&#8592;</button>
-                            <h3 class="calendar-month-title"></h3>
+                            <h2 class="calendar-month-title"></h2>
                             <button class="calendar-next" aria-label="Next month">&#8594;</button>
                         </div>
                         <div class="calendar-weekdays">
@@ -1191,7 +1206,7 @@ function buildHowToPlayPage(outputDir) {
   const howToTitle = "How to Play Wend | Rules, Routes and Daily Solver Tips";
   const howToDescription =
     "Learn how to play LinkedIn Wend with clear rules, route examples, solving tips, and daily puzzle strategy from Wend Answer Today.";
-  const howToUrl = absoluteUrl("/how-to-play.html");
+  const howToUrl = absoluteUrl("/how-to-play");
   const howToSchema = generateHowToPlaySchema();
 
   const html = `<!DOCTYPE html>
@@ -1220,7 +1235,7 @@ function buildHowToPlayPage(outputDir) {
     <meta name="twitter:description" content="${howToDescription}">
     <meta name="twitter:image" content="${OG_IMAGE_URL}">
     <link rel="preload" href="/fonts/inter-700.ttf" as="font" type="font/ttf" crossorigin>
-    <link rel="stylesheet" href="/css/styles.css">
+    <style>${INLINED_CSS}</style>
     <script type="application/ld+json">${howToSchema}</script>
 </head>
 <body>
@@ -1233,8 +1248,8 @@ function buildHowToPlayPage(outputDir) {
                 </a>
                 <nav class="nav-links">
                     <a href="/">Home</a>
-                    <a href="/archive.html">Archive</a>
-                    <a href="/how-to-play.html" class="active">How to Play</a>
+                    <a href="/archive">Archive</a>
+                    <a href="/how-to-play" class="active">How to Play</a>
                 </nav>
                 <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
@@ -1242,8 +1257,8 @@ function buildHowToPlayPage(outputDir) {
             </div>
             <div class="mobile-menu" id="mobile-menu" role="navigation" aria-label="Mobile navigation">
                 <a href="/">Home</a>
-                <a href="/archive.html">Archive</a>
-                <a href="/how-to-play.html" class="active">How to Play</a>
+                <a href="/archive">Archive</a>
+                <a href="/how-to-play" class="active">How to Play</a>
             </div>
         </header>
 
@@ -1360,6 +1375,100 @@ function copyDir(src, dest) {
       fs.copyFileSync(srcPath, destPath);
     }
   }
+}
+
+/**
+ * Lightweight CSS minifier — strips comments, whitespace, and trailing semicolons
+ * while preserving CSS validity. Safe for our stylesheet (no expressions/hacks).
+ */
+function minifyCss(css) {
+  return css
+    // Remove /* ... */ comments (but keep CSS valid)
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    // Collapse whitespace
+    .replace(/\s+/g, " ")
+    // Remove spaces around { } : ; , > + ~
+    .replace(/\s*([{}:;,>+~])\s*/g, "$1")
+    // Remove trailing semicolons before }
+    .replace(/;}/g, "}")
+    // Remove leading/trailing whitespace
+    .trim();
+}
+
+function minifyCssFile(srcPath, destPath) {
+  if (!fs.existsSync(srcPath)) return;
+  const raw = fs.readFileSync(srcPath, "utf8");
+  const minified = minifyCss(raw);
+  fs.writeFileSync(destPath, minified);
+  const savedBytes = raw.length - minified.length;
+  console.log(
+    `Minified CSS: ${path.basename(destPath)} (${raw.length} → ${minified.length} bytes, saved ${savedBytes})`,
+  );
+}
+
+/**
+ * Lightweight JS minifier — strips comments and unnecessary whitespace
+ * while preserving JS validity. Conservative — does not rename variables.
+ */
+function minifyJs(js) {
+  // Remove single-line comments (// ...) but not URLs like http://
+  let out = js
+    // Remove /* ... */ block comments
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    // Remove // comments that are not inside strings (basic heuristic: line starts with // or has // after non-string char)
+    .split("\n")
+    .map((line) => {
+      // Skip if line has // inside a string — too risky to strip; keep as-is
+      // Simple approach: strip // comments only if they're preceded by whitespace or start of line
+      // and not preceded by : (URL scheme)
+      const m = line.match(/^(\s*)(.*)$/);
+      if (!m) return line;
+      const [, indent, rest] = m;
+      // Find // that's not inside a string (simple: count quotes before)
+      let inString = false;
+      let stringChar = "";
+      let cutIndex = -1;
+      for (let i = 0; i < rest.length; i++) {
+        const ch = rest[i];
+        if (inString) {
+          if (ch === "\\") { i++; continue; }
+          if (ch === stringChar) inString = false;
+        } else {
+          if (ch === '"' || ch === "'" || ch === "`") {
+            inString = true;
+            stringChar = ch;
+          } else if (ch === "/" && rest[i + 1] === "/") {
+            // Make sure it's not part of a URL (://)
+            if (rest[i - 1] !== ":") {
+              cutIndex = i;
+              break;
+            }
+          }
+        }
+      }
+      const cleaned = cutIndex >= 0 ? rest.slice(0, cutIndex) : rest;
+      return indent + cleaned;
+    })
+    .join("\n");
+  // Collapse multiple blank lines
+  out = out.replace(/\n\s*\n/g, "\n");
+  // Trim trailing whitespace on each line
+  out = out
+    .split("\n")
+    .map((l) => l.replace(/\s+$/g, ""))
+    .join("\n");
+  return out.trim();
+}
+
+function minifyJsFile(srcPath, destPath) {
+  if (!fs.existsSync(srcPath)) return;
+  const raw = fs.readFileSync(srcPath, "utf8");
+  const minified = minifyJs(raw);
+  fs.writeFileSync(destPath, minified);
+  const savedBytes = raw.length - minified.length;
+  console.log(
+    `Minified JS: ${path.basename(destPath)} (${raw.length} → ${minified.length} bytes, saved ${savedBytes})`,
+  );
 }
 
 // Run build

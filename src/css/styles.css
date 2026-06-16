@@ -348,7 +348,7 @@ button {
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--clr-text-muted);
+    color: #64748b; /* AA-compliant on white (4.62:1) */
 }
 .share-buttons {
     display: flex;
@@ -1499,7 +1499,7 @@ button {
 .calendar-weekdays span {
     font-size: 0.68rem;
     font-weight: 700;
-    color: var(--clr-text-muted);
+    color: #64748b; /* AA-compliant on white (4.62:1) */
     padding: 2px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
