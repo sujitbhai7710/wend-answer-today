@@ -903,7 +903,19 @@ async function buildSite() {
     path.join(__dirname, "src", "images"),
     path.join(outputDir, "images"),
   );
-  copyDir(path.join(__dirname, "src", "fonts"), path.join(outputDir, "fonts"));
+  // Only copy WOFF2 fonts (modern format — 96% smaller than TTF).
+  // TTF fallback is not shipped; browsers without WOFF2 support use system fonts.
+  const fontsOutDir = path.join(outputDir, "fonts");
+  if (!fs.existsSync(fontsOutDir)) {
+    fs.mkdirSync(fontsOutDir, { recursive: true });
+  }
+  for (const weight of [400, 500, 600, 700, 800, 900]) {
+    const woff2Name = `inter-${weight}.woff2`;
+    const woff2Src = path.join(__dirname, "src", "fonts", woff2Name);
+    if (fs.existsSync(woff2Src)) {
+      fs.copyFileSync(woff2Src, path.join(fontsOutDir, woff2Name));
+    }
+  }
   fs.copyFileSync(
     path.join(__dirname, OG_IMAGE_NAME),
     path.join(outputDir, OG_IMAGE_NAME),
@@ -1095,7 +1107,8 @@ async function buildArchivePage(allPuzzles, outputDir) {
     <meta name="twitter:description" content="${archiveDescription}">
     <meta name="twitter:image" content="${OG_IMAGE_URL}">
     <link rel="preload" href="/css/styles.css" as="style">
-    <link rel="preload" href="/fonts/inter-700.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="/fonts/inter-700.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preconnect" href="https://static.cloudflareinsights.com">
     <link rel="stylesheet" href="/css/styles.css">
     <script type="application/ld+json">${archiveSchema}</script>
     <style>
@@ -1248,7 +1261,8 @@ function buildHowToPlayPage(outputDir) {
     <meta name="twitter:title" content="${howToTitle}">
     <meta name="twitter:description" content="${howToDescription}">
     <meta name="twitter:image" content="${OG_IMAGE_URL}">
-    <link rel="preload" href="/fonts/inter-700.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="/fonts/inter-700.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preconnect" href="https://static.cloudflareinsights.com">
     <style>${INLINED_CSS}</style>
     <script type="application/ld+json">${howToSchema}</script>
 </head>
