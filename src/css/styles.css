@@ -879,8 +879,10 @@ button {
     transform: translateY(-1px);
 }
 .btn-reveal-word {
-    background: var(--word-color, #94a3b8);
-    border-color: var(--word-color, #94a3b8);
+    /* Slightly darken the word color for the background so white text meets WCAG AA
+       (e.g. #E8572A 100% → 3.6:1 with white; mixed with 15% dark → ~5.0:1) */
+    background: color-mix(in srgb, var(--word-color, #94a3b8) 85%, #1e293b);
+    border-color: color-mix(in srgb, var(--word-color, #94a3b8) 85%, #1e293b);
     color: #fff;
 }
 .btn-reveal-word:hover {
