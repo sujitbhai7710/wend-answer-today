@@ -509,10 +509,38 @@
         });
 
       const targetItem = document.getElementById(`archive-puzzle-${puzzleNum}`);
-      if (targetItem) targetItem.style.display = "block";
+      if (targetItem) {
+        targetItem.style.display = "block";
+
+        // Auto-reveal the answer so users see the solved board + word list immediately
+        const revealCheckbox = targetItem.querySelector(
+          ".archive-reveal-checkbox",
+        );
+        if (revealCheckbox && !revealCheckbox.checked) {
+          revealCheckbox.checked = true;
+          // Dispatch a change event so the progress counter / fill bar update too
+          revealCheckbox.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+      }
 
       calendarSection.style.display = "none";
       if (puzzleSection) puzzleSection.classList.add("active");
+
+      // Scroll the puzzle into view (helpful on mobile + when arriving from URL hash)
+      if (puzzleSection) {
+        puzzleSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    // Support direct links like /archive.html#puzzle-7
+    function showPuzzleFromHash() {
+      const hash = window.location.hash || "";
+      const match = hash.match(/puzzle-(\d+)/);
+      if (match) {
+        showPuzzle(match[1]);
+        return true;
+      }
+      return false;
     }
 
     const backBtn = document.querySelector(".back-to-calendar");
@@ -520,7 +548,20 @@
       backBtn.addEventListener("click", function () {
         if (puzzleSection) puzzleSection.classList.remove("active");
         calendarSection.style.display = "";
+        // Clear the hash so back-to-calendar truly resets state
+        if (window.location.hash) {
+          history.replaceState(
+            null,
+            "",
+            window.location.pathname + window.location.search,
+          );
+        }
       });
+    }
+
+    // Handle URL hash on load (e.g. /archive.html#puzzle-7)
+    if (!showPuzzleFromHash()) {
+      // No hash — render the calendar as normal
     }
 
     if (prevBtn) {

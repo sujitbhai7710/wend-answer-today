@@ -828,14 +828,16 @@ async function buildSite() {
   // Generate all replacement values
   const dateDisplay = formatDate(puzzle.date);
   const dateShort = formatDateShort(puzzle.date);
-  const metaTitle = `Wend Answer Today for ${dateDisplay} | LinkedIn Wend Answer & Hints`;
-  const metaDescription = `Find the Wend answer today for ${dateDisplay}, including today's LinkedIn Wend word list, reveal-letter hints, solved path view, and archive access by date for puzzle #${puzzle.puzzle_number}.`;
+  const metaTitle = `Wend answer today - Hints & Ai Solver`;
+  const metaDescription = `Wend answer today along with hints are provided here daily with full animation`;
+  const metaKeywords = `wend answer today, wend answers, wend full answer, wend answer for date, wend answer for puzzle no`;
   const canonicalUrl = absoluteUrl("/");
 
   const replacements = {
     "{{CANONICAL_URL}}": canonicalUrl,
     "{{META_TITLE}}": metaTitle,
     "{{META_DESCRIPTION}}": metaDescription,
+    "{{META_KEYWORDS}}": metaKeywords,
     "{{OG_IMAGE_URL}}": OG_IMAGE_URL,
     "{{OG_IMAGE_ALT}}": OG_IMAGE_ALT,
     "{{SCHEMA_JSON}}": generateSchema(puzzle, allPuzzles),
