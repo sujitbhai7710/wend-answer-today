@@ -871,18 +871,19 @@ button {
 .btn-reveal-letter {
     background: transparent;
     border-color: var(--word-color, #94a3b8);
-    /* Darken the word color for text so we hit WCAG AA contrast on white */
-    color: color-mix(in srgb, var(--word-color, #475569) 60%, #1e293b);
+    /* Darken the word color more aggressively for text so we hit WCAG AA contrast on white
+       (lighter word colors like teal #4DBDBA and green #98C21F need a stronger mix) */
+    color: color-mix(in srgb, var(--word-color, #475569) 50%, #1e293b);
 }
 .btn-reveal-letter:hover {
     background: color-mix(in srgb, var(--word-color, #94a3b8) 14%, white);
     transform: translateY(-1px);
 }
 .btn-reveal-word {
-    /* Slightly darken the word color for the background so white text meets WCAG AA
-       (e.g. #E8572A 100% → 3.6:1 with white; mixed with 15% dark → ~5.0:1) */
-    background: color-mix(in srgb, var(--word-color, #94a3b8) 85%, #1e293b);
-    border-color: color-mix(in srgb, var(--word-color, #94a3b8) 85%, #1e293b);
+    /* Darken the word color more aggressively for the background so white text meets WCAG AA
+       (lighter word colors like teal #4DBDBA and green #98C21F need a stronger mix) */
+    background: color-mix(in srgb, var(--word-color, #94a3b8) 72%, #1e293b);
+    border-color: color-mix(in srgb, var(--word-color, #94a3b8) 72%, #1e293b);
     color: #fff;
 }
 .btn-reveal-word:hover {
@@ -1171,7 +1172,7 @@ button {
 }
 .card-date {
     font-size: 0.72rem;
-    color: var(--clr-text-muted);
+    color: #475569; /* AA on white (~7.1:1) */
     font-weight: 500;
 }
 .card-words {
@@ -1311,7 +1312,7 @@ button {
 }
 .footer-brand p {
     font-size: 0.82rem;
-    color: #64748b;
+    color: #94a3b8; /* AA on #1e293b (~4.84:1) */
     max-width: 260px;
     line-height: 1.65;
 }
@@ -1322,7 +1323,7 @@ button {
     margin-bottom: 10px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: #64748b;
+    color: #94a3b8; /* AA on #1e293b (~4.84:1) */
 }
 .footer-links a {
     display: block;
@@ -1336,7 +1337,7 @@ button {
 }
 .footer-legal p {
     font-size: 0.75rem;
-    color: #64748b;
+    color: #94a3b8; /* AA on #1e293b (~4.84:1) */
     line-height: 1.6;
     margin-bottom: 4px;
 }
