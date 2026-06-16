@@ -916,6 +916,12 @@ async function buildSite() {
   }
   fs.writeFileSync(path.join(cssOutDir, "styles.css"), INLINED_CSS);
 
+  // Copy Cloudflare Pages _headers file for edge caching of HTML + static assets
+  const headersSrc = path.join(__dirname, "_headers");
+  if (fs.existsSync(headersSrc)) {
+    fs.copyFileSync(headersSrc, path.join(outputDir, "_headers"));
+  }
+
   // Minify JS for performance
   minifyJsFile(
     path.join(outputDir, "js", "app.js"),
