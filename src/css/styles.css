@@ -880,10 +880,10 @@ button {
     transform: translateY(-1px);
 }
 .btn-reveal-word {
-    /* Darken the word color more aggressively for the background so white text meets WCAG AA
-       (lighter word colors like teal #4DBDBA and green #98C21F need a stronger mix) */
-    background: color-mix(in srgb, var(--word-color, #94a3b8) 72%, #1e293b);
-    border-color: color-mix(in srgb, var(--word-color, #94a3b8) 72%, #1e293b);
+    /* Darken the word color aggressively for the background so white text meets WCAG AA
+       (teal #4DBDBA is the hardest — needs ~65% mix to reach 4.5:1 with white) */
+    background: color-mix(in srgb, var(--word-color, #94a3b8) 65%, #1e293b);
+    border-color: color-mix(in srgb, var(--word-color, #94a3b8) 65%, #1e293b);
     color: #fff;
 }
 .btn-reveal-word:hover {
