@@ -348,7 +348,7 @@ button {
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #64748b; /* AA-compliant on white (4.62:1) */
+    color: #475569; /* AA-compliant on #f0f4f8 (~6.7:1) and white (~7.1:1) */
 }
 .share-buttons {
     display: flex;
@@ -871,7 +871,8 @@ button {
 .btn-reveal-letter {
     background: transparent;
     border-color: var(--word-color, #94a3b8);
-    color: var(--word-color, #475569);
+    /* Darken the word color for text so we hit WCAG AA contrast on white */
+    color: color-mix(in srgb, var(--word-color, #475569) 60%, #1e293b);
 }
 .btn-reveal-letter:hover {
     background: color-mix(in srgb, var(--word-color, #94a3b8) 14%, white);
@@ -925,7 +926,7 @@ button {
     border: 1.5px solid var(--clr-border);
     box-shadow: var(--shadow-sm);
 }
-.wend-words-label h3 {
+.wend-words-label h2 {
     font-size: 0.9rem;
     font-weight: 700;
     margin-bottom: 8px;
@@ -1312,8 +1313,8 @@ button {
     max-width: 260px;
     line-height: 1.65;
 }
-.footer-links h4,
-.footer-legal h4 {
+.footer-links h2,
+.footer-legal h2 {
     font-size: 0.68rem;
     font-weight: 700;
     margin-bottom: 10px;
@@ -1342,7 +1343,7 @@ button {
     padding: 16px 0;
     text-align: center;
     font-size: 0.75rem;
-    color: #64748b;
+    color: #94a3b8; /* AA-compliant on #1e293b (~4.84:1) */
 }
 
 /* ================================================
@@ -1499,7 +1500,7 @@ button {
 .calendar-weekdays span {
     font-size: 0.68rem;
     font-weight: 700;
-    color: #64748b; /* AA-compliant on white (4.62:1) */
+    color: #475569; /* AA-compliant on #f0f4f8 (~6.7:1) */
     padding: 2px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -1704,7 +1705,7 @@ button {
     margin-bottom: 10px;
     box-shadow: 0 2px 8px rgba(10, 102, 194, 0.3);
 }
-.step-card h3 {
+.step-card h2 {
     font-size: 0.95rem;
     font-weight: 700;
     margin-bottom: 5px;

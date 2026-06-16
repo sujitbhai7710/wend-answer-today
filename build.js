@@ -1011,7 +1011,7 @@ async function buildArchivePage(allPuzzles, outputDir) {
                     <div class="archive-words-after">
                         <div class="words-list words-list-revealed">${wordsAfter}</div>
                         <div class="wend-words-label">
-                            <h3>Wend #${p.puzzle_number} Words</h3>
+                            <h2>Wend #${p.puzzle_number} Words</h2>
                             <div class="wend-words-summary">${wordChips}</div>
                         </div>
                     </div>
@@ -1272,32 +1272,32 @@ function buildHowToPlayPage(outputDir) {
                     <div class="steps-grid">
                         <div class="step-card">
                             <div class="step-num">1</div>
-                            <h3>Understand the Grid</h3>
+                            <h2>Understand the Grid</h2>
                             <p>Each Wend puzzle presents a grid of letters. Some cells may be blocked (grayed out). Your goal is to find all the hidden words that wind through the grid, changing direction as they go.</p>
                         </div>
                         <div class="step-card">
                             <div class="step-num">2</div>
-                            <h3>Find the Words</h3>
+                            <h2>Find the Words</h2>
                             <p>Words in Wend are connected paths of letters. Each word starts at one cell and moves to adjacent cells (horizontally or vertically). Unlike traditional word searches, words in Wend can turn corners mid-word.</p>
                         </div>
                         <div class="step-card">
                             <div class="step-num">3</div>
-                            <h3>Follow the Winding Path</h3>
+                            <h2>Follow the Winding Path</h2>
                             <p>The key challenge is that words change direction. A word might go right for two letters, then turn down for three more. The name "Wend" itself means to travel along a winding course — which is exactly what each word does.</p>
                         </div>
                         <div class="step-card">
                             <div class="step-num">4</div>
-                            <h3>Use Intersections</h3>
+                            <h2>Use Intersections</h2>
                             <p>Words often share cells where they cross. Finding one word reveals letters at intersection points, making it easier to discover adjacent words. Start with short words and work your way up to the longer ones.</p>
                         </div>
                         <div class="step-card">
                             <div class="step-num">5</div>
-                            <h3>Check Your Progress</h3>
+                            <h2>Check Your Progress</h2>
                             <p>LinkedIn Wend shows you which words you've found and highlights the cells you've selected. If you're stuck, use the hint feature in the game — or check our daily answer page for the complete solution.</p>
                         </div>
                         <div class="step-card">
                             <div class="step-num">6</div>
-                            <h3>Practice Daily</h3>
+                            <h2>Practice Daily</h2>
                             <p>Wend puzzles get easier with practice. Play every day to develop pattern recognition skills. Over time, you'll learn to spot word paths more quickly and solve puzzles in fewer moves.</p>
                         </div>
                     </div>
