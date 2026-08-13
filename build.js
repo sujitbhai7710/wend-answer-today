@@ -641,7 +641,7 @@ function generateSchema(puzzleData, allPuzzles) {
   const words = puzzleData.words;
   const date = formatDate(puzzleData.date);
   const canonicalUrl = absoluteUrl("/");
-  const answerTitle = `Wend Answer Today for ${date}`;
+  const answerTitle = `LinkedIn Wend Answer Today for ${date}`;
 
   const schema = [
     {
@@ -836,16 +836,14 @@ async function buildSite() {
   // Generate all replacement values
   const dateDisplay = formatDate(puzzle.date);
   const dateShort = formatDateShort(puzzle.date);
-  const metaTitle = `Wend answer today - Hints & Ai Solver`;
-  const metaDescription = `Wend answer today along with hints are provided here daily with full animation`;
-  const metaKeywords = `wend answer today, wend answers, wend full answer, wend answer for date, wend answer for puzzle no`;
+  const metaTitle = `LinkedIn Wend Answer Today — Hints & Solutions | Wend Answer Today`;
+  const metaDescription = `Wend answer today for ${dateDisplay} puzzle #${puzzle.puzzle_number}: ${puzzle.words.join(", ")}. Interactive hints with solved board path. Updated daily within 1 minute of LinkedIn's puzzle release.`;
   const canonicalUrl = absoluteUrl("/");
 
   const replacements = {
     "{{CANONICAL_URL}}": canonicalUrl,
     "{{META_TITLE}}": metaTitle,
     "{{META_DESCRIPTION}}": metaDescription,
-    "{{META_KEYWORDS}}": metaKeywords,
     "{{INLINE_CSS}}": INLINED_CSS,
     "{{OG_IMAGE_URL}}": OG_IMAGE_URL,
     "{{OG_IMAGE_ALT}}": OG_IMAGE_ALT,
@@ -1075,9 +1073,9 @@ async function buildArchivePage(allPuzzles, outputDir) {
     })
     .join("\n");
 
-  const archiveTitle = "Wend Answer Archive by Date | Past LinkedIn Wend Answers";
+  const archiveTitle = "LinkedIn Wend Answer Archive — Past Puzzles by Date | Wend Answer Today";
   const archiveDescription =
-    "Browse past Wend answers by date with solved boards, route hints, puzzle numbers, and archive access for older LinkedIn Wend puzzles.";
+    "Browse all past LinkedIn Wend answers by date. Full solved boards, route hints, puzzle numbers, and word lists for every Wend puzzle archive.";
   const archiveUrl = absoluteUrl("/archive");
   const archiveSchema = generateArchiveSchema(fullPuzzles);
 
@@ -1092,7 +1090,7 @@ async function buildArchivePage(allPuzzles, outputDir) {
     <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1">
     <title>${archiveTitle}</title>
     <meta name="description" content="${archiveDescription}">
-    <meta name="keywords" content="wend answer by date, wend archive, past wend answers, linkedin wend answer archive, wend answers by date">
+
     <link rel="canonical" href="${archiveUrl}">
     <meta property="og:site_name" content="${SITE_NAME}">
     <meta property="og:locale" content="en_US">
@@ -1230,9 +1228,9 @@ async function buildArchivePage(allPuzzles, outputDir) {
 // =========================================================
 
 function buildHowToPlayPage(outputDir) {
-  const howToTitle = "How to Play Wend | Rules, Routes and Daily Solver Tips";
+  const howToTitle = "How to Play LinkedIn Wend — Rules, Routes & Strategy Tips | Wend Answer Today";
   const howToDescription =
-    "Learn how to play LinkedIn Wend with clear rules, route examples, solving tips, and daily puzzle strategy from Wend Answer Today.";
+    "Learn how to play LinkedIn Wend with clear rules, route examples, word-finding strategies, and daily puzzle solving tips. Complete beginner's guide to Wend.";
   const howToUrl = absoluteUrl("/how-to-play");
   const howToSchema = generateHowToPlaySchema();
 
@@ -1247,7 +1245,7 @@ function buildHowToPlayPage(outputDir) {
     <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1">
     <title>${howToTitle}</title>
     <meta name="description" content="${howToDescription}">
-    <meta name="keywords" content="how to play wend, wend rules, wend solver tips, linkedin wend strategy">
+
     <link rel="canonical" href="${howToUrl}">
     <meta property="og:site_name" content="${SITE_NAME}">
     <meta property="og:locale" content="en_US">
