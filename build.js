@@ -1112,6 +1112,7 @@ async function buildArchivePage(allPuzzles, outputDir) {
     <style>
         ${archiveRevealCSS}
     </style>
+    <script data-grow-initializer="">!(function(){window.growMe||((window.growMe=function(e){window.growMe._.push(e);}),(window.growMe._=[]));var e=document.createElement("script");(e.type="text/javascript"),(e.src="https://faves.grow.me/main.js"),(e.defer=!0),e.setAttribute("data-grow-faves-site-id","U2l0ZTpmZDk3YTQzZS1jN2E0LTRlZGUtODlhZi1iNjA5MWVmZWUwODE=");var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t);})();</script>
 </head>
 <body>
     <div class="page-wrapper">
@@ -1263,6 +1264,7 @@ function buildHowToPlayPage(outputDir) {
     <link rel="preconnect" href="https://static.cloudflareinsights.com">
     <style>${INLINED_CSS}</style>
     <script type="application/ld+json">${howToSchema}</script>
+    <script data-grow-initializer="">!(function(){window.growMe||((window.growMe=function(e){window.growMe._.push(e);}),(window.growMe._=[]));var e=document.createElement("script");(e.type="text/javascript"),(e.src="https://faves.grow.me/main.js"),(e.defer=!0),e.setAttribute("data-grow-faves-site-id","U2l0ZTpmZDk3YTQzZS1jN2E0LTRlZGUtODlhZi1iNjA5MWVmZWUwODE=");var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t);})();</script>
 </head>
 <body>
     <div class="page-wrapper">
