@@ -17,6 +17,26 @@ const OG_IMAGE_URL = `${SITE_URL}/${OG_IMAGE_NAME}`;
 const OG_IMAGE_ALT =
   "Wend Answer Today preview image with the daily puzzle board and answer path styling";
 
+// Google Analytics 4 (gtag.js) — official Google tag snippet, placed
+// immediately after the opening <head> tag exactly as Google instructs.
+// The <script async> tag downloads gtag.js without blocking rendering, and
+// the inline config queues the pageview at parse time, so every visit is
+// captured (lazy loading would drop visits that bounce before window "load").
+// Preconnect warms the gtag.js connection so the library starts arriving as
+// early as possible; dns-prefetch covers the analytics beacon origin.
+const GA_MEASUREMENT_ID = "G-1BJT7DE3S4";
+
+const ANALYTICS_SNIPPET = `<!-- Google tag (gtag.js) -->
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '${GA_MEASUREMENT_ID}');
+    </script>`;
+
 // Pre-read + minify CSS at module load so it can be inlined into every page
 // (eliminates render-blocking CSS request — major PageSpeed win on mobile)
 const RAW_CSS_SOURCE = fs.readFileSync(
@@ -847,6 +867,7 @@ async function buildSite() {
     "{{INLINE_CSS}}": INLINED_CSS,
     "{{OG_IMAGE_URL}}": OG_IMAGE_URL,
     "{{OG_IMAGE_ALT}}": OG_IMAGE_ALT,
+    "{{ANALYTICS_SNIPPET}}": ANALYTICS_SNIPPET,
     "{{SCHEMA_JSON}}": generateSchema(puzzle, allPuzzles),
     "{{PUZZLE_NUMBER}}": puzzle.puzzle_number,
     "{{DATE_DISPLAY}}": dateDisplay,
@@ -1090,6 +1111,7 @@ async function buildArchivePage(allPuzzles, outputDir) {
   const archiveHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
+    ${ANALYTICS_SNIPPET}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
@@ -1246,6 +1268,7 @@ function buildHowToPlayPage(outputDir) {
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
+    ${ANALYTICS_SNIPPET}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
