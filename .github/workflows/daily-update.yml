@@ -79,3 +79,11 @@ jobs:
           SITE_URL: https://wendanswertoday.me
           GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
           GOOGLE_SEARCH_CONSOLE_SITE_URL: ${{ vars.GOOGLE_SEARCH_CONSOLE_SITE_URL }}
+
+      - name: Notify Bing IndexNow for all pages
+        if: success()
+        continue-on-error: true
+        run: npm run notify-indexnow
+        env:
+          SITE_URL: https://wendanswertoday.me
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}

@@ -5,7 +5,8 @@
   "scripts": {
     "build": "node build.js",
     "dev": "npx serve dist -p 3000",
-    "notify-google": "node scripts/notify-google.js"
+    "notify-google": "node scripts/notify-google.js",
+    "notify-indexnow": "node scripts/notify-indexnow.js"
   },
   "dependencies": {
     "googleapis": "^144.0.0"

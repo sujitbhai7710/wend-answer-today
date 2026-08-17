@@ -919,6 +919,14 @@ async function buildSite() {
     path.join(outputDir, OG_IMAGE_NAME),
   );
 
+  // Copy IndexNow key file — IndexNow/Bing requires it to be publicly
+  // reachable at https://<host>/<key>.txt for key verification.
+  const INDEXNOW_KEY = "24401a3d83bf4b529de83366ed449dd6";
+  const indexNowKeySrc = path.join(__dirname, "src", `${INDEXNOW_KEY}.txt`);
+  if (fs.existsSync(indexNowKeySrc)) {
+    fs.copyFileSync(indexNowKeySrc, path.join(outputDir, `${INDEXNOW_KEY}.txt`));
+  }
+
   // Ship a minified external CSS file (used by archive.html)
   const cssOutDir = path.join(outputDir, "css");
   if (!fs.existsSync(cssOutDir)) {
