@@ -28,13 +28,14 @@ const GA_MEASUREMENT_ID = "G-1BJT7DE3S4";
 
 const ANALYTICS_SNIPPET = `<!-- Google tag (gtag.js) -->
     <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://www.google-analytics.com">
     <link rel="dns-prefetch" href="https://www.google-analytics.com">
     <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', '${GA_MEASUREMENT_ID}');
+        gtag('config', '${GA_MEASUREMENT_ID}', { send_page_view: true, anonymize_ip: false });
     </script>`;
 
 // Pre-read + minify CSS at module load so it can be inlined into every page
@@ -1142,7 +1143,6 @@ async function buildArchivePage(allPuzzles, outputDir) {
     <style>
         ${archiveRevealCSS}
     </style>
-    <script data-grow-initializer="">!(function(){window.growMe||((window.growMe=function(e){window.growMe._.push(e);}),(window.growMe._=[]));var e=document.createElement("script");(e.type="text/javascript"),(e.src="https://faves.grow.me/main.js"),(e.defer=!0),e.setAttribute("data-grow-faves-site-id","U2l0ZTpmZDk3YTQzZS1jN2E0LTRlZGUtODlhZi1iNjA5MWVmZWUwODE=");var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t);})();</script>
 </head>
 <body>
     <div class="page-wrapper">
@@ -1295,7 +1295,7 @@ function buildHowToPlayPage(outputDir) {
     <link rel="preconnect" href="https://static.cloudflareinsights.com">
     <style>${INLINED_CSS}</style>
     <script type="application/ld+json">${howToSchema}</script>
-    <script data-grow-initializer="">!(function(){window.growMe||((window.growMe=function(e){window.growMe._.push(e);}),(window.growMe._=[]));var e=document.createElement("script");(e.type="text/javascript"),(e.src="https://faves.grow.me/main.js"),(e.defer=!0),e.setAttribute("data-grow-faves-site-id","U2l0ZTpmZDk3YTQzZS1jN2E0LTRlZGUtODlhZi1iNjA5MWVmZWUwODE=");var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t);})();</script>
+
 </head>
 <body>
     <div class="page-wrapper">
